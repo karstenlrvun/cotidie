@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Cotidie">
+<meta name="theme-color" content="#fbf7ec">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<title>Cotidie — Greek</title>
+<style>
+:root{
+  --serif:"Palatino","Palatino Linotype","Book Antiqua",Georgia,serif;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;
+  --bg:#fbf7ec; --panel:#f5efdf; --ink:#2a2318; --muted:#6f6350; --faint:#988c75;
+  --line:#e3d9c1; --coral:#8c2f26; --accent-soft:#f0e3d8; --raise:#fffdf6;
+  --good:#5a6b32; --good-bg:#e6e5d4; --good-br:#c7cab0;
+  --bad:#8c2f26; --bad-bg:#f3ded9; --bad-br:#dcb9ac;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#1a160f; --panel:#241f16; --ink:#ece3cf; --muted:#a89a80; --faint:#7a6f5c;
+    --line:#3a3222; --coral:#d4795e; --accent-soft:#3f2a1f; --raise:#2c2519;
+    --good:#a9bd72; --good-bg:#393b25; --good-br:#565c39;
+    --bad:#d4795e; --bad-bg:#3f2a1f; --bad-br:#5c3a2c;
+  }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg)}
+body{
+  color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased; -webkit-text-size-adjust:100%;
+  padding:calc(20px + env(safe-area-inset-top)) 20px calc(40px + env(safe-area-inset-bottom));
+  max-width:30rem; margin:0 auto;
+}
+h1{font-family:var(--serif);font-weight:400;font-size:1.7rem;margin:0 0 2px}
+h2{font-family:var(--serif);font-weight:400;font-size:1.3rem;margin:0 0 2px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 22px}
+.topbar{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+button.back{background:none;border:none;color:var(--muted);font-size:15px;padding:6px 0;cursor:pointer;font-family:var(--sans)}
+button.back:active{color:var(--coral)}
+
+a.card,button.card{display:block;width:100%;text-align:left;text-decoration:none;color:inherit;
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 18px;
+  margin-bottom:10px;font-family:var(--sans);cursor:pointer}
+a.card:active,button.card:active{border-color:var(--coral);background:var(--accent-soft)}
+.card .t{font-family:var(--serif);font-size:1.15rem;margin-bottom:2px}
+.card .d{color:var(--muted);font-size:13px}
+.card.study{border-color:var(--good-br);background:var(--good-bg)}
+.card.study .t{color:var(--good)}
+
+.sect{margin-top:26px}
+.sect h3{font-size:12px;font-weight:500;color:var(--faint);text-transform:uppercase;
+  letter-spacing:.07em;margin:0 0 10px}
+
+.tabs{display:flex;gap:6px;margin:16px 0}
+.tabs button{flex:1;padding:9px 0;border:1px solid var(--line);background:var(--panel);
+  color:var(--muted);border-radius:10px;font-family:var(--sans);font-size:14px;cursor:pointer}
+.tabs button.on{background:var(--coral);border-color:var(--coral);color:var(--raise)}
+
+table.para{width:100%;border-collapse:collapse;margin:14px 0 6px;font-family:var(--serif);font-size:1.02rem}
+table.para th{text-align:left;color:var(--faint);font-family:var(--sans);font-size:11.5px;
+  text-transform:uppercase;letter-spacing:.06em;font-weight:500;padding:0 8px 8px;border-bottom:1px solid var(--line)}
+table.para td{padding:7px 8px;border-bottom:1px solid var(--line)}
+table.para td.case{color:var(--muted);font-family:var(--sans);font-size:12.5px;white-space:nowrap}
+.vtable{margin:18px 0}
+.vtable h4{font-size:13px;font-weight:600;color:var(--muted);margin:0 0 6px}
+
+.wordlist{margin-top:8px}
+.wordrow{display:flex;justify-content:space-between;align-items:center;padding:11px 4px;
+  border-bottom:1px solid var(--line);cursor:pointer}
+.wordrow:active{background:var(--accent-soft)}
+.wordrow .lemma{font-family:var(--serif);font-size:1.05rem}
+.wordrow .gloss{color:var(--muted);font-size:13px}
+.wordrow .gender{color:var(--faint);font-size:11px;margin-left:6px}
+
+.prompt-box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px 20px;margin:18px 0}
+.prompt-head{color:var(--muted);font-size:13px;margin-bottom:4px}
+.prompt-lemma{font-family:var(--serif);font-size:1.6rem;margin-bottom:2px}
+.prompt-cell{color:var(--coral);font-size:14px;font-weight:600;letter-spacing:.02em}
+.answer-row{display:flex;gap:8px;margin-top:16px}
+input.ans{flex:1;font-family:var(--serif);font-size:1.15rem;padding:11px 13px;border-radius:10px;
+  border:1px solid var(--line);background:var(--raise);color:var(--ink)}
+input.ans:focus{outline:none;border-color:var(--coral)}
+button.go{background:var(--coral);color:var(--raise);border:none;border-radius:10px;padding:0 18px;font-size:15px;cursor:pointer}
+button.go:active{opacity:.85}
+
+.feedback{margin-top:14px;padding:12px 14px;border-radius:10px;font-size:14.5px}
+.feedback.ok{background:var(--good-bg);border:1px solid var(--good-br);color:var(--good)}
+.feedback.no{background:var(--bad-bg);border:1px solid var(--bad-br);color:var(--bad)}
+.feedback .answer{font-family:var(--serif);font-size:1.05rem;margin-top:2px;color:var(--ink)}
+
+.quietlink{background:none;border:none;color:var(--faint);font-size:13px;cursor:pointer;
+  padding:8px 0;font-family:var(--sans);text-decoration:underline}
+.progress{color:var(--faint);font-size:12.5px;margin-bottom:2px}
+.progress-bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden;margin-bottom:16px}
+.progress-fill{height:100%;background:var(--coral)}
+
+.empty{color:var(--muted);text-align:center;padding:40px 10px;font-size:15px}
+.note{color:var(--faint);font-size:12.5px;margin-top:10px;line-height:1.5}
+.summary-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line)}
+.summary-row .k{color:var(--muted)}
+
+.togglerow{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.togglebtn{background:var(--accent-soft);border:1px solid var(--line);color:var(--muted);
+  border-radius:8px;padding:6px 11px;font-size:12.5px;font-family:var(--sans);cursor:pointer}
+.togglebtn.active{background:var(--coral);border-color:var(--coral);color:var(--raise)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script src="data/greek-paradigms.js"></script>
+<script src="data/greek-vocab.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/fsrs.js"></script>
+<script src="js/greek.js"></script>
+<script src="js/greek-input.js"></script>
+<script>
+/* ======================================================================
+   Cotidie — Greek engine UI. Same three-mode shape as latin.html (Table
+   -> Recite -> Drill), adapted for what's actually different about Greek:
+     - grading (js/greek.js): breathing always required, accent
+       toggleable (default off, per the real OCR A-level spec -- see
+       data/greek-paradigms.js's header), movable-nu handling.
+     - typing (js/greek-input.js): Karsten's own Hoplite KB scheme
+       reimplemented in-browser, not the OS Greek Polytonic layout --
+       toggleable per input, in case he'd rather paste or use the OS
+       layout for a given session.
+     - every class here is `literal: true` and has exactly one vocab word
+       (see greek-paradigms.js/greek-vocab.js for why) -- so the
+       Table/Recite word list skips the separate "(example)" row
+       latin.html shows, since it would just duplicate the one real entry.
+   ====================================================================== */
+
+const NOUN_CLASSES = classesOfKind(GREEK_PARADIGMS, 'noun');
+const THEMATIC_CLASSES = classesOfKind(GREEK_PARADIGMS, 'verb').filter(k => !k.startsWith('athematic'));
+const ATHEMATIC_CLASSES = classesOfKind(GREEK_PARADIGMS, 'verb').filter(k => k.startsWith('athematic'));
+
+const STORE_KEY = 'cotidie.greek.v1';
+let store = loadStore(STORE_KEY);
+// Extra Greek-only settings, layered onto the shared fsrs.js store shape
+// rather than touched inside fsrs.js itself (which stays language-
+// agnostic). Defaults match the real OCR spec finding: breathings are
+// always required (not a setting), accents are not expected to be
+// written so default OFF; Hoplite input defaults ON since that's
+// Karsten's own daily tool.
+if (store.settings.requireAccents === undefined) store.settings.requireAccents = false;
+if (store.settings.hopliteInput === undefined) store.settings.hopliteInput = true;
+
+let view = { screen:'home' };
+
+const app = document.getElementById('app');
+let hopliteCtrl = null; // controller for whichever input is currently on screen
+
+function render(){
+  hopliteCtrl = null;
+  if (view.screen==='home') app.innerHTML = renderHome();
+  else if (view.screen==='system') app.innerHTML = renderSystem(view.cls, view.tab||'table');
+  else if (view.screen==='recite') renderRecite();
+  else if (view.screen==='drill') renderDrill();
+}
+
+function go(next){ view = next; render(); window.scrollTo(0,0); }
+
+function gradeOpts(){ return { accents: store.settings.requireAccents }; }
+
+// ---------------------------------------------------------------- HOME ----
+function dueCount(){ return dueCards(store, GREEK_VOCAB, GREEK_VOCAB, GREEK_PARADIGMS, Date.now()).length; }
+
+function renderHome(){
+  const n = dueCount();
+  const studyLine = n>0 ? n+' due now' : 'nothing due — practice anytime below';
+  let h = `
+    <h1>Cotidie</h1>
+    <p class="sub">Greek — grammar production practice</p>
+    <button class="card study" data-action="start-drill">
+      <div class="t">Review</div>
+      <div class="d">${studyLine}</div>
+    </button>
+    <div class="sect"><h3>Nouns</h3>`;
+  NOUN_CLASSES.forEach(k=>{
+    const c = GREEK_PARADIGMS[k];
+    h += `<button class="card" data-action="open-system" data-cls="${k}">
+      <div class="t">${c.label}</div><div class="d">${c.subtitle}</div></button>`;
+  });
+  h += `</div><div class="sect"><h3>Thematic (-ω) verbs</h3>`;
+  THEMATIC_CLASSES.forEach(k=>{
+    const c = GREEK_PARADIGMS[k];
+    h += `<button class="card" data-action="open-system" data-cls="${k}">
+      <div class="t">${c.label}</div><div class="d">${c.subtitle}</div></button>`;
+  });
+  h += `</div><div class="sect"><h3>Athematic (-μι) verbs</h3>`;
+  ATHEMATIC_CLASSES.forEach(k=>{
+    const c = GREEK_PARADIGMS[k];
+    h += `<button class="card" data-action="open-system" data-cls="${k}">
+      <div class="t">${c.label}</div><div class="d">${c.subtitle}</div></button>`;
+  });
+  h += `</div>
+    <p class="note">Table always open; Drill pulled from whatever's actually due. Breathings always graded; accents ${store.settings.requireAccents?'required':'optional'} (change this from any Recite/Drill screen). See Cotidie's HANDOFF.md for the reasoning — nothing here is timed or gamified.</p>`;
+  return h;
+}
+
+// -------------------------------------------------------------- SYSTEM ----
+function wordsOfClass(clsKey){
+  return GREEK_VOCAB.map((e,i)=>({e,i})).filter(x=>x.e.class===clsKey);
+}
+
+function renderSystem(clsKey, tab){
+  const cls = GREEK_PARADIGMS[clsKey];
+  let h = `
+    <div class="topbar"><button class="back" data-action="home">&larr; Cotidie</button></div>
+    <h2>${cls.label}</h2>
+    <p class="sub">${cls.subtitle}</p>
+    <div class="tabs">
+      <button class="${tab==='table'?'on':''}" data-action="tab" data-tab="table">Table</button>
+      <button class="${tab==='recite'?'on':''}" data-action="tab" data-tab="recite">Recite</button>
+    </div>`;
+
+  if (tab==='table'){
+    h += cls.kind==='noun' ? renderNounTable(cls) : renderVerbTables(cls);
+    h += `<button class="card" data-action="start-drill" data-cls="${clsKey}" style="margin-top:14px">
+      <div class="t">Drill this system</div><div class="d">${dueCards(store, wordsOfClass(clsKey).map(x=>x.e), GREEK_VOCAB, GREEK_PARADIGMS, Date.now()).length} due</div>
+    </button>`;
+  } else {
+    h += `<p class="note" style="margin:0 0 12px">Recite the whole paradigm in order, from memory.</p>
+      <div class="wordlist">`;
+    wordsOfClass(clsKey).forEach(({e,i}) => { h += wordRow(e, i, clsKey); });
+    h += `</div>`;
+  }
+  return h;
+}
+
+function wordRow(entry, vocabIndex, clsKey){
+  const g = entry.gender ? `<span class="gender">${entry.gender}.</span>` : '';
+  return `<div class="wordrow" data-action="start-recite" data-cls="${clsKey}" data-idx="${vocabIndex}">
+    <div><span class="lemma">${entry.lemma}</span>${g}</div>
+    <div class="gloss">${entry.meaning}</div>
+  </div>`;
+}
+
+function renderNounTable(cls){
+  const rows = cls.categories.map(cat=>{
+    const sg = formsFor(GREEK_PARADIGMS, cls.example, cat, 'sg').primary;
+    const pl = formsFor(GREEK_PARADIGMS, cls.example, cat, 'pl').primary;
+    return `<tr><td class="case">${GREEK_CATEGORY_LABELS[cat]}</td><td>${sg}</td><td>${pl}</td></tr>`;
+  }).join('');
+  return `<table class="para"><tr><th></th><th>Singular</th><th>Plural</th></tr>${rows}</table>`;
+}
+
+function renderVerbTables(cls){
+  let h = '';
+  cls.categories.forEach(cat=>{
+    const p1s=formsFor(GREEK_PARADIGMS, cls.example,cat,'1sg').primary, p1p=formsFor(GREEK_PARADIGMS, cls.example,cat,'1pl').primary;
+    const p2s=formsFor(GREEK_PARADIGMS, cls.example,cat,'2sg').primary, p2p=formsFor(GREEK_PARADIGMS, cls.example,cat,'2pl').primary;
+    const p3s=formsFor(GREEK_PARADIGMS, cls.example,cat,'3sg').primary, p3p=formsFor(GREEK_PARADIGMS, cls.example,cat,'3pl').primary;
+    h += `<div class="vtable"><h4>${GREEK_CATEGORY_LABELS[cat]}</h4>
+      <table class="para"><tr><th></th><th>Singular</th><th>Plural</th></tr>
+      <tr><td class="case">1st</td><td>${p1s}</td><td>${p1p}</td></tr>
+      <tr><td class="case">2nd</td><td>${p2s}</td><td>${p2p}</td></tr>
+      <tr><td class="case">3rd</td><td>${p3s}</td><td>${p3p}</td></tr>
+      </table></div>`;
+  });
+  return h;
+}
+
+// ---------------------------------------------------------- input setup ----
+// Wires the Hoplite scheme onto #ansInput (if enabled) and returns the
+// toggle-row HTML for the two settings (Greek keys, accent grading) --
+// shared by both Recite and Drill prompts.
+function setupAnswerInput(){
+  const inp = document.getElementById('ansInput');
+  inp.focus();
+  hopliteCtrl = attachHopliteInput(inp);
+  if (!store.settings.hopliteInput) hopliteCtrl.disable();
+}
+
+function toggleRowHtml(){
+  return `<div class="togglerow">
+    <button class="togglebtn ${store.settings.hopliteInput?'active':''}" data-action="toggle-hoplite">Greek keys: ${store.settings.hopliteInput?'on':'off'}</button>
+    <button class="togglebtn ${store.settings.requireAccents?'active':''}" data-action="toggle-accents">Accents: ${store.settings.requireAccents?'required':'optional'}</button>
+  </div>`;
+}
+
+// -------------------------------------------------------------- RECITE ----
+// Recitation is deliberately NOT logged to the FSRS review store -- see
+// latin.html's identical note, same reasoning applies here.
+let reciteState = null;
+
+function renderRecite(){
+  const { entry, cells } = reciteState;
+  if (reciteState.pos >= cells.length){
+    app.innerHTML = `
+      <div class="topbar"><button class="back" data-action="back-to-system">&larr; ${GREEK_PARADIGMS[reciteState.clsKey].label}</button></div>
+      <h2>Recited in full</h2>
+      <p class="sub">${entry.lemma} — ${entry.meaning}</p>
+      <button class="card study" data-action="start-drill" data-cls="${reciteState.clsKey}">
+        <div class="t">Drill this system now</div><div class="d">random cells, auto-graded</div>
+      </button>
+      <button class="card" data-action="back-to-system"><div class="t">Back to ${GREEK_PARADIGMS[reciteState.clsKey].label}</div></button>`;
+    attachDelegate(); return;
+  }
+  const cell = cells[reciteState.pos];
+  const label = cellLabel(cell);
+  reciteState.promptShownAt = Date.now();
+  app.innerHTML = `
+    <div class="topbar"><button class="back" data-action="back-to-system">&larr; ${GREEK_PARADIGMS[reciteState.clsKey].label}</button></div>
+    <div class="progress">Reciting ${entry.lemma} — ${reciteState.pos+1} of ${cells.length}</div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${100*reciteState.pos/cells.length}%"></div></div>
+    <div class="prompt-box">
+      <div class="prompt-head">${entry.meaning}</div>
+      <div class="prompt-lemma">${entry.lemma}</div>
+      <div class="prompt-cell">${label}</div>
+      <div class="answer-row">
+        <input class="ans" id="ansInput" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="type the form">
+        <button class="go" data-action="recite-submit">&rarr;</button>
+      </div>
+      <div id="reciteFeedback"></div>
+      ${toggleRowHtml()}
+    </div>
+    <button class="quietlink" data-action="recite-reveal">show answer</button>`;
+  attachDelegate();
+  setupAnswerInput();
+  document.getElementById('ansInput').addEventListener('keydown', e => { if (e.key==='Enter') submitRecite(); });
+}
+
+function cellLabel(cell){
+  return GREEK_CATEGORY_LABELS[cell.category] + ' · ' + GREEK_CELL_LABELS[cell.cell];
+}
+
+function submitRecite(){
+  const inp = document.getElementById('ansInput');
+  const cell = reciteState.cells[reciteState.pos];
+  const forms = formsFor(GREEK_PARADIGMS, reciteState.entry, cell.category, cell.cell);
+  const correct = checkAnswerGreek(inp.value, forms.accepted, gradeOpts());
+  showReciteFeedback(correct, forms.primary);
+}
+function showReciteFeedback(correct, primary){
+  const fb = document.getElementById('reciteFeedback');
+  fb.innerHTML = correct
+    ? `<div class="feedback ok">Right.</div>`
+    : `<div class="feedback no">Not quite. <div class="answer">${primary}</div></div>`;
+  document.getElementById('ansInput').disabled = true;
+  const goBtn = document.querySelector('[data-action="recite-submit"]');
+  if (goBtn) goBtn.disabled = true;
+  setTimeout(() => { reciteState.pos++; renderRecite(); }, correct ? 550 : 1600);
+}
+
+// --------------------------------------------------------------- DRILL ----
+// Same fixed-snapshot-per-session design as latin.html -- see its note.
+let drillState = null;
+
+function startDrill(clsKeyOrNull){
+  const pool = clsKeyOrNull ? wordsOfClass(clsKeyOrNull).map(x=>x.e) : GREEK_VOCAB;
+  const due = dueCards(store, pool, GREEK_VOCAB, GREEK_PARADIGMS, Date.now());
+  drillState = { clsKey:clsKeyOrNull, queue:due, pos:0, correct:0, total:due.length };
+  go({ screen:'drill' });
+}
+
+function renderDrill(){
+  if (!drillState || drillState.total===0){
+    app.innerHTML = `
+      <div class="topbar"><button class="back" data-action="home">&larr; Cotidie</button></div>
+      <h2>Nothing due</h2>
+      <p class="empty">No cards are due${drillState&&drillState.clsKey?' in '+GREEK_PARADIGMS[drillState.clsKey].label:''} right now.<br>Come back later, or drill anyway if you want the extra practice.</p>
+      <button class="card" data-action="start-drill-anyway" data-cls="${drillState&&drillState.clsKey?drillState.clsKey:''}">
+        <div class="t">Drill anyway</div><div class="d">practice ahead of schedule</div></button>
+      <button class="card" data-action="home"><div class="t">Back to Cotidie</div></button>`;
+    attachDelegate(); return;
+  }
+  if (drillState.pos >= drillState.queue.length){
+    app.innerHTML = `
+      <div class="topbar"><button class="back" data-action="home">&larr; Cotidie</button></div>
+      <h2>Session done</h2>
+      <div class="summary-row"><span class="k">Reviewed</span><span>${drillState.total}</span></div>
+      <div class="summary-row"><span class="k">Correct</span><span>${drillState.correct} / ${drillState.total}</span></div>
+      <button class="card" data-action="home" style="margin-top:16px"><div class="t">Back to Cotidie</div></button>`;
+    attachDelegate(); return;
+  }
+  const item = drillState.queue[drillState.pos];
+  const label = cellLabel(item);
+  drillState.promptShownAt = Date.now();
+  app.innerHTML = `
+    <div class="topbar"><button class="back" data-action="home">&larr; Cotidie</button></div>
+    <div class="progress">Review — ${drillState.pos+1} of ${drillState.queue.length}</div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${100*drillState.pos/drillState.queue.length}%"></div></div>
+    <div class="prompt-box">
+      <div class="prompt-head">${item.entry.meaning}</div>
+      <div class="prompt-lemma">${item.entry.lemma}</div>
+      <div class="prompt-cell">${label}</div>
+      <div class="answer-row">
+        <input class="ans" id="ansInput" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="type the form">
+        <button class="go" data-action="drill-submit">&rarr;</button>
+      </div>
+      <div id="drillFeedback"></div>
+      ${toggleRowHtml()}
+    </div>
+    <p class="note">Breathing marks always graded. Movable ν always accepted either way.</p>`;
+  attachDelegate();
+  setupAnswerInput();
+  document.getElementById('ansInput').addEventListener('keydown', e => { if (e.key==='Enter') submitDrill(); });
+}
+
+function submitDrill(){
+  const inp = document.getElementById('ansInput');
+  if (inp.disabled) return;
+  const item = drillState.queue[drillState.pos];
+  const forms = formsFor(GREEK_PARADIGMS, item.entry, item.category, item.cell);
+  const latency = Date.now() - drillState.promptShownAt;
+  const correct = checkAnswerGreek(inp.value, forms.accepted, gradeOpts());
+  if (correct) drillState.correct++;
+
+  const meta = { vocabIndex: GREEK_VOCAB.indexOf(item.entry), category:item.category, cell:item.cell, lemma:item.entry.lemma };
+  const result = recordReview(store, meta, correct, latency, Date.now());
+  saveStore(STORE_KEY, store);
+
+  const fb = document.getElementById('drillFeedback');
+  const ratingWord = {1:'Again',2:'Hard',3:'Good',4:'Easy'}[result.rating];
+  fb.innerHTML = correct
+    ? `<div class="feedback ok">Right — ${ratingWord}.</div>`
+    : `<div class="feedback no">Not quite. <div class="answer">${forms.primary}</div></div>`;
+  inp.disabled = true;
+  const goBtn = document.querySelector('[data-action="drill-submit"]');
+  if (goBtn) goBtn.disabled = true;
+  setTimeout(() => { drillState.pos++; renderDrill(); }, correct ? 550 : 1800);
+}
+
+// ------------------------------------------------------------ delegation ----
+function attachDelegate(){
+  app.onclick = e => {
+    const el = e.target.closest('[data-action]');
+    if (!el) return;
+    const action = el.dataset.action;
+    if (action==='home') go({screen:'home'});
+    else if (action==='open-system') go({screen:'system', cls:el.dataset.cls, tab:'table'});
+    else if (action==='tab') go({screen:'system', cls:view.cls, tab:el.dataset.tab});
+    else if (action==='back-to-system') go({screen:'system', cls:reciteState?reciteState.clsKey:view.cls, tab:'recite'});
+    else if (action==='start-drill') startDrill(null);
+    else if (action==='start-drill-anyway') startDrillAnyway(el.dataset.cls||null);
+    else if (action==='start-recite'){
+      const clsKey = el.dataset.cls;
+      const idx = parseInt(el.dataset.idx,10);
+      const entry = GREEK_VOCAB[idx];
+      reciteState = { entry, clsKey, cells: orderedCells(GREEK_PARADIGMS, clsKey), pos:0 };
+      go({ screen:'recite' });
+    }
+    else if (action==='recite-submit') submitRecite();
+    else if (action==='recite-reveal'){
+      const cell = reciteState.cells[reciteState.pos];
+      const forms = formsFor(GREEK_PARADIGMS, reciteState.entry, cell.category, cell.cell);
+      showReciteFeedback(false, forms.primary);
+    }
+    else if (action==='drill-submit') submitDrill();
+    else if (action==='toggle-hoplite'){
+      store.settings.hopliteInput = !store.settings.hopliteInput;
+      saveStore(STORE_KEY, store);
+      if (hopliteCtrl) { store.settings.hopliteInput ? hopliteCtrl.enable() : hopliteCtrl.disable(); }
+      render();
+    }
+    else if (action==='toggle-accents'){
+      store.settings.requireAccents = !store.settings.requireAccents;
+      saveStore(STORE_KEY, store);
+      render();
+    }
+  };
+}
+
+function startDrillAnyway(clsKeyOrNull){
+  const pool = clsKeyOrNull ? wordsOfClass(clsKeyOrNull).map(x=>x.e) : GREEK_VOCAB;
+  const queue = [];
+  pool.forEach(entry => orderedCells(GREEK_PARADIGMS, entry.class).forEach(({category,cell}) =>
+    queue.push({ vocabIndex: GREEK_VOCAB.indexOf(entry), entry, category, cell })));
+  for (let i=queue.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [queue[i],queue[j]]=[queue[j],queue[i]]; }
+  drillState = { clsKey:clsKeyOrNull, queue, pos:0, correct:0, total:queue.length };
+  go({ screen:'drill' });
+}
+
+attachDelegate();
+render();
+</script>
+</body>
+</html>

@@ -27,6 +27,19 @@ const S_MIN=0.001;
 const AGAIN=1, HARD=2, GOOD=3, EASY=4;
 const LEARN_STEPS=[1*FSRS_MIN,10*FSRS_MIN], RELEARN_STEPS=[10*FSRS_MIN];
 
+// Guards a review card's day-boundary snap (schedule(), below) against
+// landing only minutes after `now` when a card is rated close to the
+// rollover boundary -- ported from vocabula's own fix (2026.08.07.3,
+// retuned once after an earlier flat-half-interval version over-corrected).
+// A flat 3h floor, not half the interval: half-interval was tried first and
+// bumped ordinary evening/night sessions (this app's rollover options are
+// all small-hours) a full extra day out, since most sessions land in the
+// back half of the study day. SNAP_GUARD only needs to be big enough that a
+// snapped review can never be mistaken for a genuinely short learning/
+// relearning step (at most 10 minutes here); it doesn't need to preserve
+// anything close to a full day.
+const SNAP_GUARD=3*FSRS_HOUR;
+
 // ---- day-boundary math, same rollover convention as vocabula ----
 function dayKey(ts, rolloverHour){
   const h = (rolloverHour==null) ? 4 : rolloverHour;
@@ -120,9 +133,21 @@ function schedule(card, rating, now, settings){
 
   // Review cards are due by study day, not by clock -- a batch studied at
   // 14:00 shouldn't be held back until 14:00 the next day.
+  //
+  // The snap always rounds *down* onto a boundary, which quietly eats
+  // however much of the current study day has already gone. Harmless for a
+  // long interval (a ten-day card loses at most a day out of ten) and
+  // ruinous for a one-day one: rated at 03:45 against a 4am rollover, "one
+  // day" became the boundary fifteen minutes away. Fixed by rounding up to
+  // the next boundary instead whenever rounding down would land within
+  // SNAP_GUARD of now (ported from vocabula, see SNAP_GUARD's own comment).
+  // Can only ever fire for a one-day interval -- an N-day one lands at
+  // least (N-1) days out, already clear of SNAP_GUARD for every N>=2.
   if (c.st==='R' && c.due-now>=FSRS_DAY){
     const ivlDays = Math.max(Math.round((c.due-now)/FSRS_DAY),1);
-    c.due = dayStart(dayKey(now,settings.rollover)+ivlDays, settings.rollover);
+    let snapped = dayStart(dayKey(now,settings.rollover)+ivlDays, settings.rollover);
+    if (snapped-now < SNAP_GUARD) snapped = dayStart(dayKey(now,settings.rollover)+ivlDays+1, settings.rollover);
+    c.due = snapped;
   }
   return { card:c, ivl:c.due-now };
 }
@@ -157,12 +182,28 @@ function defaultStore(){
   };
 }
 
+// Drops a hostile own `__proto__` key before anything touches the object --
+// a crafted backup, or (once gist sync, HANDOFF.md §10e, exists) a crafted
+// sync payload from another device, could otherwise silently reparent
+// whatever loadStore() builds, and every later `store.something` lookup
+// would start finding values it chose instead. Nothing in this app has ever
+// stored a field by that name, so there's nothing real to lose by dropping
+// it. Ported from vocabula's own security pass (2026-08-08).
+function deProto(o){
+  if (o && typeof o==='object' && Object.prototype.hasOwnProperty.call(o,'__proto__')) delete o['__proto__'];
+  return o;
+}
+
 function loadStore(key){
   if (typeof localStorage === 'undefined') return defaultStore();
   try {
     const raw = localStorage.getItem(key);
     if (!raw) return defaultStore();
-    const parsed = JSON.parse(raw);
+    const parsed = deProto(JSON.parse(raw));
+    if (parsed && typeof parsed==='object'){
+      if (parsed.settings) deProto(parsed.settings);
+      if (parsed.cards) Object.keys(parsed.cards).forEach(k => deProto(parsed.cards[k]));
+    }
     return Object.assign(defaultStore(), parsed);
   } catch(e){ return defaultStore(); }
 }

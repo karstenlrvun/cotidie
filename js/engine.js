@@ -118,3 +118,18 @@ function checkAnswer(userInput, accepted){
   if (!got) return false;
   return accepted.some(a => normalize(a) === got);
 }
+
+/* ======================================================================
+   HTML escaping -- shared by both decks' render functions (security pass,
+   ported from vocabula 2026-08-08). Escapes quotes as well as angle
+   brackets, and coerces a non-string rather than throwing. Today's own
+   vocab/paradigm data has no & < > in it to prove this matters, and the
+   store has no external-input path yet either -- but that stays true only
+   until gist sync (HANDOFF.md §10e, planned) lands, at which point a value inside
+   `store.log`/`store.cards` can arrive from another device's push rather
+   than from this device's own typing. Escape at the boundary function now,
+   not after there's a real incident to point at, same lesson vocabula's own
+   HANDOFF documents about its `row()` fix. */
+function escHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}

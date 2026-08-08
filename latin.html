@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self'; connect-src https://api.github.com https://*.githubusercontent.com; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -103,6 +104,57 @@ button.go:active{opacity:.85}
 .note{color:var(--faint);font-size:12.5px;margin-top:10px;line-height:1.5}
 .summary-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line)}
 .summary-row .k{color:var(--muted)}
+
+/* ---- Stats screen + Study-days calendar (ported from vocabula, 2026-08-09) ---- */
+:root{ --amber:#a67c1e; --amber-bg:#efe6cf; }
+@media (prefers-color-scheme: dark){ :root{ --amber:#d9b04c; --amber-bg:#3a3018; } }
+
+.s-unseen{background:var(--line)}
+.s-learning{background:var(--coral)}
+.s-young{background:var(--amber)}
+.s-mature{background:var(--good)}
+.cellDot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;vertical-align:middle}
+
+.stackbar{display:flex;height:10px;border-radius:6px;overflow:hidden;background:var(--line);margin-top:4px}
+.legend{display:flex;flex-wrap:wrap;gap:10px 16px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+.legend .sw{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle}
+
+.wpart{margin:16px 0}
+.wpart h3{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;
+  font-weight:600;color:var(--muted);margin:0 0 8px;text-transform:none;letter-spacing:0}
+.wpart h3 b{color:var(--faint);font-weight:500;font-size:12px}
+.wgrid{display:flex;flex-wrap:wrap;gap:3px}
+.wbox{width:11px;height:11px;border-radius:2px}
+
+.strip{display:flex;gap:3px;margin-top:6px}
+.dot{flex:1;aspect-ratio:1;border-radius:2px;background:var(--line);max-width:9px}
+.dot.did{background:var(--coral)}
+.dot.today{outline:1.5px solid var(--ink);outline-offset:1px}
+.streakNote{margin-top:8px}
+
+.fold{margin-top:14px}
+.fold summary{cursor:pointer;color:var(--coral);font-size:13px;list-style:none}
+.fold summary::-webkit-details-marker{display:none}
+.fold summary::before{content:'\25B8\0020';display:inline-block;transition:transform .15s}
+.fold[open] summary::before{transform:rotate(90deg)}
+
+.calHead{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+.calNav{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px 10px}
+.calTitle{font-family:var(--serif);font-size:1rem}
+.calDow{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;color:var(--faint);
+  font-size:10.5px;margin-top:10px}
+.calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:4px}
+.calCell{position:relative;aspect-ratio:1;border-radius:6px;background:var(--panel);
+  border:1px solid var(--line);font-size:10px;padding:3px;overflow:hidden}
+.calCell.out{opacity:.35;border-color:transparent;background:none}
+.calCell.did{background:var(--accent-soft);border-color:var(--coral)}
+.calCell.today{border-color:var(--ink);border-width:1.5px}
+.calNum{display:block;color:var(--faint);font-size:9.5px}
+.calCell.did .calNum{color:var(--muted)}
+.calNew,.calWords,.calTot{display:block;font-size:9px;line-height:1.3}
+.calNew{color:var(--good)}
+.calWords{color:var(--coral)}
+.calTot{color:var(--faint)}
 </style>
 </head>
 <body>
@@ -112,6 +164,8 @@ button.go:active{opacity:.85}
 <script src="data/latin-vocab.js"></script>
 <script src="js/engine.js"></script>
 <script src="js/fsrs.js"></script>
+<script src="js/stats.js"></script>
+<script src="js/sync.js"></script>
 <script>
 /* ======================================================================
    Cotidie — Latin engine UI. Vanilla DOM, event delegation, no framework.
@@ -129,8 +183,13 @@ const VERB_CLASSES = classesOfKind(LATIN_PARADIGMS, 'verb').filter(k => !LATIN_P
 const IRREGULAR_VERB_CLASSES = classesOfKind(LATIN_PARADIGMS, 'verb').filter(k => LATIN_PARADIGMS[k].literal);
 
 const STORE_KEY = 'cotidie.latin.v1';
+const GIST_FILE = 'cotidie-latin.json';   // one shared gist, two files -- see js/sync.js
 let store = loadStore(STORE_KEY);
-let view = { screen:'home' };   // {screen:'home'} | {screen:'system',cls} | {screen:'recite',cls,entry} | {screen:'drill',cls|null}
+let view = { screen:'home' };   // {screen:'home'} | {screen:'system',cls} | {screen:'recite',cls,entry} | {screen:'drill',cls|null} | {screen:'stats'} | {screen:'settings'}
+
+// Study-days calendar's own view state (HANDOFF.md §10c) -- not persisted,
+// resets to the current month each fresh load, same as vocabula's calY/calM.
+let calY=null, calM=null, calOpen=false;
 
 const app = document.getElementById('app');
 
@@ -139,6 +198,8 @@ function render(){
   else if (view.screen==='system') app.innerHTML = renderSystem(view.cls, view.tab||'table');
   else if (view.screen==='recite') renderRecite();     // manages its own DOM (needs live input focus/state)
   else if (view.screen==='drill') renderDrill();        // ditto
+  else if (view.screen==='stats') app.innerHTML = renderStats();
+  else if (view.screen==='settings') app.innerHTML = renderSettings();
 }
 
 function go(next){ view = next; render(); window.scrollTo(0,0); }
@@ -156,6 +217,23 @@ function renderHome(){
       <div class="t">Review</div>
       <div class="d">${studyLine}</div>
     </button>
+    <button class="card" data-action="open-stats">
+      <div class="t">Stats</div>
+      <div class="d">Where you stand, by system</div>
+    </button>
+    <button class="card" data-action="open-settings">
+      <div class="t">Settings</div>
+      <div class="d">Cloud sync</div>
+    </button>
+    <div class="sect">
+      <h3>Study days</h3>
+      <div class="strip">${stripHtml()}</div>
+      <p class="note streakNote">${streakNoteText()}</p>
+      <details class="fold"${calOpen?' open':''}>
+        <summary data-action="toggle-cal">Full calendar</summary>
+        ${calOpen?calendarHtml():''}
+      </details>
+    </div>
     <div class="sect"><h3>Nouns</h3>`;
   NOUN_CLASSES.forEach(k=>{
     const c = LATIN_PARADIGMS[k];
@@ -177,6 +255,204 @@ function renderHome(){
   h += `</div>
     <p class="note">Table always open; Drill pulled from whatever's actually due (see Cotidie's HANDOFF.md if you want the reasoning) — nothing here is timed or gamified.</p>`;
   return h;
+}
+
+// ----------------------------------------------- STUDY DAYS / STATS (§10c) ----
+// All derived on demand from store.log via js/stats.js's computeDayIndex() --
+// no persisted day-aggregate, see that file's own header comment for why.
+function stripHtml(){
+  const idx = computeDayIndex(store.log, store.settings.rollover);
+  const d = dayKey(Date.now(), store.settings.rollover);
+  let h = '';
+  for (let i=34; i>=0; i--){
+    const did = idx[d-i] && idx[d-i].n;
+    h += `<div class="dot${did?' did':''}${i===0?' today':''}"></div>`;
+  }
+  return h;
+}
+function streakNoteText(){
+  const idx = computeDayIndex(store.log, store.settings.rollover);
+  const streak = currentStreak(idx, dayKey(Date.now(), store.settings.rollover));
+  return streak ? (streak+' day'+(streak===1?'':'s')+' running') : 'No streak yet — the first day starts it.';
+}
+function calendarHtml(){
+  if (calY==null){ const n=new Date(); calY=n.getFullYear(); calM=n.getMonth(); }
+  const idx = computeDayIndex(store.log, store.settings.rollover);
+  const d0 = dayKey(Date.now(), store.settings.rollover);
+  const sun = new Date(); sun.setDate(sun.getDate()-sun.getDay());
+  const dowHtml = [0,1,2,3,4,5,6].map(i =>
+    `<div>${new Date(sun.getFullYear(),sun.getMonth(),sun.getDate()+i).toLocaleDateString(undefined,{weekday:'narrow'})}</div>`
+  ).join('');
+  let gridHtml = '';
+  monthMatrix(calY,calM).forEach(week => week.forEach(cell => {
+    if (!cell.inMonth){ gridHtml += `<div class="calCell out">${cell.d}</div>`; return; }
+    const dk = dayKeyForDate(cell.y, cell.m, cell.d, store.settings.rollover);
+    const st = dayStatsFor(idx, dk);
+    const cls = ['calCell'];
+    if (st.studied) cls.push('did');
+    if (dk===d0) cls.push('today');
+    const nums = st.studied
+      ? `<span class="calNew">${st.intro}</span><span class="calWords">${st.words}</span><span class="calTot">${st.ratings}</span>`
+      : '';
+    gridHtml += `<div class="${cls.join(' ')}"><span class="calNum">${cell.d}</span>${nums}</div>`;
+  }));
+  return `
+    <div class="calHead">
+      <button class="calNav" data-action="cal-prev" aria-label="Previous month">&lsaquo;</button>
+      <div class="calTitle">${new Date(calY,calM,1).toLocaleDateString(undefined,{month:'long',year:'numeric'})}</div>
+      <button class="calNav" data-action="cal-next" aria-label="Next month">&rsaquo;</button>
+    </div>
+    <div class="calDow">${dowHtml}</div>
+    <div class="calGrid">${gridHtml}</div>`;
+}
+function shiftCalMonth(delta){
+  if (calY==null){ const n=new Date(); calY=n.getFullYear(); calM=n.getMonth(); }
+  calM += delta;
+  if (calM<0){ calM=11; calY--; } else if (calM>11){ calM=0; calY++; }
+}
+
+function renderStats(){
+  const { totals, bySystem } = wholeDeckStats(store, LATIN_VOCAB, LATIN_PARADIGMS);
+  const total = STATUS_ORDER.reduce((n,k) => n+totals[k], 0);
+  let barHtml = '';
+  STATUS_ORDER.forEach(k => {
+    const n = totals[k]; if (!n) return;
+    barHtml += `<div class="s-${k}" style="width:${100*n/total}%" title="${STATUS_LABEL[k]}: ${n}"></div>`;
+  });
+  let legendHtml = '';
+  STATUS_ORDER.forEach(k => {
+    const n = totals[k]; if (!n) return;
+    legendHtml += `<span><i class="sw s-${k}"></i>${STATUS_LABEL[k]} — ${n} (${Math.round(100*n/total)}%)</span>`;
+  });
+  const allClasses = [...NOUN_CLASSES, ...VERB_CLASSES, ...IRREGULAR_VERB_CLASSES];
+  let gridHtml = '';
+  allClasses.forEach(k => {
+    const sys = bySystem[k]; if (!sys) return;
+    const met = sys.cells.filter(s => s!=='unseen').length;
+    gridHtml += `<div class="wpart"><h3><span>${escHtml(LATIN_PARADIGMS[k].label)}</span><b>${met} / ${sys.cells.length}</b></h3><div class="wgrid">`;
+    sys.cells.forEach(s => { gridHtml += `<div class="wbox s-${s}"></div>`; });
+    gridHtml += `</div></div>`;
+  });
+  return `
+    <div class="topbar"><button class="back" data-action="home">&larr; Cotidie</button></div>
+    <h2>Stats</h2>
+    <p class="sub">Every cell across every system — not just what's due.</p>
+    <div class="sect" style="margin-top:8px">
+      <h3>Where you stand</h3>
+      <div class="stackbar">${barHtml}</div>
+      <div class="legend">${legendHtml}</div>
+    </div>
+    <div class="sect"><h3>By system</h3>${gridHtml || '<p class="empty">No systems to show.</p>'}</div>`;
+}
+
+// ------------------------------------------------------------- SYNC (§10e) ----
+// Credentials live only in js/sync.js's shared key, never duplicated into
+// this deck's own store.settings -- see that file's header comment.
+let saveTimer = null;
+let syncedLogLen = null;   // last log length both sides agreed on, this session
+let lastSyncNote = null;   // {when, note} -- shown on the Settings screen
+
+// Replaces the old bare saveStore(STORE_KEY, store) call sites: saves
+// locally as before, and additionally schedules a debounced push (6s after
+// the last save, same interval as vocabula's own) if a gist is configured.
+function save(){
+  saveStore(STORE_KEY, store);
+  const cred = loadSharedGist();
+  if (cred.gistId && cred.gistTok){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => { saveTimer = null; doPush(); }, 6000);
+  }
+}
+function flushPendingPush(){
+  if (saveTimer){ clearTimeout(saveTimer); saveTimer = null; doPush(); }
+}
+
+async function doPush(){
+  const cred = loadSharedGist();
+  const res = await pushStore(store, cred.gistId, cred.gistTok, GIST_FILE);
+  lastSyncNote = res.ok
+    ? { when: Date.now(), note: 'Pushed' }
+    : { when: Date.now(), note: 'Push failed ('+res.error+')' };
+  if (res.ok) syncedLogLen = store.log.length;
+  if (view.screen==='settings') render();
+  return res;
+}
+
+// Pull-and-reconcile, the same three-way split as vocabula's syncOnLaunch:
+// only remote moved -> adopt silently; only local moved -> push; both moved
+// past the last-agreed point -> a genuine conflict, ask.
+async function doPull(){
+  const cred = loadSharedGist();
+  const res = await fetchStore(cred.gistId, cred.gistTok, GIST_FILE);
+  if (!res.ok){
+    lastSyncNote = { when: Date.now(), note: 'Pull failed ('+res.error+')' };
+    if (view.screen==='settings') render();
+    return res;
+  }
+  const base = (syncedLogLen==null) ? store.log.length : syncedLogLen;
+  const decision = syncDecision(store.log.length, res.store.log.length, base);
+  if (decision==='conflict'){
+    const ok = confirm(
+      'This device and the gist both have reviews the other hasn’t seen.\n\n'+
+      'OK = replace this device’s reviews with the gist’s ('+res.store.log.length+' total, this device has '+store.log.length+').\n'+
+      'Cancel = keep this device’s copy and push it to the gist instead.');
+    if (ok){ store = adoptStore(res.store); syncedLogLen = store.log.length; saveStore(STORE_KEY, store);
+      lastSyncNote = { when: Date.now(), note: 'Took the gist’s copy' }; }
+    else { await doPush(); lastSyncNote = { when: Date.now(), note: 'Kept this device, pushed' }; }
+  } else if (decision==='take-remote'){
+    store = adoptStore(res.store); syncedLogLen = store.log.length; saveStore(STORE_KEY, store);
+    lastSyncNote = { when: Date.now(), note: 'Synced '+store.log.length+' reviews from the gist' };
+  } else if (decision==='push-local'){
+    await doPush();
+  } else {
+    lastSyncNote = { when: Date.now(), note: 'Already in sync' };
+  }
+  render();
+  return res;
+}
+
+// Runs when the tab becomes visible again on the Home screen -- mirrors
+// vocabula's syncOnLaunch(), simplified: a genuine conflict is left for the
+// user to resolve explicitly via "Pull now" on Settings (its confirm()),
+// rather than popping one unprompted the moment the tab regains focus.
+async function syncOnLaunch(){
+  const cred = loadSharedGist();
+  if (!cred.gistId || !cred.gistTok) return;
+  const lenAtStart = store.log.length;
+  const res = await fetchStore(cred.gistId, cred.gistTok, GIST_FILE);
+  if (!res.ok) return;
+  if (store.log.length !== lenAtStart) return;   // rated while the fetch was in flight
+  const base = (syncedLogLen==null) ? store.log.length : syncedLogLen;
+  const decision = syncDecision(store.log.length, res.store.log.length, base);
+  if (decision==='take-remote'){
+    store = adoptStore(res.store); syncedLogLen = store.log.length; saveStore(STORE_KEY, store);
+    lastSyncNote = { when: Date.now(), note: 'Synced '+store.log.length+' reviews from another device' };
+    if (view.screen==='home') render();
+  } else if (decision==='push-local'){
+    await doPush();
+  }
+}
+
+function renderSettings(){
+  const cred = loadSharedGist();
+  const configured = !!(cred.gistId && cred.gistTok);
+  const noteLine = lastSyncNote ? (lastSyncNote.note+' — '+new Date(lastSyncNote.when).toLocaleTimeString()) : 'Not synced yet this session.';
+  return `
+    <div class="topbar"><button class="back" data-action="home">&larr; Cotidie</button></div>
+    <h2>Settings</h2>
+    <p class="sub">Sync status for this deck.</p>
+    <div class="sect" style="margin-top:8px">
+      <h3>Cloud sync</h3>
+      ${configured ? `
+        <p class="note">Gist: ${escHtml(cred.gistId)}</p>
+        <button class="card" data-action="sync-push"><div class="t">Push now</div><div class="d">send this device's reviews</div></button>
+        <button class="card" data-action="sync-pull"><div class="t">Pull now</div><div class="d">fetch from the gist</div></button>
+        <p class="note">${escHtml(noteLine)}</p>
+      ` : `
+        <p class="note">No gist set up yet. Open the Cotidie launcher and enter a gist ID and token
+        (or paste a pairing code from another device) to turn this on.</p>
+      `}
+    </div>`;
 }
 
 // -------------------------------------------------------------- SYSTEM ----
@@ -218,26 +494,38 @@ function wordRow(entry, vocabIndex, clsKey, isExample){
   </div>`;
 }
 
+// Per-cell status dots (HANDOFF.md §10d) summarize across the class's real
+// vocab words -- see cellStatusSummary()'s own comment for why this can't
+// just point at cls.example's own cells.
+function dotHtml(st){ return `<i class="cellDot s-${st}" title="${STATUS_LABEL[st]}"></i>`; }
+
 function renderNounTable(cls){
+  const clsKey = cls.example.class;
   const rows = cls.categories.map(cat=>{
     const sg = formsFor(LATIN_PARADIGMS, cls.example, cat, 'sg').primary;
     const pl = formsFor(LATIN_PARADIGMS, cls.example, cat, 'pl').primary;
-    return `<tr><td class="case">${CATEGORY_LABELS[cat]}</td><td>${sg}</td><td>${pl}</td></tr>`;
+    const sgSt = cellStatusSummary(store, LATIN_VOCAB, clsKey, cat, 'sg');
+    const plSt = cellStatusSummary(store, LATIN_VOCAB, clsKey, cat, 'pl');
+    return `<tr><td class="case">${CATEGORY_LABELS[cat]}</td><td>${dotHtml(sgSt)}${sg}</td><td>${dotHtml(plSt)}${pl}</td></tr>`;
   }).join('');
   return `<table class="para"><tr><th></th><th>Singular</th><th>Plural</th></tr>${rows}</table>`;
 }
 
 function renderVerbTables(cls){
+  const clsKey = cls.example.class;
   let h = '';
   cls.categories.forEach(cat=>{
     const p1s=formsFor(LATIN_PARADIGMS, cls.example,cat,'1sg').primary, p1p=formsFor(LATIN_PARADIGMS, cls.example,cat,'1pl').primary;
     const p2s=formsFor(LATIN_PARADIGMS, cls.example,cat,'2sg').primary, p2p=formsFor(LATIN_PARADIGMS, cls.example,cat,'2pl').primary;
     const p3s=formsFor(LATIN_PARADIGMS, cls.example,cat,'3sg').primary, p3p=formsFor(LATIN_PARADIGMS, cls.example,cat,'3pl').primary;
+    const d1s=dotHtml(cellStatusSummary(store,LATIN_VOCAB,clsKey,cat,'1sg')), d1p=dotHtml(cellStatusSummary(store,LATIN_VOCAB,clsKey,cat,'1pl'));
+    const d2s=dotHtml(cellStatusSummary(store,LATIN_VOCAB,clsKey,cat,'2sg')), d2p=dotHtml(cellStatusSummary(store,LATIN_VOCAB,clsKey,cat,'2pl'));
+    const d3s=dotHtml(cellStatusSummary(store,LATIN_VOCAB,clsKey,cat,'3sg')), d3p=dotHtml(cellStatusSummary(store,LATIN_VOCAB,clsKey,cat,'3pl'));
     h += `<div class="vtable"><h4>${CATEGORY_LABELS[cat]}</h4>
       <table class="para"><tr><th></th><th>Singular</th><th>Plural</th></tr>
-      <tr><td class="case">1st</td><td>${p1s}</td><td>${p1p}</td></tr>
-      <tr><td class="case">2nd</td><td>${p2s}</td><td>${p2p}</td></tr>
-      <tr><td class="case">3rd</td><td>${p3s}</td><td>${p3p}</td></tr>
+      <tr><td class="case">1st</td><td>${d1s}${p1s}</td><td>${d1p}${p1p}</td></tr>
+      <tr><td class="case">2nd</td><td>${d2s}${p2s}</td><td>${d2p}${p2p}</td></tr>
+      <tr><td class="case">3rd</td><td>${d3s}${p3s}</td><td>${d3p}${p3p}</td></tr>
       </table></div>`;
   });
   return h;
@@ -378,7 +666,7 @@ function submitDrill(){
 
   const meta = { vocabIndex: LATIN_VOCAB.indexOf(item.entry), category:item.category, cell:item.cell, lemma:item.entry.lemma };
   const result = recordReview(store, meta, correct, latency, Date.now());
-  saveStore(STORE_KEY, store);
+  save();
 
   const fb = document.getElementById('drillFeedback');
   const ratingWord = {1:'Again',2:'Hard',3:'Good',4:'Easy'}[result.rating];
@@ -398,6 +686,13 @@ function attachDelegate(){
     if (!el) return;
     const action = el.dataset.action;
     if (action==='home') go({screen:'home'});
+    else if (action==='open-stats') go({screen:'stats'});
+    else if (action==='open-settings') go({screen:'settings'});
+    else if (action==='sync-push') doPush();
+    else if (action==='sync-pull') doPull();
+    else if (action==='toggle-cal'){ e.preventDefault(); calOpen=!calOpen; render(); }
+    else if (action==='cal-prev'){ shiftCalMonth(-1); render(); }
+    else if (action==='cal-next'){ shiftCalMonth(1); render(); }
     else if (action==='open-system') go({screen:'system', cls:el.dataset.cls, tab:'table'});
     else if (action==='tab') go({screen:'system', cls:view.cls, tab:el.dataset.tab});
     else if (action==='back-to-system') go({screen:'system', cls:reciteState?reciteState.clsKey:view.cls, tab:'recite'});
@@ -438,6 +733,15 @@ function startDrillAnyway(clsKeyOrNull){
 // which meant the home and system screens had no click handling at all.)
 attachDelegate();
 render();
+
+// Flush a pending debounced push immediately on tab-hide/close rather than
+// dropping it silently; check for remote changes when coming back to Home.
+// Same pattern as vocabula's own visibilitychange/pagehide hooks.
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) flushPendingPush();
+  else if (view.screen==='home') syncOnLaunch();
+});
+window.addEventListener('pagehide', flushPendingPush);
 </script>
 </body>
 </html>

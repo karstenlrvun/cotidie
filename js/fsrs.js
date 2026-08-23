@@ -53,6 +53,38 @@ function dayStart(k, rolloverHour){
   return t;
 }
 
+// ---- rollover changes take effect at the next study-day boundary ----
+// Moving the boundary is retroactive by nature: reviews already logged would
+// re-bucket into different days the instant the hour changed, so a study-day
+// calendar would rewrite its own history. Instead a change is *pending*
+// until the start of the next study day measured under the OLD hour, which
+// is the first moment at which no already-logged review can change day.
+// Ported from vocabula's own handling of this.
+function effRollover(settings, now){
+  const cur = (settings && settings.rollover!=null) ? settings.rollover : 4;
+  if (!settings || settings.rolloverPending==null || settings.rolloverPendingFrom==null) return cur;
+  return now >= settings.rolloverPendingFrom ? settings.rolloverPending : cur;
+}
+// Folds a matured pending change into `rollover` itself. Mutates. Safe to
+// call on every load and every render -- it is a no-op until the boundary.
+function commitRollover(settings, now){
+  if (!settings || settings.rolloverPending==null || settings.rolloverPendingFrom==null) return settings;
+  if (now >= settings.rolloverPendingFrom){
+    settings.rollover = settings.rolloverPending;
+    settings.rolloverPending = null;
+    settings.rolloverPendingFrom = null;
+  }
+  return settings;
+}
+// Schedules a change for the next study-day boundary under the current hour.
+// Choosing the hour it already has clears any pending change instead.
+function setRollover(settings, hour, now){
+  const cur = (settings.rollover!=null) ? settings.rollover : 4;
+  if (hour===cur){ settings.rolloverPending=null; settings.rolloverPendingFrom=null; }
+  else { settings.rolloverPending=hour; settings.rolloverPendingFrom=dayStart(dayKey(now,cur)+1,cur); }
+  return settings;
+}
+
 const clampD = d => Math.min(Math.max(d,1),10);
 const clampS = s => Math.max(s,S_MIN);
 const initS = r => clampS(P[r-1]);
@@ -70,7 +102,12 @@ function nextInterval(s, retention, maxIvl){
 }
 function shortTermS(s,r){
   let inc = Math.exp(P[17]*(r-3+P[18]))*Math.pow(s,-P[19]);
-  if (r===GOOD||r===EASY) inc = Math.max(inc,1);
+  // Floor covers Hard as well as Good/Easy -- Again is the only grade that
+  // may reduce same-day stability. Was GOOD||EASY, which let a *correct*
+  // answer graded Hard drive stability down rep after rep (see the Hard arm
+  // in schedule() below; the two faults compounded). Matches vocabula's
+  // `if(r>=HARD)`, ported 2026-08-21.
+  if (r>=HARD) inc = Math.max(inc,1);
   return clampS(s*inc);
 }
 function nextD(d,r){
@@ -100,7 +137,8 @@ function freshCard(){
 // settings: {retention, maxIvl, rollover}
 function schedule(card, rating, now, settings){
   const c = Object.assign({}, card);
-  const daysSince = (c.last!=null) ? (dayKey(now,settings.rollover)-dayKey(c.last,settings.rollover)) : null;
+  const roll = effRollover(settings, now);
+  const daysSince = (c.last!=null) ? (dayKey(now,roll)-dayKey(c.last,roll)) : null;
   let ivl = 0;
   const toReview = () => { c.st='R'; c.step=null; ivl=nextInterval(c.s, settings.retention, settings.maxIvl)*FSRS_DAY; };
   const steps = (c.st==='L') ? LEARN_STEPS : RELEARN_STEPS;
@@ -112,11 +150,22 @@ function schedule(card, rating, now, settings){
 
     if (steps.length===0 || (c.step>=steps.length && rating!==AGAIN)) toReview();
     else if (rating===AGAIN){ c.step=0; ivl=steps[0]; }
-    else if (rating===GOOD){
+    else if (rating===GOOD||rating===HARD){
+      // Hard advances exactly as Good does, and graduates from the final
+      // step. Until 2026-08-21 this arm repeated the current step for Hard
+      // (Anki's behaviour), which meant a card could never leave learning
+      // while it kept being graded Hard -- and gradeToRating() handed out
+      // Hard for any correct answer slower than 15s, so a consistently slow
+      // but correct answer looped at one minute forever. Every non-Again
+      // press advances now, so no same-day loop can form. "Shorter than
+      // Good" is not tuned here: initS/nextS/shortTermS have already applied
+      // Hard's own weights and toReview() reads the stability they produced.
+      // Ported from vocabula 2026.08.19.3. Unreachable in normal play since
+      // grading collapsed to Again/Good (see gradeToRating), and kept
+      // correct anyway so a restored four-grade mode isn't a landmine.
       if (c.step+1===steps.length) toReview();
       else { c.step+=1; ivl=steps[c.step]; }
     }
-    else if (rating===HARD){ c.step=Math.min(c.step|0, steps.length-1); ivl=steps[c.step]; }
     else toReview(); // Easy
   } else { // Review
     if (daysSince!=null && daysSince<1) c.s=shortTermS(c.s,rating);
@@ -145,25 +194,37 @@ function schedule(card, rating, now, settings){
   // least (N-1) days out, already clear of SNAP_GUARD for every N>=2.
   if (c.st==='R' && c.due-now>=FSRS_DAY){
     const ivlDays = Math.max(Math.round((c.due-now)/FSRS_DAY),1);
-    let snapped = dayStart(dayKey(now,settings.rollover)+ivlDays, settings.rollover);
-    if (snapped-now < SNAP_GUARD) snapped = dayStart(dayKey(now,settings.rollover)+ivlDays+1, settings.rollover);
+    let snapped = dayStart(dayKey(now,roll)+ivlDays, roll);
+    if (snapped-now < SNAP_GUARD) snapped = dayStart(dayKey(now,roll)+ivlDays+1, roll);
     c.due = snapped;
   }
   return { card:c, ivl:c.due-now };
 }
 
 // ---- auto-grading translation layer ----
-// correctness + latency -> Again/Hard/Good/Easy. Thresholds are an initial
-// guess (typing a full inflected Latin form is slower than recalling an
-// English gloss) -- NOT yet tuned against real usage. Revisit once there
-// is real review-log data; see HANDOFF.md open items.
-const LATENCY_EASY_MS = 4000;
-const LATENCY_HARD_MS = 15000;
-function gradeToRating(correct, latencyMs){
-  if (!correct) return AGAIN;
-  if (latencyMs <= LATENCY_EASY_MS) return EASY;
-  if (latencyMs >= LATENCY_HARD_MS) return HARD;
-  return GOOD;
+// Two grades: Again when the typed form is wrong, Good when it is right.
+// Nothing about *how long* it took feeds the grade any more (2026-08-21).
+//
+// Why, in one paragraph. The old mapping cut Again/Hard/Good/Easy out of the
+// answer's total latency, which fuses recall time with typing time. Greek
+// forms here run 4 to 13 keystrokes and the Hoplite diacritics are 19% of
+// all keypresses, so long forms were penalised for being long: measured
+// across the deck, at 2 keystrokes/second 35% of cells could not reach Easy
+// however well they were known, while the 15s Hard gate was never reached by
+// typing alone at any rate. So Hard was a real recall signal and Easy was
+// largely a typing-speed signal -- an asymmetry no choice of threshold
+// fixes. Meanwhile correctness here is a string match: machine-measured and
+// essentially noise-free. Collapsing to Again/Good deletes the noisy axis and
+// keeps the clean one; Anki's own FSRS documentation calls using only Again
+// and Good a supported configuration, sometimes a more accurate one.
+//
+// Latency is still measured and still logged, in more detail than before
+// (see recordReview) -- it just no longer decides anything. If graded speed
+// ever comes back it should use absolute cut-points chosen once from the
+// real histogram and frozen, never rolling quantiles, and it must never
+// produce Hard while a card is still in learning.
+function gradeToRating(correct){
+  return correct ? GOOD : AGAIN;
 }
 
 // ---- storage: log every rep from day one, independent of which analysis
@@ -176,9 +237,21 @@ function defaultStore(){
   return {
     version: 1,
     created: Date.now(),
-    settings: { retention: 0.90, maxIvl: 36500, rollover: 4 },
+    // newPerDay: how many never-seen cells a day may introduce. 0 means no
+    // limit, which is the shipped default -- Karsten's call 2026-08-21, on
+    // the grounds that he does not yet know his own pace through material he
+    // partly knows. The machinery is here so it is one number away when he
+    // does; buildQueue() is the only thing that reads it.
+    settings: { retention: 0.90, maxIvl: 36500, rollover: 4,
+                rolloverPending: null, rolloverPendingFrom: null, newPerDay: 0 },
     cards: {},   // cardId -> card state
-    log: []      // {ts, cardId, lemma, category, cell, correct, latencyMs, rating, ivl}
+    // {ts, cardId, lemma, category, cell, correct, latencyMs, rating, ivl,
+    //  tfk, typ, keys, fl} -- the last four are the timing split, see
+    // recordReview(). Short keys deliberately: the log, not the card set, is
+    // what grows without bound (measured: ~174 bytes a row before these,
+    // against ~125 bytes for a card that is written once and then updated in
+    // place), and localStorage is ~5 MB for both decks together.
+    log: []
   };
 }
 
@@ -204,53 +277,209 @@ function loadStore(key){
       if (parsed.settings) deProto(parsed.settings);
       if (parsed.cards) Object.keys(parsed.cards).forEach(k => deProto(parsed.cards[k]));
     }
-    return Object.assign(defaultStore(), parsed);
+    // Object.assign is shallow, so a stored `settings` object would replace
+    // the default one entirely and any setting added after that store was
+    // last written would read back as undefined -- silently, and differently
+    // depending on how old the install is. Merge settings key by key so a
+    // new default is always present. (Same family of trap as vocabula's
+    // "write card-field defaults unconditionally".)
+    // Take the defaults BEFORE the assign: Object.assign mutates `base`, so
+    // reading base.settings afterwards would read the stored object that
+    // just replaced it and merge a thing into itself.
+    const defaults = defaultStore().settings;
+    const out = Object.assign(defaultStore(), parsed);
+    out.settings = Object.assign({}, defaults, (parsed && parsed.settings) || {});
+    return out;
   } catch(e){ return defaultStore(); }
 }
+// The pre-2026-08-21 write path. Kept because loadStore() above is still the
+// migration source and both are still worth testing; nothing in the running
+// app calls this any more -- see persistStore().
 function saveStore(key, store){
   if (typeof localStorage === 'undefined') return;
   try { localStorage.setItem(key, JSON.stringify(store)); } catch(e){}
 }
 
-function cardId(vocabIndex, category, cell){
-  return vocabIndex + ':' + category + ':' + cell;
+// ---- storage of record: IndexedDB, with localStorage as the migration source
+// and the last-resort fallback. js/store.js carries the layer and the reasons.
+//
+// Boot is asynchronous now, which is the whole cost of this change: a deck
+// cannot render until its store has been read. Everything downstream stays
+// synchronous, because the in-memory store is authoritative for the session
+// and writes are fire-and-forget.
+async function bootStore(key){
+  await openIDB();
+  const fromIdb = await idbReadStore(key);
+  if (fromIdb){
+    // trust what the log store actually returned, not a counter from a
+    // previous session, so an interrupted write can never leave a gap
+    logPersisted[key] = (fromIdb.log || []).length;
+    return normaliseStore(fromIdb);
+  }
+  const legacy = lsReadStore(key);
+  if (legacy){
+    const store = normaliseStore(legacy);
+    storeReplaced(key);          // nothing of it is in the log store yet
+    idbWriteStore(key, store);
+    return store;
+  }
+  return defaultStore();
 }
+
+// Same defaults-and-guards pass loadStore() applies, factored out so a store
+// arriving from IndexedDB, from localStorage or from a restore all get it.
+function normaliseStore(parsed){
+  deProto(parsed);
+  if (parsed.settings) deProto(parsed.settings);
+  if (parsed.cards) Object.keys(parsed.cards).forEach(k => deProto(parsed.cards[k]));
+  const defaults = defaultStore().settings;
+  const out = Object.assign(defaultStore(), parsed);
+  out.settings = Object.assign({}, defaults, parsed.settings || {});
+  if (!Array.isArray(out.log)) out.log = [];
+  if (!out.cards || typeof out.cards !== 'object') out.cards = {};
+  return out;
+}
+
+// The running app's only write path. Fire-and-forget by design: the in-memory
+// store is what the session reads, and blocking a rating on a disk commit
+// would buy nothing. If IndexedDB is unavailable at all (private browsing,
+// say) this falls back to localStorage so the app still works.
+function persistStore(key, store){
+  if (idbWriteStore(key, store)) return true;
+  try { localStorage.setItem(key, JSON.stringify(store)); return true; } catch(e){ return false; }
+}
+
+// A card's identity: the word's own written-once slug, its category, its
+// cell. That first component used to be the word's INDEX in the *_VOCAB
+// array, which made review history positional -- inserting a word at the top
+// of the array silently re-pointed every card after it at a different word's
+// history, with no error, and nothing would look wrong until the intervals
+// stopped making sense weeks later. Slugs live in the vocab data (`id:`) and
+// are never renumbered or reused. See data/latin-vocab.js's header.
+function cardId(wordId, category, cell){
+  return wordId + ':' + category + ':' + cell;
+}
+
+// Flags packed into each log row's `fl`. A byte rather than four booleans
+// because this is the field that repeats on every row for years.
+const FL_ACCENTS = 1;   // accents were being graded (Greek only)
+const FL_SCHEME  = 2;   // the Hoplite input scheme was active
+const FL_TOUCH   = 4;   // coarse pointer, i.e. phone or tablet rather than Mac
 
 // Records one rep against the store (mutates and returns it), applying the
 // grading translation layer and FSRS schedule together. `now` is injectable
 // for tests; defaults to Date.now().
-function recordReview(store, meta, correct, latencyMs, now){
+//
+// `timing` is optional and recorded but NOT graded on (see gradeToRating):
+//   toFirstKey  prompt shown -> first keydown. This is the recall latency,
+//               and unlike total latency it does not scale with how long the
+//               answer is -- which is the whole reason for splitting here
+//               rather than normalising a fused number afterwards.
+//   typing      first keydown -> submit.
+//   keys        keydown count, so cost per keystroke can be separated from
+//               cost per form.
+//   flags       FL_* bits above: what the answer was graded under, and on
+//               what kind of device. A threshold fitted across a mixture of
+//               Mac and phone sessions would be fitted to nothing.
+// None of this can be backfilled, which is why it is being logged now rather
+// than when something finally reads it. Rows written before 2026-08-21 simply
+// lack these fields; any reader must treat them as absent, not zero.
+function recordReview(store, meta, correct, latencyMs, now, timing){
   now = now==null ? Date.now() : now;
-  const id = cardId(meta.vocabIndex, meta.category, meta.cell);
+  const id = cardId(meta.wordId, meta.category, meta.cell);
   const prior = store.cards[id] || freshCard();
-  const rating = gradeToRating(correct, latencyMs);
+  const rating = gradeToRating(correct);
   const { card, ivl } = schedule(prior, rating, now, store.settings);
   store.cards[id] = card;
-  store.log.push({
+  const row = {
     ts: now, cardId: id, lemma: meta.lemma, category: meta.category, cell: meta.cell,
     correct: !!correct, latencyMs: latencyMs|0, rating, ivl
-  });
+  };
+  if (timing){
+    if (timing.toFirstKey!=null) row.tfk = timing.toFirstKey|0;
+    if (timing.typing!=null)     row.typ = timing.typing|0;
+    if (timing.keys!=null)       row.keys = timing.keys|0;
+    if (timing.flags)            row.fl = timing.flags|0;
+  }
+  store.log.push(row);
   return { rating, ivl, card };
 }
 
+// How many never-before-seen cells were introduced on study day `dayK`.
+// A cell counts as introduced by its FIRST-EVER log entry, which is the same
+// rule stats.js's computeDayIndex() uses for its `intro` figure -- so the
+// number the cap enforces and the number the Stats screen shows can never
+// disagree. Deliberately derived from the log rather than kept as a counter:
+// a counter would have to survive sync, import and a rollover change, and
+// this is a cheap scan of a few thousand rows.
+function introducedOn(store, dayK, rollover){
+  const seen = new Set();
+  let n = 0;
+  for (const e of store.log){
+    if (seen.has(e.cardId)) continue;
+    seen.add(e.cardId);
+    if (dayKey(e.ts, rollover) === dayK) n++;
+  }
+  return n;
+}
+
+// Turns everything-that-is-due into the list a sitting actually works
+// through. Two jobs the raw dueCards() list does not do:
+//
+//   1. Shuffle. dueCards() returns pool order x orderedCells() order, so an
+//      un-shuffled queue walks nom.sg, nom.pl, voc.sg ... of word one, then
+//      word two -- the same sequence every session, and not what HANDOFF's
+//      "random (word x cell)" describes. The shuffle used to exist only on
+//      the "drill anyway" path, so the real scheduled drill never got it.
+//   2. Hold back new cells beyond the day's allowance. Cards already in
+//      progress are NEVER capped: FSRS asks for those today for a reason,
+//      and deferring them is how a backlog compounds. Only never-seen cells
+//      are rationed, which is the same shape vocabula settled on.
+//
+// `rng` is injectable so tests can pin the order; defaults to Math.random.
+function buildQueue(store, due, now, rng){
+  const out = capNew(store, due, now);
+  const r = rng || Math.random;
+  for (let i=out.length-1; i>0; i--){ const j=Math.floor(r()*(i+1)); [out[i],out[j]]=[out[j],out[i]]; }
+  return out;
+}
+
+// The capping half on its own, so the count shown on the home screen can be
+// the number the drill will actually ask -- an "N due" that a cap then
+// quietly shrinks is exactly the kind of dishonest label worth avoiding.
+function capNew(store, due, now){
+  now = now==null ? Date.now() : now;
+  const limit = (store.settings && store.settings.newPerDay|0) || 0;
+  if (limit <= 0) return due.slice();
+  const roll = effRollover(store.settings, now);
+  const remaining = Math.max(limit - introducedOn(store, dayKey(now, roll), roll), 0);
+  let taken = 0;
+  return due.filter(item => (item.card ? true : (taken < remaining ? (taken++, true) : false)));
+}
+
 // pool: the (possibly filtered, e.g. "drill this system") slice being
-// searched. fullVocabList: the language's complete *_VOCAB array -- cardId
-// is always keyed on THIS list's index, never pool's position, because
-// pool.indexOf(entry) would silently diverge from the global index
-// recordReview() uses whenever pool is filtered. That divergence was a
-// real bug caught during manual testing: a system-filtered drill would
-// check due-ness under one cardId and write the review under another.
-// table: the language's PARADIGMS object (LATIN_PARADIGMS / GREEK_PARADIGMS),
-// passed through to orderedCells() from engine.js, which must be loaded first.
-function dueCards(store, pool, fullVocabList, table, now){
+// searched. table: the language's PARADIGMS object, passed through to
+// orderedCells() from engine.js, which must be loaded first.
+//
+// This used to take the complete *_VOCAB array as a third argument, purely so
+// a card id could be keyed on a word's GLOBAL index rather than its position
+// within whatever slice was handed in -- get that wrong and a system-filtered
+// drill checks due-ness under one id and writes the review under another,
+// which is a bug that actually happened here. With ids keyed on the word's
+// own slug the question cannot arise: an entry carries its identity with it,
+// so a filtered pool and the full list produce identical ids, and the
+// parameter has nothing left to do.
+function dueCards(store, pool, table, now){
   now = now==null ? Date.now() : now;
   const due = [];
   pool.forEach((entry) => {
-    const vi = fullVocabList.indexOf(entry);
-    orderedCells(table, entry.class).forEach(({category,cell}) => {
-      const id = cardId(vi, category, cell);
+    // orderedCellsFor, not orderedCells: a word may lack cells its class
+    // defines (see engine.js), and scheduling a card for a form that does not
+    // exist is how a deck ends up drilling non-words.
+    orderedCellsFor(table, entry).forEach(({category,cell}) => {
+      const id = cardId(entry.id, category, cell);
       const c = store.cards[id];
-      if (!c || c.due==null || c.due<=now) due.push({ vocabIndex:vi, entry, category, cell, card:c||null });
+      if (!c || c.due==null || c.due<=now) due.push({ wordId:entry.id, entry, category, cell, card:c||null });
     });
   });
   return due;

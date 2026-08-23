@@ -73,121 +73,157 @@ button.btn.primary{background:var(--coral);border-color:var(--coral);color:var(-
 
 <div class="sect">
   <h2>Sync</h2>
-  <p class="sub" style="margin:0 0 14px">One GitHub Gist backs up both decks (two files inside it,
-  set up once here). Latin and Greek each show their own push/pull status on their own Settings
-  screen; this is the one place credentials are entered or shared to another device.</p>
+  <p class="sub" style="margin:0 0 14px">A Cloudflare Worker backs up both decks under one code — no GitHub
+  account or token needed. Type the same code on every device; Latin and Greek each show their own
+  push/pull status on their own Settings screen. The code is encrypted before it ever leaves this
+  device (see <code>js/sync.js</code>), so this is the one place it's entered or shared.</p>
 
   <div class="field">
-    <label for="fGistId">Gist ID</label>
-    <input type="text" id="fGistId" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="the id from your gist's URL">
-  </div>
-  <div class="field">
-    <label for="fGistTok">GitHub token (fine-grained, gist-only)</label>
-    <input type="password" id="fGistTok" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="ghp_…">
+    <label for="fSyncCode">Sync code</label>
+    <input type="text" id="fSyncCode" autocapitalize="characters" autocorrect="off" spellcheck="false" placeholder="tap Get a code, or type one from another device">
   </div>
   <div class="btnRow">
-    <button class="btn primary" id="btnSaveCreds">Save</button>
+    <button class="btn primary" id="btnSaveCode">Save</button>
+    <button class="btn" id="btnNewCode">Get a code for this device</button>
   </div>
   <p class="syncStatus" id="credStatus"></p>
-
-  <div class="sect" style="margin-top:22px">
-    <h2>Pair another device</h2>
-    <p class="sub" style="margin:0 0 12px">Copy a code on this device, paste it on the other one —
-    no camera scan (Safari has never shipped the API that would need). The code carries the gist ID
-    and token in plain sight, same trust level as copy-pasting the token itself; nothing here is encrypted beyond that.</p>
-    <div class="btnRow">
-      <button class="btn" id="btnCopyPair">Show my pairing code</button>
-    </div>
-    <div class="field" id="pairCodeWrap" style="margin-top:10px;display:none">
-      <label for="pairCodeOut">Tap to select, then copy</label>
-      <input type="text" id="pairCodeOut" readonly autocapitalize="off" autocorrect="off" spellcheck="false">
-    </div>
-    <div class="field" style="margin-top:16px">
-      <label for="pairPaste">Paste a code from another device</label>
-      <input type="text" id="pairPaste" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="COTIDIE1:…">
-    </div>
-    <div class="btnRow">
-      <button class="btn" id="btnUsePaste">Use this code</button>
-    </div>
-    <p class="syncStatus" id="pairStatus"></p>
-  </div>
 </div>
 
-<a class="card" href="latin.html">
-  <div class="t">Latin</div>
-  <div class="d">Declension &amp; conjugation — table, recitation, drill</div>
-</a>
-<a class="card" href="greek.html">
-  <div class="t">Greek</div>
-  <div class="d">Declension &amp; conjugation — table, recitation, drill</div>
-</a>
+<div class="sect">
+  <h2>Backup</h2>
+  <p class="sub" style="margin:0 0 14px">One file holding both decks. Sync already keeps a copy on the server,
+  but it is the same copy every device writes to &mdash; a file is the one that stays put. Saving is a tap because
+  Safari silently blocks a download nothing asked for, so nothing here happens on its own.</p>
+  <div class="btnRow">
+    <button class="btn primary" id="btnExport">Export both decks</button>
+    <button class="btn" id="btnImport">Restore from a file</button>
+  </div>
+  <input type="file" id="impFile" accept="application/json,.json" style="display:none">
+  <p class="syncStatus" id="backupStatus"></p>
+</div>
 
 <div class="sect">
   <h2>About</h2>
-  <p class="sub" style="margin:0">Personal use only. See <code>HANDOFF.md</code> in this repo for ground rules and open items.</p>
+  <!-- The version is here so a device can answer "did my upload actually land?" without
+     guesswork. tools/bump_build.py rewrites it alongside the ?v= stamps, and
+     tools/make_upload_bundle.sh refuses to build a bundle where the two disagree. -->
+  <p class="sub" style="margin:0">Personal use only. Version 2026.08.23.4.</p>
+  <p class="sub" style="margin:6px 0 0">Ground rules and open items are in <code>evergreen/HANDOFF.md</code> in the working tree — dev-only, never uploaded here.</p>
 </div>
 
-<script src="js/sync.js"></script>
+<script src="js/store.js?v=202608234"></script>
+<script src="js/sync.js?v=202608234"></script>
 <script>
 /* ======================================================================
-   Cotidie — launcher's sync setup + pairing (HANDOFF.md §10e). Credentials
-   live only in the shared key (js/sync.js's loadSharedGist/saveSharedGist)
-   -- this page is the one intended place to enter or share them; each
-   deck's own Settings screen just reads this same key.
+   Cotidie — launcher's sync code setup (see js/sync.js's header comment).
+   The code lives only in the shared key (loadSyncCode/saveSyncCode) --
+   this page is the one intended place to enter, generate, or share it;
+   each deck's own Settings screen just reads this same key. "Pairing"
+   another device is just typing (or pasting) the same code into this
+   same field there -- no separate pairing flow needed now that a single
+   code is the whole credential, unlike the old gist id+token pair.
    ====================================================================== */
 const $ = id => document.getElementById(id);
 
 function refreshCredFields(){
-  const cred = loadSharedGist();
-  $('fGistId').value = cred.gistId;
-  $('fGistTok').value = cred.gistTok;
+  $('fSyncCode').value = loadSyncCode().syncCode;
 }
 refreshCredFields();
 
-$('btnSaveCreds').addEventListener('click', () => {
-  const gistId = $('fGistId').value.trim(), gistTok = $('fGistTok').value.trim();
-  saveSharedGist({ gistId, gistTok });
-  $('credStatus').textContent = (gistId||gistTok) ? 'Saved.' : 'Cleared.';
-});
-
-$('btnCopyPair').addEventListener('click', () => {
-  const cred = loadSharedGist();
-  if (!cred.gistId || !cred.gistTok){
-    $('pairStatus').textContent = 'Save a gist ID and token above first — there’s nothing to share yet.';
-    return;
-  }
-  $('pairCodeOut').value = pairEncode(cred.gistId, cred.gistTok);
-  $('pairCodeWrap').style.display = '';
-  $('pairStatus').textContent = '';
-});
-$('pairCodeOut').addEventListener('click', e => e.target.select());
-
-// Confirm-before-overwrite (security pass, HANDOFF.md §10b/§10e) -- only
-// prompts when this device already has different credentials set up;
-// first-time pairing with nothing configured yet applies with no prompt.
-// Cancel is a genuine no-op: nothing is written, the pasted code is left
-// in the box to retry.
-function applyPaired(res){
-  const cur = loadSharedGist();
-  if ((cur.gistId||cur.gistTok) && (cur.gistId!==res.gistId || cur.gistTok!==res.gistTok)){
-    if (!confirm(pairReplaceMessage(cur.gistId, cur.gistTok, res))){
-      $('pairStatus').textContent = 'Left as it was — this device is still using the gist it had.';
+/* ---------------------------------------------------------------- backup ----
+   Both decks in one file (js/sync.js: buildBackup/readBackup). The launcher
+   owns this rather than either deck page, because a per-deck backup is a
+   half backup, and the half you didn't take is the one you needed. */
+$('btnExport').addEventListener('click', async () => {
+  try {
+    // readStoreAnywhere, not localStorage: the decks moved to IndexedDB, and a
+    // backup that quietly read the abandoned copy would look like it worked
+    // while capturing nothing that has happened since.
+    const stores = {};
+    for (const k of Object.keys(STORE_KEYS)){
+      const st = await readStoreAnywhere(STORE_KEYS[k]);
+      if (st) stores[k] = st;
+    }
+    if (!Object.keys(stores).length){
+      $('backupStatus').textContent = 'Nothing to export yet — neither deck has been studied on this device.';
       return;
     }
+    const backup = buildBackup(stores, Date.now());
+    const counts = Object.keys(backup.decks)
+      .map(k => k + ' ' + ((backup.decks[k].log||[]).length) + ' reviews').join(', ');
+    const blob = new Blob([JSON.stringify(backup)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'cotidie-' + new Date().toISOString().slice(0,10) + '.json';
+    document.body.appendChild(a);          // Safari will not click a detached link
+    a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1500);
+    $('backupStatus').textContent = 'Saved — ' + counts + '.';
+  } catch(e){
+    $('backupStatus').textContent = 'Export failed. Nothing was changed.';
   }
-  saveSharedGist(res);
-  refreshCredFields();
-  $('pairPaste').value = '';
-  $('pairStatus').textContent = 'Paired — this device is now connected to the same gist.';
-}
+});
 
-$('btnUsePaste').addEventListener('click', () => {
-  const res = pairDecode($('pairPaste').value);
-  if (!res){
-    $('pairStatus').textContent = 'That doesn’t look like a Cotidie pairing code — check it was copied in full.';
+$('btnImport').addEventListener('click', () => $('impFile').click());
+
+$('impFile').addEventListener('change', e => {
+  const file = e.target.files && e.target.files[0];
+  e.target.value = '';                     // so choosing the same file twice still fires
+  if (!file) return;
+  const fr = new FileReader();
+  fr.onerror = () => { $('backupStatus').textContent = "That file couldn't be read."; };
+  fr.onload = () => {
+    let parsed = null;
+    try { parsed = JSON.parse(fr.result); }
+    catch(err){ $('backupStatus').textContent = "That file isn't valid JSON, so it wasn't touched."; return; }
+    const res = readBackup(parsed);
+    if (!res.ok){ $('backupStatus').textContent = res.error; return; }
+    const names = Object.keys(res.decks);
+    const detail = names.map(k => k + ' (' + (res.decks[k].log||[]).length + ' reviews)').join(' and ');
+    const when = parsed.exportedAt ? new Date(parsed.exportedAt).toLocaleString() : 'an unknown date';
+    if (!confirm('Restore ' + detail + ' from ' + when + '?\n\nThis REPLACES what is on this device for '
+                 + (names.length>1 ? 'both decks' : 'the ' + names[0] + ' deck')
+                 + '. Export first if you are not sure.')) {
+      $('backupStatus').textContent = 'Restore cancelled — nothing was changed.';
+      return;
+    }
+    (async () => {
+      try {
+        for (const k of names){
+          const ok = await writeStoreAnywhere(STORE_KEYS[k], res.decks[k]);
+          if (!ok) throw new Error('write failed for ' + k);
+        }
+        $('backupStatus').textContent = 'Restored ' + detail + '. Open a deck to check it.';
+      } catch(err){
+        $('backupStatus').textContent = 'Restore failed part-way. Check both decks before studying.';
+      }
+    })();
+  };
+  fr.readAsText(file);
+});
+
+$('btnSaveCode').addEventListener('click', () => {
+  const code = $('fSyncCode').value.trim().toUpperCase();
+  $('fSyncCode').value = code;
+  saveSyncCode(code);
+  $('credStatus').textContent = code ? 'Saved — enter this same code on your other devices.' : 'Cleared.';
+});
+
+// Confirm-before-overwrite (carried over from the old pairing flow's same
+// safeguard) -- only prompts when this device already has a different
+// code set up; first-time setup with nothing configured yet applies with
+// no prompt. Cancel is a genuine no-op: nothing is written.
+$('btnNewCode').addEventListener('click', () => {
+  const cur = loadSyncCode().syncCode;
+  if (cur && !confirm(syncCodeReplaceMessage())){
+    $('credStatus').textContent = 'Left as it was — this device is still using the code it had.';
     return;
   }
-  applyPaired(res);
+  const code = randomSyncCode();
+  $('fSyncCode').value = code;
+  saveSyncCode(code);
+  $('credStatus').textContent = 'Created — enter this same code on your other devices to link them.';
 });
 </script>
 </body>

@@ -42,10 +42,10 @@ function statusOf(card){
 function wholeDeckStats(store, vocabList, table){
   const totals = { unseen:0, learning:0, young:0, mature:0 };
   const bySystem = {};
-  vocabList.forEach((entry, vi) => {
+  vocabList.forEach((entry) => {
     const sys = bySystem[entry.class] || (bySystem[entry.class] = { cells: [] });
-    orderedCells(table, entry.class).forEach(({ category, cell }) => {
-      const id = cardId(vi, category, cell);
+    orderedCellsFor(table, entry).forEach(({ category, cell }) => {
+      const id = cardId(entry.id, category, cell);
       const st = statusOf(store.cards[id]);
       totals[st]++;
       sys.cells.push(st);
@@ -66,13 +66,15 @@ function wholeDeckStats(store, vocabList, table){
 // still-unmet word in a class of ten keeps the dot honest rather than
 // getting averaged away.
 function cellStatusSummary(store, vocabList, classKey, category, cell){
-  const entries = vocabList.filter(e => e.class === classKey);
+  // only words that actually have this cell -- a word restricted out of it has
+  // no card there, and counting its absence as "unseen" would keep the dot
+  // permanently red for a form most of the class does not have
+  const entries = vocabList.filter(e => e.class === classKey && entryHasCell(e, category, cell));
   if (!entries.length) return 'unseen';
   const rank = { unseen:0, learning:1, young:2, mature:3 };
   let worst = 3;
   entries.forEach(entry => {
-    const vi = vocabList.indexOf(entry);
-    const st = statusOf(store.cards[cardId(vi, category, cell)]);
+    const st = statusOf(store.cards[cardId(entry.id, category, cell)]);
     worst = Math.min(worst, rank[st]);
   });
   return STATUS_ORDER[worst];

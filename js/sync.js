@@ -417,7 +417,7 @@ function lastActivity(st){
   return Number.isFinite(st && st.created) ? st.created : -1;
 }
 
-const MERGE_KNOWN_FIELDS = ['version','created','settings','cards','log'];
+const MERGE_KNOWN_FIELDS = ['version','created','settings','cards','log','flags'];
 
 // Returns { store, stats }. Pure: no clock, no storage, no network -- which
 // is what lets the whole thing be tested, and why the tests can assert the
@@ -499,6 +499,34 @@ function mergeStores(local, remote){
       out.settings = Object.assign({}, takeRemote ? rs : ls);
       stats.prefsFrom = takeRemote ? 'remote' : 'local';
     } }
+
+  // --- 5. the flags ---
+  // Newest stamp per cell wins, which is why setFlag() writes an {on:false}
+  // tombstone rather than deleting the key: taking the union of the keys
+  // PRESENT on either side cannot represent a flag that was cleared, so an
+  // unflag on the phone would be silently undone by the next merge from the
+  // Mac. Ties break on content rather than on side, so merge(A,B) ===
+  // merge(B,A) -- the property the suite already asserts for the whole store.
+  { const lf = (L.flags && typeof L.flags === 'object') ? L.flags : {};
+    const rf = (R.flags && typeof R.flags === 'object') ? R.flags : {};
+    const flags = {};
+    // Sorted, not merely deduplicated. The set's iteration order follows
+    // whichever side was passed as `local`, so an unsorted build produced
+    // the same VALUES in a different key order on the two devices -- equal
+    // under canonJSON, but not byte-identical as JSON, which is what gets
+    // uploaded. The log is sorted for exactly this reason; so is this.
+    [...new Set([...Object.keys(lf), ...Object.keys(rf)])].sort().forEach(id => {
+      if (id === '__proto__') return;              // never reparent the object being built
+      const a = (lf[id] && typeof lf[id] === 'object') ? lf[id] : null;
+      const b = (rf[id] && typeof rf[id] === 'object') ? rf[id] : null;
+      if (!a && !b) return;
+      if (!a){ flags[id] = Object.assign({}, b); return; }
+      if (!b){ flags[id] = Object.assign({}, a); return; }
+      const at = a.at | 0, bt = b.at | 0;
+      const w = (at !== bt) ? (at > bt ? a : b) : (canonJSON(a) >= canonJSON(b) ? a : b);
+      flags[id] = Object.assign({}, w);
+    });
+    out.flags = flags; }
 
   return { store: out, stats: stats };
 }

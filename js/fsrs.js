@@ -245,6 +245,12 @@ function defaultStore(){
     settings: { retention: 0.90, maxIvl: 36500, rollover: 4,
                 rolloverPending: null, rolloverPendingFrom: null, newPerDay: 0 },
     cards: {},   // cardId -> card state
+    // cardId -> {on, at}. One flag, on or off, per CELL -- his call
+    // 2026-08-30 over vocabula's seven colours. Cleared flags are kept as
+    // {on:false} tombstones rather than deleted, because mergeStores() takes
+    // the newer stamp per cell and a union of present keys cannot express a
+    // deletion; see setFlag() in js/stats.js.
+    flags: {},
     // {ts, cardId, lemma, category, cell, correct, latencyMs, rating, ivl,
     //  tfk, typ, keys, fl} -- the last four are the timing split, see
     // recordReview(). Short keys deliberately: the log, not the card set, is
@@ -276,6 +282,7 @@ function loadStore(key){
     if (parsed && typeof parsed==='object'){
       if (parsed.settings) deProto(parsed.settings);
       if (parsed.cards) Object.keys(parsed.cards).forEach(k => deProto(parsed.cards[k]));
+      if (parsed.flags) Object.keys(parsed.flags).forEach(k => deProto(parsed.flags[k]));
     }
     // Object.assign is shallow, so a stored `settings` object would replace
     // the default one entirely and any setting added after that store was
@@ -332,11 +339,13 @@ function normaliseStore(parsed){
   deProto(parsed);
   if (parsed.settings) deProto(parsed.settings);
   if (parsed.cards) Object.keys(parsed.cards).forEach(k => deProto(parsed.cards[k]));
+  if (parsed.flags) Object.keys(parsed.flags).forEach(k => deProto(parsed.flags[k]));
   const defaults = defaultStore().settings;
   const out = Object.assign(defaultStore(), parsed);
   out.settings = Object.assign({}, defaults, parsed.settings || {});
   if (!Array.isArray(out.log)) out.log = [];
   if (!out.cards || typeof out.cards !== 'object') out.cards = {};
+  if (!out.flags || typeof out.flags !== 'object') out.flags = {};
   return out;
 }
 

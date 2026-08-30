@@ -203,6 +203,30 @@ function checkAnswer(userInput, accepted){
   return accepted.some(a => normalize(a) === got);
 }
 
+// True if a and b differ by exactly one inserted, deleted or substituted
+// character -- NOT full edit distance, which allows any number of edits.
+// Language-agnostic (pure string comparison, no normalization of its own --
+// callers normalize first), so it lives here rather than in js/greek.js,
+// next to the other shared, testable primitives. Two-pointer scan, not a
+// Levenshtein table: cheap, and "exactly one slipped key" is the only shape
+// a typo-forgiveness check needs.
+function isOneEditAway(a, b){
+  const la = a.length, lb = b.length;
+  if (Math.abs(la - lb) > 1) return false;
+  let i = 0, j = 0, found = false;
+  while (i < la && j < lb){
+    if (a[i] !== b[j]){
+      if (found) return false;
+      found = true;
+      if (la === lb) { i++; j++; }        // substitution
+      else if (la > lb) { i++; }          // a has one extra character
+      else { j++; }                       // b has one extra character
+    } else { i++; j++; }
+  }
+  if (i < la || j < lb) found = true;     // one trailing character left over
+  return found;
+}
+
 /* ======================================================================
    HTML escaping -- shared by both decks' render functions (security pass,
    ported from vocabula 2026-08-08). Escapes quotes as well as angle

@@ -164,18 +164,109 @@ button.go:active{opacity:.85}
 .calNew{color:var(--good)}
 .calWords{color:var(--coral)}
 .calTot{color:var(--faint)}
+/* ================= 2026-08-30: the interface port from vocabula ==========
+   Eleven decisions, his; the reasoning is in in-progress/UI_PORT_DECISIONS.md
+   and the demo beside it. Everything below is additive -- no existing rule
+   was changed, so every screen not named here looks exactly as it did.
+   ======================================================================== */
+
+/* ---- the bar. Stats and Settings stop being two of four full-width cards
+   and become the two top corners, which is what freed 185px on Home. The
+   negative margin pulls it out of body's own 20px padding so the icons sit
+   where a phone's thumbs expect them, at 12px from each edge. ---- */
+.hidden{display:none!important}
+.bar{display:flex;align-items:center;gap:10px;margin:-6px -8px 12px}
+.bar .icon{width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+  background:none;border:none;color:var(--muted);font-size:19px;border-radius:11px;
+  cursor:pointer;flex:0 0 auto;font-family:var(--sans);line-height:1}
+.bar .icon:active{background:var(--panel);color:var(--coral)}
+.bar .wm{flex:1;text-align:center;font-family:var(--serif);font-size:1.2rem;color:var(--ink)}
+.bar .title{flex:1;text-align:center;font-size:15px;font-weight:500;color:var(--ink)}
+.bar .spacer{width:44px;flex:0 0 auto}
+
+/* ---- Review three-quarters, Look up one quarter. The narrow one is a
+   magnifier with a caption under it, his choice over letting "Look up a
+   form" wrap: at a quarter of 335px there are 84px to play with. ---- */
+.actRow{display:flex;gap:10px;margin-bottom:10px}
+.actRow .card{margin-bottom:0}
+.actRow .grow{flex:3;min-width:0}
+.actRow .shrink{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:15px 6px;gap:4px}
+.actRow .shrink .glyph{line-height:0;color:var(--muted);display:block}
+.actRow .shrink .cap{font-size:10.5px;color:var(--muted);letter-spacing:.02em;line-height:1.15}
+.capHint{display:block;width:100%;text-align:left;background:none;border:none;padding:2px 2px 0;
+  color:var(--coral);font-size:12.5px;font-family:var(--sans);cursor:pointer;text-decoration:underline}
+
+/* ---- graded study-days strip: same 35 squares, shaded by how much was done
+   against his own average rather than on/off. Geometry unchanged. ---- */
+.dot.lit{background:var(--coral)}
+
+/* ---- where you keep slipping ---- */
+.trow{display:grid;grid-template-columns:auto 1fr auto;gap:2px 9px;padding:9px 2px;
+  border-bottom:1px solid var(--line);width:100%;background:none;border-left:0;border-right:0;
+  border-top:0;text-align:left;font-family:var(--sans);color:inherit;cursor:pointer;align-items:baseline}
+.trow:last-of-type{border-bottom:none}
+.trow:active{background:var(--accent-soft)}
+.tFlag{grid-row:1/3;align-self:center;width:10px;color:var(--coral);font-size:11px;line-height:1}
+.tLemma{font-family:var(--serif);font-size:1.02rem;min-width:0;overflow-wrap:anywhere}
+.tScore{font-size:12px;font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap;justify-self:end}
+.tScore b{color:var(--bad-ink);font-weight:600}
+/* the grammar label gets the full width of the row's second line, so it is
+   never the thing that gets cut */
+.tCell{grid-column:2/4;color:var(--muted);font-size:12.5px;line-height:1.35}
+.tGroup{font-family:var(--sans);font-size:.95rem;min-width:0}
+.troubleBar{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
+.troubleFoot{color:var(--faint);font-size:12.5px;margin-top:12px;line-height:1.5}
+
+/* ---- keycaps. Shown only where there is a keyboard to press: on a phone a
+   picture of a key is decoration, and this app is mostly used on one. ---- */
+.keycap{display:none}
+@media (hover:hover) and (pointer:fine){
+  .keycap{display:inline-block;margin-left:7px;font-family:var(--sans);font-size:10px;
+    line-height:1;padding:3px 5px;border:1px solid var(--line);border-bottom-width:2px;
+    border-radius:4px;color:var(--faint);background:var(--raise);vertical-align:middle;
+    letter-spacing:.02em}
+  .icon .keycap{margin-left:5px}
+}
+.scRow{display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:5px 0;font-size:13.5px;color:var(--muted)}
+.scRow .keycap{display:inline-block;margin:0}
+
+/* ---- what changed ---- */
+.logEntry{border-bottom:1px solid var(--line);padding:13px 0}
+.logEntry:last-child{border-bottom:none}
+.logVer{font-size:11px;color:var(--faint);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+.logLine{font-size:13.5px;color:var(--muted);margin-bottom:7px;line-height:1.5}
+.logLine:last-child{margin-bottom:0}
+.logLine b{color:var(--ink);font-weight:600}
+
+/* ---- on a laptop: two balanced columns instead of a 480px ribbon down the
+   middle of an empty screen. Home only, and only where there is room --
+   below the threshold .cols2 is display:contents, so the markup flows in
+   exactly the single column it did before and nothing else changes. ---- */
+.cols2, .cols2 > div{display:contents}
+@media (min-width:900px){
+  body[data-screen="home"]{max-width:56rem}
+  body[data-screen="home"] .cols2{display:flex;gap:30px;align-items:flex-start}
+  body[data-screen="home"] .cols2 > div{display:block;flex:1;min-width:0}
+  body[data-screen="home"] .cols2 .sect{margin-top:16px;background:var(--panel);
+    border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+  body[data-screen="home"] .cols2 .sect:first-child{margin-top:0}
+  body[data-screen="home"] .cols2 .sect .card{background:var(--raise)}
+}
 </style>
 </head>
 <body>
 <div id="app"></div>
 
-<script src="data/latin-paradigms.js?v=202608234"></script>
-<script src="data/latin-vocab.js?v=202608234"></script>
-<script src="js/engine.js?v=202608234"></script>
-<script src="js/store.js?v=202608234"></script>
-<script src="js/fsrs.js?v=202608234"></script>
-<script src="js/stats.js?v=202608234"></script>
-<script src="js/sync.js?v=202608234"></script>
+<script src="data/latin-paradigms.js?v=202608303"></script>
+<script src="data/latin-vocab.js?v=202608303"></script>
+<script src="js/engine.js?v=202608303"></script>
+<script src="js/store.js?v=202608303"></script>
+<script src="js/fsrs.js?v=202608303"></script>
+<script src="js/stats.js?v=202608303"></script>
+<script src="js/changes.js?v=202608303"></script>
+<script src="js/sync.js?v=202608303"></script>
 <script>
 /* ======================================================================
    Cotidie — Latin engine UI. Vanilla DOM, event delegation, no framework.
@@ -191,6 +282,25 @@ button.go:active{opacity:.85}
 const NOUN_CLASSES = classesOfKind(LATIN_PARADIGMS, 'noun');
 const VERB_CLASSES = classesOfKind(LATIN_PARADIGMS, 'verb').filter(k => !LATIN_PARADIGMS[k].literal);
 const IRREGULAR_VERB_CLASSES = classesOfKind(LATIN_PARADIGMS, 'verb').filter(k => LATIN_PARADIGMS[k].literal);
+
+// ------------------------------------------------------------ GROUPS ----
+// Home shows one card per GROUP; each group's systems now live on their own
+// screen. The groups, their order and their contents are UNCHANGED -- every
+// split has its reason recorded on the class lists above and none of them
+// moved. What changed is only that a group is reached rather than scrolled
+// to. Home was 22 cards over 2.8 phone screenfuls -- not the problem Greek had,
+// but the two decks stay the same shape on purpose.
+// A group with no classes drops out, exactly as the `if (X.length)` guards
+// this replaces did.
+const CLASS_GROUPS = [
+  { id:'nouns',   label:'Nouns',           classes:NOUN_CLASSES },
+  { id:'verbs',   label:'Verbs',           classes:VERB_CLASSES },
+  { id:'irregt',  label:'Irregular verbs', classes:IRREGULAR_VERB_CLASSES },
+].filter(g => g.classes.length);
+
+// class key -> group id, for bucketing the due list and nothing else.
+const GROUP_OF_CLASS = {};
+CLASS_GROUPS.forEach(g => g.classes.forEach(k => { GROUP_OF_CLASS[k] = g.id; }));
 
 const STORE_KEY = STORE_KEYS.latin;   // defined once in js/sync.js
 const DECK_ID = 'latin';   // folded into the sync-code hash so this deck gets its own KV slot -- see js/sync.js
@@ -215,12 +325,19 @@ const app = document.getElementById('app');
 
 function render(){
   if (view.screen==='home') app.innerHTML = renderHome();
+  else if (view.screen==='group') app.innerHTML = renderGroup(view.gid);
   else if (view.screen==='system') app.innerHTML = renderSystem(view.cls, view.tab||'table');
   else if (view.screen==='recite') renderRecite();     // manages its own DOM (needs live input focus/state)
   else if (view.screen==='drill') renderDrill();        // ditto
   else if (view.screen==='stats') app.innerHTML = renderStats();
   else if (view.screen==='settings'){ app.innerHTML = renderSettings(); wireSettings(); }
   else if (view.screen==='lookup'){ app.innerHTML = renderLookup(); wireLookup(); }
+  else if (view.screen==='trouble') app.innerHTML = renderTrouble();
+  else if (view.screen==='log') app.innerHTML = renderLog();
+  // The two-column laptop layout keys off this rather than off a class the
+  // render functions have to remember to add: one place, set for every
+  // screen, impossible to forget when a screen is added later.
+  document.body.dataset.screen = view.screen;
 }
 
 function go(next){ view = next; render(); window.scrollTo(0,0); }
@@ -228,78 +345,164 @@ function go(next){ view = next; render(); window.scrollTo(0,0); }
 // ---------------------------------------------------------------- HOME ----
 // capNew, not the raw due list: if a new-cell allowance is set, the number
 // on the home screen has to be the number the drill will really ask for.
-function dueCount(){
+function homeDue(){
   const now = Date.now();
-  return capNew(store, dueCards(store, LATIN_VOCAB, LATIN_PARADIGMS, now), now).length;
+  const due = capNew(store, dueCards(store, LATIN_VOCAB, LATIN_PARADIGMS, now), now);
+  // Bucketed from ONE capped list, deliberately: capNew() spends a per-day
+  // new-cell allowance, so calling it once per group would hand every group
+  // the same remaining allowance and the group numbers would sum to more than
+  // the Review button's. Bucketing makes them add up by construction.
+  const byGroup = {};
+  due.forEach(it => {
+    const g = GROUP_OF_CLASS[it.entry.class];
+    if (g) byGroup[g] = (byGroup[g]||0) + 1;
+  });
+  return { total: due.length, byGroup };
+}
+
+// What the Review button promises -- see greek.html for the reasoning; the two
+// decks stay the same shape, which is his standing rule for this app.
+function reviewLine(n){
+  if (!n) return 'nothing due — practice anytime below';
+  const est = fmtDuration(estimateMs(store, n));
+  return n + ' cell' + (n===1?'':'s') + (est ? ' &middot; ' + est : '');
+}
+function newLimitHintHtml(n){
+  if ((store.settings.newPerDay|0) > 0 || n < 200) return '';
+  return `<button class="capHint" data-action="open-settings">That is everything you have never met. Set a daily limit &rarr;</button>`;
 }
 
 function renderHome(){
-  const n = dueCount();
-  const studyLine = n>0 ? n+' due now' : 'nothing due — practice anytime below';
-  let h = `
-    <h1>Cotidie</h1>
-    <p class="sub">Latin — grammar production practice</p>
-    <button class="card study" data-action="start-drill">
-      <div class="t">Review</div>
-      <div class="d">${studyLine}</div>
-    </button>
-    <button class="card" data-action="open-lookup">
-      <div class="t">Look up a form</div>
-      <div class="d">what is this word?</div>
-    </button>
-    <button class="card" data-action="open-stats">
-      <div class="t">Stats</div>
-      <div class="d">Where you stand, by system</div>
-    </button>
-    <button class="card" data-action="open-settings">
-      <div class="t">Settings</div>
-      <div class="d">Cloud sync</div>
-    </button>
-    <div class="sect">
-      <h3>Study days</h3>
-      <div class="strip">${stripHtml()}</div>
-      <p class="note streakNote">${streakNoteText()}</p>
-      <details class="fold"${calOpen?' open':''}>
-        <summary data-action="toggle-cal">Full calendar</summary>
-        ${calOpen?calendarHtml():''}
-      </details>
+  const due = homeDue();
+  const n = due.total;
+  const trouble = troubleCells(store).slice(0, 5);
+  let groups = '';
+  CLASS_GROUPS.forEach(g=>{
+    const d = due.byGroup[g.id]||0;
+    groups += `<button class="card" data-action="open-group" data-group="${g.id}">
+      <div class="t">${g.label}</div>
+      <div class="d">${g.classes.length} system${g.classes.length===1?'':'s'}${d?' &middot; '+d+' due':''}</div></button>`;
+  });
+  return `
+    <div class="bar">
+      <button class="icon" data-action="open-stats" aria-label="Stats" title="Stats">&#9638;</button>
+      <div class="wm">Cotidie</div>
+      <button class="icon" data-action="open-settings" aria-label="Settings" title="Settings">&#9881;&#65038;</button>
     </div>
-    <div class="sect"><h3>Nouns</h3>`;
-  NOUN_CLASSES.forEach(k=>{
-    const c = LATIN_PARADIGMS[k];
-    h += `<button class="card" data-action="open-system" data-cls="${k}">
-      <div class="t">${c.label}</div><div class="d">${c.subtitle}</div></button>`;
-  });
-  h += `</div><div class="sect"><h3>Verbs</h3>`;
-  VERB_CLASSES.forEach(k=>{
-    const c = LATIN_PARADIGMS[k];
-    h += `<button class="card" data-action="open-system" data-cls="${k}">
-      <div class="t">${c.label}</div><div class="d">${c.subtitle}</div></button>`;
-  });
-  h += `</div><div class="sect"><h3>Irregular verbs</h3>`;
-  IRREGULAR_VERB_CLASSES.forEach(k=>{
-    const c = LATIN_PARADIGMS[k];
-    h += `<button class="card" data-action="open-system" data-cls="${k}">
-      <div class="t">${c.label}</div><div class="d">${c.subtitle}</div></button>`;
-  });
-  h += `</div>
-    <p class="note">Table always open; Drill pulled from whatever's actually due (see Cotidie's HANDOFF.md if you want the reasoning) — nothing here is timed or gamified.</p>`;
-  return h;
+    <div class="actRow">
+      <button class="card study grow" data-action="start-drill">
+        <div class="t">Review</div>
+        <div class="d">${reviewLine(n)}</div>
+      </button>
+      <button class="card shrink" data-action="open-lookup" aria-label="Look up a form" title="Look up a form">
+        <span class="glyph" aria-hidden="true"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.4 15.4 21 21"/></svg></span><span class="cap">Look up</span>
+      </button>
+    </div>
+    ${newLimitHintHtml(n)}
+    <div class="cols2"><div>
+      <div class="sect"><h3>Paradigms</h3>${groups}</div>
+    </div><div>
+      ${troubleSectionHtml(trouble)}
+      <div class="sect">
+        <h3>Study days</h3>
+        <div class="strip">${stripHtml()}</div>
+        <p class="note streakNote">${streakNoteText()}</p>
+        <details class="fold"${calOpen?' open':''}>
+          <summary data-action="toggle-cal">Full calendar</summary>
+          ${calOpen?calendarHtml():''}
+        </details>
+      </div>
+      <div class="sect">
+        <h3>Cotidie</h3>
+        <button class="card" data-action="open-log"><div class="t">What changed</div>
+          <div class="d">Version ${BUILD}</div></button>
+      </div>
+    </div></div>
+    <p class="note">Table always open; Drill pulled from whatever's actually due. Macrons optional — grading ignores them. Nothing here is timed or gamified.</p>`;
+}
+
+// The five worst cells, and the button that drills only those.
+function troubleSectionHtml(list){
+  // Nothing to say on a deck that has never been answered -- an empty section
+  // explaining a feature you have not reached yet is just noise on a first
+  // run. Once there IS history, say why it is still empty rather than leaving
+  // a feature he chose invisible with no explanation.
+  if (!list.length){
+    if (!store.log.length) return '';
+    return `<div class="sect"><h3>Where you keep slipping</h3>
+      <p class="note" style="margin-top:0">Nothing yet. A cell appears here once you have
+      answered it ${TROUBLE_FLOOR} times and missed at least one &mdash; sooner than that sounds,
+      because a cell you miss comes back within minutes.</p></div>`;
+  }
+  const rows = list.map(t => troubleRowHtml(t)).join('');
+  return `<div class="sect"><h3>Where you keep slipping</h3>${rows}
+    <button class="card" data-action="drill-trouble" style="margin-top:11px">
+      <div class="t">Drill just these</div>
+      <div class="d">the cells you miss most, nothing else</div></button>
+    <button class="card" data-action="open-trouble">
+      <div class="t">See the full list</div>
+      <div class="d">every cell ranked, and by tense, voice or case</div></button></div>`;
+}
+
+// Latin's cellLabel() needs the word's CLASS, which a trouble row -- rebuilt
+// from the log -- does not carry. Resolved through a lazily-built id->entry
+// map rather than a .find() per row: the full list runs to hundreds of rows
+// and LATIN_VOCAB to 153, and that product is a real cost on every render.
+let _vocabById = null;
+function entryById(id){
+  if (!_vocabById){ _vocabById = Object.create(null); LATIN_VOCAB.forEach(e => { _vocabById[e.id] = e; }); }
+  return _vocabById[id] || null;
+}
+function troubleCellLabel(t){
+  const p = splitCardId(t.cardId);
+  const e = p && entryById(p.wordId);
+  // A word can leave the deck while its log rows remain; naming the category
+  // alone is better than throwing on a row nobody can act on any more.
+  if (!e || !LATIN_PARADIGMS[e.class]) return CATEGORY_LABELS[t.category] || String(t.category);
+  return cellLabel(e.class, { category:t.category, cell:t.cell });
+}
+
+// Pressing a row turns its flag on or off -- the only per-cell action there
+// is, so the row IS the button and nothing appears on hover.
+function troubleRowHtml(t){
+  const pct = Math.round(t.rate*100);
+  return `<button class="trow" data-action="toggle-flag" data-id="${escHtml(t.cardId)}"
+      aria-label="${isFlagged(store, t.cardId)?'Unflag':'Flag'} ${escHtml(t.lemma||'')}">
+    <span class="tFlag">${isFlagged(store, t.cardId) ? '&#9873;' : ''}</span>
+    <span class="tLemma">${escHtml(t.lemma||'')}</span>
+    <span class="tScore"><b>${t.misses}</b>/${t.attempts} &middot; ${pct}%</span>
+    <span class="tCell">${escHtml(troubleCellLabel(t))}</span>
+  </button>`;
 }
 
 // ----------------------------------------------- STUDY DAYS / STATS (§10c) ----
 // All derived on demand from store.log via js/stats.js's computeDayIndex() --
 // no persisted day-aggregate, see that file's own header comment for why.
+// Shaded by how much was done that day against his own average, not merely
+// on/off -- a 12-answer day and a 90-answer day used to look identical. The
+// baseline is the mean of the days actually STUDIED rather than of all 35: a
+// week off would otherwise drag the average down and repaint every ordinary
+// day afterwards as a heavy one. Capped at twice that average so a single
+// enormous session cannot wash every other day out to nothing, and floored at
+// 22% so a day with one answer still reads as a day worked.
 function stripHtml(){
   const idx = computeDayIndex(store.log, store.settings.rollover);
   const d = dayKey(Date.now(), store.settings.rollover);
+  const counts = [];
+  for (let i=34;i>=0;i--){ const r = idx[d-i]; if (r && r.n) counts.push(r.n); }
+  const avg = counts.length ? counts.reduce((a,b)=>a+b,0)/counts.length : 0;
   let h = '';
   for (let i=34; i>=0; i--){
-    const did = idx[d-i] && idx[d-i].n;
-    h += `<div class="dot${did?' did':''}${i===0?' today':''}"></div>`;
+    const rec = idx[d-i], n = (rec && rec.n) || 0;
+    const pct = n ? Math.round(22 + 78*Math.min(1, n/Math.max(1, avg*2))) : 0;
+    // .lit carries a flat fallback, so a browser without color-mix() still
+    // shows a worked day as worked rather than as an empty one
+    const style = n ? ` style="background:color-mix(in srgb, var(--coral) ${pct}%, var(--panel))"` : '';
+    h += `<div class="dot${n?' lit':''}${i===0?' today':''}"${style} title="${n?n+' answered':'nothing'}"></div>`;
   }
   return h;
 }
+
 function streakNoteText(){
   const idx = computeDayIndex(store.log, store.settings.rollover);
   const streak = currentStreak(idx, dayKey(Date.now(), store.settings.rollover));
@@ -339,6 +542,121 @@ function shiftCalMonth(delta){
   if (calY==null){ const n=new Date(); calY=n.getFullYear(); calM=n.getMonth(); }
   calM += delta;
   if (calM<0){ calM=11; calY--; } else if (calM>11){ calM=0; calY++; }
+}
+
+// ------------------------------------------------- TROUBLE (2026-08-30) ----
+// The ranked list behind Home's five rows. Two things it does that the
+// shortlist cannot: it runs all the way down to the cells he never gets
+// wrong (he asked for "worst to best", which has to include the best), and
+// it pivots onto the axes of the category -- tense, voice, mood for verbs,
+// case for nouns and adjectivals -- so "the aorist is what kills me" is a
+// question the app can answer, not just "this one cell is".
+//
+// The grouped numbers are SUMS, not averages of the per-cell rates: see
+// troubleByAxis() in js/stats.js for why that distinction decides the order.
+const TROUBLE_AXIS_TITLE = { tense:'By tense', voice:'By voice', mood:'By mood', 'case':'By case' };
+
+function renderTrouble(){
+  const axis = view.axis || 'cells';
+  const flaggedOnly = !!view.flagged;
+  const axes = troubleAxes(store);
+  const chips = ['cells'].concat(axes).map(a =>
+    `<button class="togglebtn${a===axis?' active':''}" data-action="trouble-axis" data-axis="${a}">${
+      a==='cells' ? 'Every cell' : TROUBLE_AXIS_TITLE[a]}</button>`).join('');
+  const nFlagged = flaggedCount(store);
+  const flagChip = nFlagged
+    ? `<button class="togglebtn${flaggedOnly?' active':''}" data-action="trouble-flagged">&#9873; Flagged (${nFlagged})</button>`
+    : '';
+
+  const group = view.group || null;
+  const groupChip = group
+    ? `<button class="togglebtn active" data-action="trouble-clear-group">${
+        escHtml(axisLabel(group.axis, group.key))} &times;</button>`
+    : '';
+
+  let body, foot;
+  if (axis === 'cells'){
+    let list = troubleCells(store, { includeClean:true });
+    if (group) list = list.filter(t => categoryAxes(t.category)[group.axis] === group.key);
+    if (flaggedOnly) list = list.filter(t => isFlagged(store, t.cardId));
+    body = list.length
+      ? list.map(troubleRowHtml).join('')
+      : `<p class="empty">${flaggedOnly ? 'Nothing flagged yet.'
+          : 'Nothing ranked yet — a cell joins this list once you have answered it '+TROUBLE_FLOOR+' times.'}</p>`;
+    foot = `Ranked by how often you get it wrong, not by how many times &mdash; a cell you have
+      missed 3 of 4 sits above one you have missed 9 of 200. Cells answered fewer than
+      ${TROUBLE_FLOOR} times are left out until there is enough to judge them on. Press any row
+      to flag it.`;
+  } else {
+    const groups = troubleByAxis(store, axis);
+    body = groups.length
+      ? groups.map(g => `<button class="trow" data-action="trouble-group" data-axis="${axis}" data-key="${escHtml(g.key)}">
+          <span class="tFlag"></span>
+          <span class="tGroup">${escHtml(axisLabel(axis, g.key))}</span>
+          <span class="tScore"><b>${g.misses}</b>/${g.attempts} &middot; ${Math.round(g.rate*100)}%</span>
+          <span class="tCell">${g.cellCount} cell${g.cellCount===1?'':'s'} answered &mdash; open</span>
+        </button>`).join('')
+      : `<p class="empty">Not enough answers yet to rank ${axis==='case'?'the cases':'by '+axis}.</p>`;
+    foot = `Every cell of a ${axis} added together &mdash; the misses and the attempts are summed
+      and the rate worked out from those, rather than averaging the rates of the cells, which
+      would let one rarely-asked form outweigh a hundred common ones. Groups with fewer than
+      ${TROUBLE_GROUP_FLOOR} answers are left out.`;
+  }
+
+  const canDrill = axis === 'cells';
+  return `
+    <div class="bar">
+      <button class="icon" data-action="home" aria-label="Back">&#8249;</button>
+      <div class="title">Where you keep slipping</div>
+      <div class="spacer"></div>
+    </div>
+    <div class="troubleBar">${chips}${flagChip}${groupChip}</div>
+    ${body}
+    ${canDrill ? `<button class="card study" data-action="drill-trouble" style="margin-top:14px">
+        <div class="t">Drill ${flaggedOnly ? 'the flagged cells' : group ? escHtml(axisLabel(group.axis, group.key).toLowerCase()) : 'these'}</div>
+        <div class="d">nothing else in the queue</div></button>` : ''}
+    <p class="troubleFoot">${foot}</p>`;
+}
+
+// A drill built from a list of cards rather than from what is due. Cells the
+// deck no longer contains are dropped silently -- a card id survives in the
+// log after its word is corrected out of the data, and scheduling a drill for
+// a word that is gone is how a queue ends up with a blank prompt.
+function startTroubleDrill(cardIds){
+  const byId = Object.create(null);
+  LATIN_VOCAB.forEach(e => { byId[e.id] = e; });
+  const queue = [];
+  cardIds.forEach(id => {
+    const parts = splitCardId(id);
+    if (!parts) return;
+    const entry = byId[parts.wordId];
+    if (!entry || !entryHasCell(entry, parts.category, parts.cell)) return;
+    queue.push({ wordId: entry.id, entry, category: parts.category, cell: parts.cell,
+                 card: store.cards[id] || null });
+  });
+  for (let i=queue.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [queue[i],queue[j]]=[queue[j],queue[i]]; }
+  drillState = { clsKey:null, queue, pos:0, correct:0, total:queue.length };
+  go({ screen:'drill' });
+}
+
+// -------------------------------------------------- WHAT CHANGED (2026-08-30)
+// Read on the phone, which is the only reason it is worth having in the app
+// at all -- the memos that record the same changes live in the repo, and the
+// repo is not somewhere he is standing when he wonders what moved.
+function renderLog(){
+  const entries = CHANGES.map(([ver, lines]) => `
+    <div class="logEntry">
+      <div class="logVer">${escHtml(ver)}</div>
+      ${lines.map(l => `<div class="logLine">${l}</div>`).join('')}
+    </div>`).join('');
+  return `
+    <div class="bar">
+      <button class="icon" data-action="home" aria-label="Back">&#8249;</button>
+      <div class="title">What changed</div>
+      <div class="spacer"></div>
+    </div>
+    ${entries}
+    <p class="note">Running ${escHtml(BUILD)}.</p>`;
 }
 
 function renderStats(){
@@ -693,10 +1011,36 @@ function wordsOfClass(clsKey){
   return LATIN_VOCAB.map((e,i)=>({e,i})).filter(x=>x.e.class===clsKey);
 }
 
+// One group's systems, on their own screen.
+function renderGroup(gid){
+  const g = CLASS_GROUPS.find(x => x.id === gid);
+  if (!g) return renderHome();          // unknown id: fall back rather than blank
+  let h = `
+    <div class="topbar"><button class="back" data-action="home">&larr; Cotidie</button></div>
+    <h2>${g.label}</h2>
+    <p class="sub">${g.classes.length} system${g.classes.length===1?'':'s'}</p>
+    <div class="sect">`;
+  g.classes.forEach(k=>{
+    const c = LATIN_PARADIGMS[k];
+    h += `<button class="card" data-action="open-system" data-cls="${k}" data-group="${g.id}">
+      <div class="t">${c.label}</div><div class="d">${c.subtitle}</div></button>`;
+  });
+  return h + `</div>`;
+}
+
+// The system screen sits one level deeper than it used to, so its back button
+// returns to the group it was opened from. view.from carries that; when it is
+// absent -- a system reached any other way -- the old behaviour stands.
+function backTopbar(){
+  const g = view.from && CLASS_GROUPS.find(x => x.id === view.from);
+  return g ? `<button class="back" data-action="open-group" data-group="${g.id}">&larr; ${g.label}</button>`
+           : `<button class="back" data-action="home">&larr; Cotidie</button>`;
+}
+
 function renderSystem(clsKey, tab){
   const cls = LATIN_PARADIGMS[clsKey];
   let h = `
-    <div class="topbar"><button class="back" data-action="home">&larr; Cotidie</button></div>
+    <div class="topbar">${backTopbar()}</div>
     <h2>${cls.label}</h2>
     <p class="sub">${cls.subtitle}</p>
     <div class="tabs">
@@ -878,8 +1222,12 @@ function renderDrill(){
   const label = cellLabel(item.entry.class, item);
   drillState.promptShownAt = Date.now();
   app.innerHTML = `
-    <div class="topbar"><button class="back" data-action="home">&larr; Cotidie</button></div>
-    <div class="progress">Review — ${drillState.pos+1} of ${drillState.queue.length}</div>
+    <div class="bar">
+      <button class="icon" data-action="home" aria-label="Back to Cotidie">&#8249;<span class="keycap">Esc</span></button>
+      <div class="title">Review — ${drillState.pos+1} of ${drillState.queue.length}</div>
+      <button class="icon" data-action="toggle-shortcuts" aria-label="Keyboard shortcuts">&#9000;&#65038;</button>
+    </div>
+    <div class="sect hidden" id="shortcutsCard" style="margin-top:0">${shortcutsHtml()}</div>
     <div class="progress-bar"><div class="progress-fill" style="width:${100*drillState.pos/drillState.queue.length}%"></div></div>
     <div class="prompt-box">
       <div class="prompt-head">${item.entry.meaning}</div>
@@ -887,7 +1235,7 @@ function renderDrill(){
       <div class="prompt-cell">${label}</div>
       <div class="answer-row">
         <input class="ans" id="ansInput" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="type the form">
-        <button class="go" data-action="drill-submit">&rarr;</button>
+        <button class="go" data-action="drill-submit">&rarr;<span class="keycap">&crarr;</span></button>
       </div>
       <div id="drillFeedback"></div>
     </div>
@@ -898,6 +1246,41 @@ function renderDrill(){
   inp.addEventListener('keydown', e => { if (e.key==='Enter') submitDrill(); });
   wireDrillTiming(inp);
 }
+
+// The shortcuts card, behind the keyboard icon in the drill bar. Its own
+// rows always show their keycaps -- the .keycap media query hides caps on a
+// touch device, but a list a touch user has deliberately opened is a list
+// they want to read, and on an iPad with a keyboard both are true at once.
+function shortcutsHtml(){
+  const rows = [
+    ['Submit the answer', '&crarr;'],
+    ['Move on, once graded', 'any key'],
+    ['Flag the cell, after a miss', 'F'],
+    ['Back to Cotidie', 'Esc']
+  ];
+  return '<h3>Keyboard</h3>' + rows.map(([what,key]) =>
+    `<div class="scRow"><span>${what}</span><span class="keycap">${key}</span></div>`).join('');
+}
+
+// Drill-wide keys. Bound on `document` rather than on the answer input for
+// the same reason advanceOnKeyOrTimeout() is: once an answer is graded the
+// input is disabled and cannot receive a keystroke at all. Every branch
+// checks the screen first, so nothing here fires on Home or in Settings.
+document.addEventListener('keydown', e => {
+  if (view.screen !== 'drill' || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === 'Escape'){ e.preventDefault(); go({screen:'home'}); return; }
+  const inp = document.getElementById('ansInput');
+  const graded = !inp || inp.disabled;
+  // '/' and 'f' are ordinary characters: they must never be stolen while an
+  // answer is still being typed, only once the box is closed.
+  // Only once the answer is closed: 'f' is an ordinary character and must
+  // never be stolen from a half-typed answer.
+  if (!graded) return;
+  if (e.key === 'f' || e.key === 'F'){
+    const btn = document.querySelector('[data-action="drill-flag"]');
+    if (btn){ e.preventDefault(); btn.click(); }
+  }
+});
 
 // ---- the timing split recorded against every rep (2026-08-21) ----
 // Measured, logged, and deliberately NOT graded on -- see gradeToRating() in
@@ -941,6 +1324,35 @@ function drillTiming(now){
   return t;
 }
 
+// ---- the forced pause, killed (2026-08-30) -------------------------------
+// Both Recite and Drill used to hold the next card behind a bare setTimeout
+// no key could skip -- a MINIMUM wait. Against the ground rule "nothing is
+// timed or gamified", forcing someone to sit and watch a clock IS a kind of
+// gamification. This makes the interval a MAXIMUM instead: whichever comes
+// first, the timeout or the next keystroke, moves on. Listens on `document`,
+// not the (disabled) answer input -- a disabled input cannot receive
+// keyboard focus, so it would never see the key meant to skip the wait.
+function advanceOnKeyOrTimeout(timeoutMs, fn){
+  let done = false;
+  const go = () => { if (done) return; done = true; document.removeEventListener('keydown', onKey); clearTimeout(timer); fn(); };
+  // preventDefault matters: `fn` re-renders synchronously, which creates a
+  // brand-new (enabled) answer input for the next card before this keydown
+  // event has finished. Without preventDefault, the browser's own default
+  // handling for THIS SAME keystroke still runs afterward and types the
+  // character into that new input -- caught live: skipping past a reveal
+  // with 'a' left a stray "a" sitting in the next card's answer box.
+  const onKey = e => { if (e.key==='Shift'||e.key==='Alt'||e.key==='Control'||e.key==='Meta') return; e.preventDefault(); go(); };
+  document.addEventListener('keydown', onKey);
+  const timer = setTimeout(go, timeoutMs);
+}
+
+// Same race, but with a second way to resolve early: an explicit click (the
+// "actually that was a typo" undo), which settles to a DIFFERENT outcome
+// than letting the pause run out naturally. Returns the function that
+// triggers the override -- call it from the click handler. Used only for
+// the one case that needs it: an undo-eligible miss in Drill (see
+// finishDrillTurn). Whichever of the three ways to resolve fires first wins;
+// the other two become no-ops.
 function submitDrill(){
   const inp = document.getElementById('ansInput');
   if (inp.disabled) return;
@@ -952,6 +1364,9 @@ function submitDrill(){
 
   const meta = { wordId: item.entry.id, category:item.category, cell:item.cell, lemma:item.entry.lemma };
   const submittedAt = Date.now();
+  // BEFORE recordReview: afterwards the row just written is in the log, and
+  // "missed N times before" would be counting the miss you are looking at.
+  const priorMisses = correct ? 0 : missCountOf(item);
   const result = recordReview(store, meta, correct, latency, submittedAt, drillTiming(submittedAt));
   save();
 
@@ -960,12 +1375,56 @@ function submitDrill(){
   // same thing, and the old line ("Right — Hard.") was the app telling you
   // off for being slow while claiming nothing here is timed.
   fb.innerHTML = correct
-    ? `<div class="feedback ok">Right.</div>`
-    : `<div class="feedback no">Not quite. <div class="answer">${forms.primary}</div></div>`;
+    ? `<div class="feedback ok">Right.${backInLine(result && result.ivl)}</div>`
+    : `<div class="feedback no">Not quite. <div class="answer">${forms.primary}</div>${backInLine(result && result.ivl)}${missLine(priorMisses)}</div>`
+      + (correct ? '' : flagButtonHtml(item));
   inp.disabled = true;
   const goBtn = document.querySelector('[data-action="drill-submit"]');
   if (goBtn) goBtn.disabled = true;
-  setTimeout(() => { drillState.pos++; renderDrill(); }, correct ? 550 : 1600);
+  // A MAXIMUM, not a minimum: any key moves on. Longer after a miss than it
+  // was, because there is now something on screen worth reading and a flag
+  // worth pressing -- and nothing forces you to wait it out.
+  advanceOnKeyOrTimeout(correct ? 550 : 2600, () => { drillState.pos++; renderDrill(); });
+}
+
+// ---- the three lines a graded answer can carry (2026-08-30) ----------------
+// All three are his call: "add the return, the miss count, and a flag".
+// Deliberately quiet -- one line of small text inside the feedback box, not a
+// second panel. The interval comes from the scheduler that just ran, so it is
+// what will really happen rather than an estimate.
+function backInLine(ivlMs){
+  if (!ivlMs || ivlMs <= 0) return '';
+  const mins = ivlMs/60000, hrs = mins/60, days = hrs/24;
+  let when;
+  if (mins < 90)   when = 'in ' + Math.max(1, Math.round(mins)) + ' minutes';
+  else if (hrs < 36) when = 'in ' + Math.round(hrs) + ' hours';
+  else if (days < 60) when = 'in ' + Math.round(days) + ' days';
+  else               when = 'in ' + Math.round(days/30) + ' months';
+  return `<div class="note" style="margin-top:6px">Back ${when}.</div>`;
+}
+// Silent until a cell has actually beaten him more than once: "missed 1 time"
+// on a first slip is noise, and nine is the number that means go and read the
+// paradigm rather than keep guessing.
+function missCountOf(item){
+  const id = cardId(item.entry.id, item.category, item.cell);
+  let misses = 0;
+  for (let i=0;i<store.log.length;i++){ const r = store.log[i]; if (r.cardId===id && !r.correct) misses++; }
+  return misses;
+}
+// Counting and rendering are separate because the two decks reach this at
+// different moments: Greek's miss path still has an undo pause open and has
+// not written the review yet, whereas Latin's has already committed -- so
+// Latin must capture the count BEFORE recordReview or the miss just made
+// would be counted as one that came before it.
+function missLine(misses){
+  if (misses < 2) return '';
+  return `<div class="note" style="margin-top:2px">Missed ${misses} times before.</div>`;
+}
+
+function flagButtonHtml(item){
+  const id = cardId(item.entry.id, item.category, item.cell);
+  const on = isFlagged(store, id);
+  return `<button class="quietlink" data-action="drill-flag">${on ? '\u2691 flagged' : '\u2690 flag this cell'}</button>`;
 }
 
 // ------------------------------------------------------------ delegation ----
@@ -978,15 +1437,56 @@ function attachDelegate(){
     else if (action==='open-stats') go({screen:'stats'});
     else if (action==='open-settings') go({screen:'settings'});
     else if (action==='open-lookup') go({screen:'lookup'});
+    else if (action==='open-trouble') go({screen:'trouble', axis:'cells'});
+    else if (action==='open-log') go({screen:'log'});
+    // Changing axis drops any group filter: a group is a value OF one axis,
+    // so "Aorist" is meaningless once you are looking at voices.
+    else if (action==='trouble-axis') go({screen:'trouble', axis:el.dataset.axis, flagged:view.flagged});
+    else if (action==='trouble-flagged') go({screen:'trouble', axis:view.axis||'cells', flagged:!view.flagged, group:view.group});
+    else if (action==='trouble-group') go({screen:'trouble', axis:'cells', flagged:view.flagged,
+      group:{axis:el.dataset.axis, key:el.dataset.key}});
+    else if (action==='trouble-clear-group') go({screen:'trouble', axis:'cells', flagged:view.flagged});
+    else if (action==='toggle-flag'){
+      const id = el.dataset.id;
+      setFlag(store, id, !isFlagged(store, id));
+      save();
+      render();
+    }
+    else if (action==='drill-trouble'){
+      // The Home button drills the same five rows it is showing; the Trouble
+      // screen's drills whatever that screen is currently listing, flag
+      // filter included -- in both cases what you press is what you get.
+      let list = troubleCells(store);
+      if (view.screen === 'trouble'){
+        if (view.group) list = list.filter(t => categoryAxes(t.category)[view.group.axis] === view.group.key);
+        if (view.flagged) list = list.filter(t => isFlagged(store, t.cardId));
+      } else {
+        list = list.slice(0, 5);   // Home's button drills the five rows it is showing
+      }
+      startTroubleDrill(list.map(t => t.cardId));
+    }
+    else if (action==='drill-flag'){
+      const item = drillState && drillState.queue[drillState.pos];
+      if (!item) return;
+      const id = cardId(item.entry.id, item.category, item.cell);
+      setFlag(store, id, !isFlagged(store, id));
+      save();
+      el.textContent = isFlagged(store, id) ? '\u2691 flagged' : '\u2690 flag this cell';
+    }
+    else if (action==='toggle-shortcuts'){
+      const card = document.getElementById('shortcutsCard');
+      if (card) card.classList.toggle('hidden');
+    }
     else if (action==='sync-push') doPush();
     else if (action==='sync-pull') doPull();
     else if (action==='sync-spare') restoreFromSpare();
     else if (action==='toggle-cal'){ e.preventDefault(); calOpen=!calOpen; render(); }
     else if (action==='cal-prev'){ shiftCalMonth(-1); render(); }
     else if (action==='cal-next'){ shiftCalMonth(1); render(); }
-    else if (action==='open-system') go({screen:'system', cls:el.dataset.cls, tab:'table'});
-    else if (action==='tab') go({screen:'system', cls:view.cls, tab:el.dataset.tab});
-    else if (action==='back-to-system') go({screen:'system', cls:reciteState?reciteState.clsKey:view.cls, tab:'recite'});
+    else if (action==='open-group') go({screen:'group', gid:el.dataset.group});
+    else if (action==='open-system') go({screen:'system', cls:el.dataset.cls, tab:'table', from:el.dataset.group||null});
+    else if (action==='tab') go({screen:'system', cls:view.cls, tab:el.dataset.tab, from:view.from});
+    else if (action==='back-to-system') go({screen:'system', cls:reciteState?reciteState.clsKey:view.cls, tab:'recite', from:view.from});
     else if (action==='start-drill') startDrill(null);
     else if (action==='start-drill-anyway') startDrillAnyway(el.dataset.cls||null);
     else if (action==='start-recite'){
@@ -1000,7 +1500,9 @@ function attachDelegate(){
       // exact non-words the verification pass removed. Silently wrong, not a
       // crash, which is why it needed looking for.
       reciteState = { entry, clsKey, cells: orderedCellsFor(LATIN_PARADIGMS, entry), pos:0 };
-      go({ screen:'recite' });
+      // carry the group through Recite too, or back-to-system lands on a
+      // system screen that has forgotten which group opened it.
+      go({ screen:'recite', from:view.from });
     }
     else if (action==='recite-submit') submitRecite();
     else if (action==='recite-reveal'){

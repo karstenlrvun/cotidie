@@ -3163,7 +3163,4323 @@ const GREEK_PARADIGMS = {
       'aor.act.imper': { '2sg':'ἅλωθι', '3sg':'ἁλώτω', '2pl':'ἅλωτε', '3pl':'ἁλόντων' },
       'aor.act.inf': { inf:'ἁλῶναι' }
     }
-  }
+  },
+
+  /* ====================================================================
+     Principal parts, one class per verb (2026-08-30) -- built from
+     vocabula's in-progress/greek-principal-parts.json, the same shape as
+     the hand-written athematic_eimi/athematic_didomi/... classes above:
+     literal:true, one verb per class, every ending value written out
+     whole rather than built from a stem+suffix rule, because a principal
+     part is by definition the citation form -- often irregular, that's
+     the whole reason it has to be memorised rather than derived.
+
+     cellKeys is always just ['1sg']: a principal part IS the first person
+     singular of its tense-system, nothing else. categories lists only the
+     tense-systems this verb is actually cited with -- a missing category
+     here means the form is not in common classical use (Mastronarde's own
+     em-dash), never a gap left to fill in later. A value beginning with a
+     hyphen in the source dataset (attested only in compounds, e.g. bare
+     βαίνω's simple future/aorist/perfect) is dropped from categories
+     entirely rather than kept, for the same reason: it is not a real
+     answer for the SIMPLE verb this card asks about.
+
+     301 of the dataset's 332 verbs are here. Held back: 13 on Karsten's
+     own 2026-08-30 call (2 whose only source redirected elsewhere when
+     checked -- σιγάομαι, στρατοπεδεύομαι -- and 11 whose parts were
+     derived from a base verb's pattern rather than looked up directly);
+     17 that already have a full conjugation drillable elsewhere in this
+     deck (λύω, εἰμί, τιμάω and fourteen more -- exactly the fixture the
+     parts dataset was built and cross-checked against, which already
+     subsumes 'produce the six parts' as a special case of drilling the
+     whole paradigm); and 1 genuine homograph (a second, less-standard
+     'δέω' clashing in LEMMA, not id, with the kept 'δέω' "bind" -- see
+     vocabula/in-progress/GREEK_PARTS_DATASET_NOTES.md for the full
+     accounting and every kept verb's provenance). The two verbs whose
+     source rows were badly garbled (ἐπιτρέπω, ὄμνυμι) were checked
+     against LSJ on 2026-08-30 and their REVIEW flags are closed; each
+     carries the finding in its own comment below.
+
+     ALSO 2026-08-30 -- twenty-one futures corrected from the UNCONTRACTED
+     to the Attic form. Every one came in verbatim from a `tier=mastronarde`
+     row, i.e. one of the 155 verbs read straight off the printed table
+     without the per-verb LSJ adjudication the other 150 got, and the table
+     prints the uncontracted stem (ἀγγελέω) where Attic writes the contracted
+     future (ἀγγελῶ). LSJ marks these explicitly and consistently -- "Ep. and
+     Ion. fut. ἀγγελέω ... Att. ἀγγελῶ", "fut. βαλῶ ... Ion. βαλέω", "fut.,
+     Ion. καλέω, Att. καλῶ" -- so they were Epic/Ionic forms sitting in a deck
+     whose stated register is Attic prose, being asked for and graded as the
+     answer. That they were unintended rather than a register choice is
+     settled by the deck's own contents: it already held ἀποστελῶ, κτενῶ,
+     ἐγκαλῶ and ἀποκρινοῦμαι -- the same stems, contracted -- from the rows
+     that DID go through LSJ. Two of the twenty-one were worse than merely
+     dialectal: γαμέω and καλέω had a future spelled identically to their own
+     present, so those two cards could not be answered distinctly at all.
+     Four are not simple contractions and were taken from LSJ individually
+     rather than derived: πίνω fut. πίομαι (πιοῦμαι is later), πίπτω
+     πεσοῦμαι, τρέχω δραμοῦμαι (root δραμ-), ὄμνυμι ὀμοῦμαι.
+     The uncontracted spellings were NOT kept as accepted alternates: for
+     γαμέω and καλέω that spelling is the present, so accepting it would undo
+     the fix, and for the rest the typo-forgiveness added in 2026.08.30.0
+     already absorbs a one-character miss.
+
+     A number of slots were hand-corrected against the raw dataset before
+     generation, where the source table's own line-wrapping had scrambled
+     a value across the wrong column (a stray 'and', or a form that
+     belonged in a neighbouring slot) -- see the generator script's own
+     OVERRIDES table for exactly what changed and why, verb by verb.
+     ==================================================================== */
+  pp_aganakteo: {
+    kind: 'verb', label: 'ἀγανακτέω (be annoyed at)', literal: true,
+    subtitle: 'ἀγανακτέω, ἀγανακτήσω, ἠγανάκτησα — be annoyed at',
+    example: { lemma: 'ἀγανακτέω', class: 'pp_aganakteo', meaning: 'be annoyed at' },
+    // Regular -έω (LSJ header lists no forms). Perfect system not in classical use; Med. aor. part. -ησάμενος late (Luc.).
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀγανακτέω' },
+      'fut.act': { '1sg': 'ἀγανακτήσω' },
+      'aor.act': { '1sg': 'ἠγανάκτησα' }
+    },
+  },
+  pp_aggello: {
+    kind: 'verb', label: 'ἀγγέλλω (announce)', literal: true,
+    subtitle: 'ἀγγέλλω, ἀγγελῶ, ἤγγειλα, ἤγγελκα, ἤγγελμαι, ἠγγέλθην — announce',
+    example: { lemma: 'ἀγγέλλω', class: 'pp_aggello', meaning: 'announce' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀγγέλλω' },
+      'fut.act': { '1sg': 'ἀγγελῶ' },
+      'aor.act': { '1sg': 'ἤγγειλα' },
+      'perf.act': { '1sg': 'ἤγγελκα' },
+      'perf.mp': { '1sg': 'ἤγγελμαι' },
+      'aor.pass': { '1sg': 'ἠγγέλθην' }
+    },
+  },
+  pp_ageiro: {
+    kind: 'verb', label: 'ἀγείρω (collect)', literal: true,
+    subtitle: 'ἀγείρω, ἤγειρα — collect',
+    example: { lemma: 'ἀγείρω', class: 'pp_ageiro', meaning: 'collect' },
+    // LSJ: fut. ἀγερῶ only inscr.; aor. pass. ἠγέρθην Hom.; pf. ἀγήγερμαι App. (post-class.); 'rare in good Prose' — prose prefers συλλέγω. Keep aor. act. only.
+    categories: ['pres.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀγείρω' },
+      'aor.act': { '1sg': 'ἤγειρα' }
+    },
+  },
+  pp_agnoeo: {
+    kind: 'verb', label: 'ἀγνοέω (not to know)', literal: true,
+    subtitle: 'ἀγνοέω, ἀγνοήσω, ἠγνόησα, ἠγνόηκα, ἠγνόημαι, ἠγνοήθην — not to know',
+    example: { lemma: 'ἀγνοέω', class: 'pp_agnoeo', meaning: 'not to know' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀγνοέω' },
+      'fut.act': { '1sg': 'ἀγνοήσω' },
+      'aor.act': { '1sg': 'ἠγνόησα' },
+      'perf.act': { '1sg': 'ἠγνόηκα' },
+      'perf.mp': { '1sg': 'ἠγνόημαι' },
+      'aor.pass': { '1sg': 'ἠγνοήθην' }
+    },
+  },
+  pp_agoreuo: {
+    kind: 'verb', label: 'ἀγορεύω (say)', literal: true,
+    subtitle: 'ἀγορεύω — say',
+    example: { lemma: 'ἀγορεύω', class: 'pp_agoreuo', meaning: 'say' },
+    // LSJ: the simple verb only pres./impf. in Attic; fut./aor./pf. (-εύσω, -ευσα, -ευκα, -εύθην) Homeric or late, and in Attic found only in compounds. Prose supplies ἐρῶ, εἶπον, εἴρηκα.
+    categories: ['pres.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀγορεύω' }
+    },
+  },
+  pp_ago: {
+    kind: 'verb', label: 'ἄγω (lead)', literal: true,
+    subtitle: 'ἄγω, ἄξω, ἤγαγον, ἦχα, ἦγμαι, ἤχθην — lead',
+    example: { lemma: 'ἄγω', class: 'pp_ago', meaning: 'lead' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἄγω' },
+      'fut.act': { '1sg': 'ἄξω' },
+      'aor.act': { '1sg': 'ἤγαγον' },
+      'perf.act': { '1sg': 'ἦχα' },
+      'perf.mp': { '1sg': 'ἦγμαι' },
+      'aor.pass': { '1sg': 'ἤχθην' }
+    },
+  },
+  pp_agonizomai: {
+    kind: 'verb', label: 'ἀγωνίζομαι (contend)', literal: true,
+    subtitle: 'ἀγωνίζομαι, ἀγωνιοῦμαι, ἠγωνισάμην, ἠγώνισμαι, ἠγωνίσθην — contend',
+    example: { lemma: 'ἀγωνίζομαι', class: 'pp_agonizomai', meaning: 'contend' },
+    // Deponent. LSJ: Att. fut. -ιοῦμαι (-ίσομαι only late); pf. ἠγώνισμαι act. sense; aor. ἠγωνίσθην passive sense only.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀγωνίζομαι' },
+      'fut.act': { '1sg': 'ἀγωνιοῦμαι' },
+      'aor.act': { '1sg': 'ἠγωνισάμην' },
+      'perf.mp': { '1sg': 'ἠγώνισμαι' },
+      'aor.pass': { '1sg': 'ἠγωνίσθην' }
+    },
+  },
+  pp_adikeo: {
+    kind: 'verb', label: 'ἀδικέω ((do) wrong)', literal: true,
+    subtitle: 'ἀδικέω, ἀδικήσω, ἠδίκησα, ἠδίκηκα, ἠδίκημαι, ἠδικήθην — (do) wrong',
+    example: { lemma: 'ἀδικέω', class: 'pp_adikeo', meaning: '(do) wrong' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀδικέω' },
+      'fut.act': { '1sg': 'ἀδικήσω' },
+      'aor.act': { '1sg': 'ἠδίκησα' },
+      'perf.act': { '1sg': 'ἠδίκηκα' },
+      'perf.mp': { '1sg': 'ἠδίκημαι' },
+      'aor.pass': { '1sg': 'ἠδικήθην' }
+    },
+  },
+  pp_ado: {
+    kind: 'verb', label: 'ᾄδω (sing)', literal: true,
+    subtitle: 'ᾄδω, ᾄσομαι, ᾖσα, ᾖσμαι, ᾔσθην — sing',
+    example: { lemma: 'ᾄδω', class: 'pp_ado', meaning: 'sing' },
+    // Attic contraction of ἀείδω. Middle future ᾄσομαι always in Attic; ᾖσα Ar./Pl.; pass. pf. ᾖσμαι, aor. ᾔσθην.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ᾄδω' },
+      'fut.act': { '1sg': 'ᾄσομαι' },
+      'aor.act': { '1sg': 'ᾖσα' },
+      'perf.mp': { '1sg': 'ᾖσμαι' },
+      'aor.pass': { '1sg': 'ᾔσθην' }
+    },
+  },
+  pp_athroizo: {
+    kind: 'verb', label: 'ἁθροίζω (collect)', literal: true,
+    subtitle: 'ἁθροίζω, ἁθροίσω, ἥθροισα, ἥθροικα, ἥθροισμαι, ἡθροίσθην — collect',
+    // Rough breathing throughout, including the aspirated augment (ἥθροισα).
+    // The label and lemma used to be smooth (ἀθροίζω) while all six stored
+    // forms were rough, so the word was DISPLAYED one way and GRADED another
+    // -- and breathings are never stripped by this deck's grader. LSJ heads
+    // the entry "ἀθροίζω, Att. ἁθροίζω", so the rough form is the Attic one
+    // and the five forms were right; the two display strings were the odd
+    // ones out and were brought into line with them (2026-08-30). Flip all
+    // eight the other way if the OCR list's own spelling is the smooth one.
+    example: { lemma: 'ἁθροίζω', class: 'pp_athroizo', meaning: 'collect' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἁθροίζω' },
+      'fut.act': { '1sg': 'ἁθροίσω' },
+      'aor.act': { '1sg': 'ἥθροισα' },
+      'perf.act': { '1sg': 'ἥθροικα' },
+      'perf.mp': { '1sg': 'ἥθροισμαι' },
+      'aor.pass': { '1sg': 'ἡθροίσθην' }
+    },
+  },
+  pp_athymeo: {
+    kind: 'verb', label: 'ἀθυμέω (be disheartened)', literal: true,
+    subtitle: 'ἀθυμέω, ἀθυμήσω, ἠθύμησα — be disheartened',
+    example: { lemma: 'ἀθυμέω', class: 'pp_athymeo', meaning: 'be disheartened' },
+    // Regular -έω (LSJ header lists no forms); perfect system not in classical use.
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀθυμέω' },
+      'fut.act': { '1sg': 'ἀθυμήσω' },
+      'aor.act': { '1sg': 'ἠθύμησα' }
+    },
+  },
+  pp_aideomai: {
+    kind: 'verb', label: 'αἰδέομαι (reverence)', literal: true,
+    subtitle: 'αἰδέομαι, αἰδέσομαι, ᾔδεσμαι, ᾐδέσθην — reverence',
+    example: { lemma: 'αἰδέομαι', class: 'pp_aideomai', meaning: 'reverence' },
+    // Short-vowel σ-stem: αἰδέσομαι, NOT -ήσομαι. Ordinary aorist is ᾐδέσθην (pass. form, act. sense); ᾐδεσάμην only as law-term 'pardon (a homicide)'.
+    categories: ['pres.act', 'fut.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'αἰδέομαι' },
+      'fut.act': { '1sg': 'αἰδέσομαι' },
+      'perf.mp': { '1sg': 'ᾔδεσμαι' },
+      'aor.pass': { '1sg': 'ᾐδέσθην' }
+    },
+  },
+  pp_aineo: {
+    kind: 'verb', label: 'αἰνέω (praise)', literal: true,
+    subtitle: 'αἰνέω, αἰνέσω, ᾔνεσα, ᾐνέθην — praise',
+    example: { lemma: 'αἰνέω', class: 'pp_aineo', meaning: 'praise' },
+    // Short-vowel: Att. αἰνέσω/ᾔνεσα (αἰνήσω/ᾔνησα are Ep.). Pf. act./mp. attested in compound ἐπ-. LSJ: poet./Ion., 'very rare in good Att. Prose — ἐπαινέω being used instead'.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'αἰνέω' },
+      'fut.act': { '1sg': 'αἰνέσω' },
+      'aor.act': { '1sg': 'ᾔνεσα' },
+      'aor.pass': { '1sg': 'ᾐνέθην' }
+    },
+  },
+  pp_haireo: {
+    kind: 'verb', label: 'αἱρέω (take; mid. choose)', literal: true,
+    subtitle: 'αἱρέω, αἱρήσω, εἷλον, ᾕρηκα, ᾕρημαι, ᾑρέθην — take; mid. choose',
+    example: { lemma: 'αἱρέω', class: 'pp_haireo', meaning: 'take; mid. choose' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'αἱρέω' },
+      'fut.act': { '1sg': 'αἱρήσω' },
+      'aor.act': { '1sg': 'εἷλον' },
+      'perf.act': { '1sg': 'ᾕρηκα' },
+      'perf.mp': { '1sg': 'ᾕρημαι' },
+      'aor.pass': { '1sg': 'ᾑρέθην' }
+    },
+  },
+  pp_airo: {
+    kind: 'verb', label: 'αἴρω (raise, set out)', literal: true,
+    subtitle: 'αἴρω, ἀρῶ, ἦρα, ἦρκα, ἦρμαι, ἤρθην — raise, set out',
+    example: { lemma: 'αἴρω', class: 'pp_airo', meaning: 'raise, set out' },
+    // Att. for poet. ἀείρω; ᾱ in all aorist moods (ἆραι, ἄρας). Mid. ἠράμην 'won (for oneself)'. Distinguish fut. ἀροῦμαι/aor. ἠρόμην of ἄρνυμαι.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'αἴρω' },
+      'fut.act': { '1sg': 'ἀρῶ' },
+      'aor.act': { '1sg': 'ἦρα' },
+      'perf.act': { '1sg': 'ἦρκα' },
+      'perf.mp': { '1sg': 'ἦρμαι' },
+      'aor.pass': { '1sg': 'ἤρθην' }
+    },
+  },
+  pp_aisthanomai: {
+    kind: 'verb', label: 'αἰσθάνομαι (perceive (+ gen.))', literal: true,
+    subtitle: 'αἰσθάνομαι, αἰσθήσομαι, ᾐσθόμην, ᾔσθημαι — perceive (+ gen.)',
+    example: { lemma: 'αἰσθάνομαι', class: 'pp_aisthanomai', meaning: 'perceive (+ gen.)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'αἰσθάνομαι' },
+      'fut.act': { '1sg': 'αἰσθήσομαι' },
+      'aor.act': { '1sg': 'ᾐσθόμην' },
+      'perf.mp': { '1sg': 'ᾔσθημαι' }
+    },
+  },
+  pp_aischynomai: {
+    kind: 'verb', label: 'αἰσχύνομαι (be ashamed at)', literal: true,
+    subtitle: 'αἰσχύνομαι, αἰσχυνοῦμαι, ᾔσχυμμαι, ᾐσχύνθην — be ashamed at',
+    example: { lemma: 'αἰσχύνομαι', class: 'pp_aischynomai', meaning: 'be ashamed at' },
+    // 'Feel shame': fut. αἰσχυνοῦμαι (αἰσχυνθήσομαι rare); aorist is ᾐσχύνθην (pass. form). Active αἰσχύνω 'dishonour': fut. αἰσχυνῶ, aor. ᾔσχυνα.
+    categories: ['pres.act', 'fut.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'αἰσχύνομαι' },
+      'fut.act': { '1sg': 'αἰσχυνοῦμαι' },
+      'perf.mp': { '1sg': 'ᾔσχυμμαι' },
+      'aor.pass': { '1sg': 'ᾐσχύνθην' }
+    },
+  },
+  pp_aiteo: {
+    kind: 'verb', label: 'αἰτέω (ask, beg)', literal: true,
+    subtitle: 'αἰτέω, αἰτήσω, ᾔτησα, ᾔτηκα, ᾔτημαι, ᾐτήθην — ask, beg',
+    example: { lemma: 'αἰτέω', class: 'pp_aiteo', meaning: 'ask, beg' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'αἰτέω' },
+      'fut.act': { '1sg': 'αἰτήσω' },
+      'aor.act': { '1sg': 'ᾔτησα' },
+      'perf.act': { '1sg': 'ᾔτηκα' },
+      'perf.mp': { '1sg': 'ᾔτημαι' },
+      'aor.pass': { '1sg': 'ᾐτήθην' }
+    },
+  },
+  pp_aitiaomai: {
+    kind: 'verb', label: 'αἰτιάομαι (blame, accuse (+ acc. of person, gen. of thing))', literal: true,
+    subtitle: 'αἰτιάομαι, αἰτιάσομαι, ᾐτιασάμην, ᾐτίαμαι, ᾐτιάθην — blame, accuse (+ acc. of person, gen. of thing)',
+    example: { lemma: 'αἰτιάομαι', class: 'pp_aitiaomai', meaning: 'blame, accuse (+ acc. of person, gen. of thing)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'αἰτιάομαι' },
+      'fut.act': { '1sg': 'αἰτιάσομαι' },
+      'aor.act': { '1sg': 'ᾐτιασάμην' },
+      'perf.mp': { '1sg': 'ᾐτίαμαι' },
+      'aor.pass': { '1sg': 'ᾐτιάθην' }
+    },
+  },
+  pp_akoloutheo: {
+    kind: 'verb', label: 'ἀκολουθέω (follow (+ dat.))', literal: true,
+    subtitle: 'ἀκολουθέω, ἀκολουθήσω, ἠκολούθησα — follow (+ dat.)',
+    example: { lemma: 'ἀκολουθέω', class: 'pp_akoloutheo', meaning: 'follow (+ dat.)' },
+    // Regular -έω (LSJ header lists no forms). Pf. ἠκολούθηκα exists but mainly later; LSJ: replaces ἕπομαι in later Greek.
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀκολουθέω' },
+      'fut.act': { '1sg': 'ἀκολουθήσω' },
+      'aor.act': { '1sg': 'ἠκολούθησα' }
+    },
+  },
+  pp_akontizo: {
+    kind: 'verb', label: 'ἀκοντίζω (hurl javelins (at))', literal: true,
+    subtitle: 'ἀκοντίζω, ἀκοντιῶ, ἠκόντισα — hurl javelins (at)',
+    example: { lemma: 'ἀκοντίζω', class: 'pp_akontizo', meaning: 'hurl javelins (at)' },
+    // LSJ: Att. fut. -ιῶ. Aor. pass. attested in sense 'be hit' but not part of the common paradigm.
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀκοντίζω' },
+      'fut.act': { '1sg': 'ἀκοντιῶ' },
+      'aor.act': { '1sg': 'ἠκόντισα' }
+    },
+  },
+  pp_akouo: {
+    kind: 'verb', label: 'ἀκούω (hear (+ gen. of person))', literal: true,
+    subtitle: 'ἀκούω, ἀκούσομαι, ἤκουσα, ἀκήκοα, ἠκούσθην — hear (+ gen. of person)',
+    example: { lemma: 'ἀκούω', class: 'pp_akouo', meaning: 'hear (+ gen. of person)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀκούω' },
+      'fut.act': { '1sg': 'ἀκούσομαι' },
+      'aor.act': { '1sg': 'ἤκουσα' },
+      'perf.act': { '1sg': 'ἀκήκοα' },
+      'aor.pass': { '1sg': 'ἠκούσθην' }
+    },
+  },
+  pp_hamartano: {
+    kind: 'verb', label: 'ἁμαρτάνω (make a mistake, err)', literal: true,
+    subtitle: 'ἁμαρτάνω, ἁμαρτήσομαι, ἥμαρτον, ἡμάρτηκα, ἡμάρτημαι, ἡμαρτήθην — make a mistake, err',
+    example: { lemma: 'ἁμαρτάνω', class: 'pp_hamartano', meaning: 'make a mistake, err' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἁμαρτάνω' },
+      'fut.act': { '1sg': 'ἁμαρτήσομαι' },
+      'aor.act': { '1sg': 'ἥμαρτον' },
+      'perf.act': { '1sg': 'ἡμάρτηκα' },
+      'perf.mp': { '1sg': 'ἡμάρτημαι' },
+      'aor.pass': { '1sg': 'ἡμαρτήθην' }
+    },
+  },
+  pp_amyno: {
+    kind: 'verb', label: 'ἀμύνω (ward off; mid. resist)', literal: true,
+    subtitle: 'ἀμύνω, ἀμυνῶ, ἤμυνα — ward off; mid. resist',
+    example: { lemma: 'ἀμύνω', class: 'pp_amyno', meaning: 'ward off; mid. resist' },
+    // No perfect; passive rare. Mid. ἀμύνομαι 'defend oneself / requite': fut. ἀμυνοῦμαι, aor. ἠμυνάμην.
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀμύνω' },
+      'fut.act': { '1sg': 'ἀμυνῶ' },
+      'aor.act': { '1sg': 'ἤμυνα' }
+    },
+  },
+  pp_anabaino: {
+    kind: 'verb', label: 'ἀναβαίνω (board, go on board (ship))', literal: true,
+    subtitle: 'ἀναβαίνω, ἀναβήσομαι, ἀνέβην, ἀναβέβηκα, ἀναβέβαμαι, ἀνεβάθην — board, go on board (ship)',
+    example: { lemma: 'ἀναβαίνω', class: 'pp_anabaino', meaning: 'board, go on board (ship)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀναβαίνω' },
+      'fut.act': { '1sg': 'ἀναβήσομαι' },
+      'aor.act': { '1sg': 'ἀνέβην' },
+      'perf.act': { '1sg': 'ἀναβέβηκα' },
+      'perf.mp': { '1sg': 'ἀναβέβαμαι' },
+      'aor.pass': { '1sg': 'ἀνεβάθην' }
+    },
+  },
+  pp_anagignosko: {
+    kind: 'verb', label: 'ἀναγιγνώσκω (read, recognise)', literal: true,
+    subtitle: 'ἀναγιγνώσκω, ἀναγνώσομαι, ἀνέγνων, ἀνέγνωκα, ἀνέγνωσμαι, ἀνεγνώσθην — read, recognise',
+    example: { lemma: 'ἀναγιγνώσκω', class: 'pp_anagignosko', meaning: 'read, recognise' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀναγιγνώσκω' },
+      'fut.act': { '1sg': 'ἀναγνώσομαι' },
+      'aor.act': { '1sg': 'ἀνέγνων' },
+      'perf.act': { '1sg': 'ἀνέγνωκα' },
+      'perf.mp': { '1sg': 'ἀνέγνωσμαι' },
+      'aor.pass': { '1sg': 'ἀνεγνώσθην' }
+    },
+  },
+  pp_anagkazo: {
+    kind: 'verb', label: 'ἀναγκάζω (compel)', literal: true,
+    subtitle: 'ἀναγκάζω, ἀναγκάσω, ἠνάγκασα, ἠνάγκακα, ἠνάγκασμαι, ἠναγκάσθην — compel',
+    example: { lemma: 'ἀναγκάζω', class: 'pp_anagkazo', meaning: 'compel' },
+    // All six classical: fut. -άσω (E., Th.); pf. ἠνάγκακα (Pl.); fut. pass. ἀναγκασθήσομαι (D.).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀναγκάζω' },
+      'fut.act': { '1sg': 'ἀναγκάσω' },
+      'aor.act': { '1sg': 'ἠνάγκασα' },
+      'perf.act': { '1sg': 'ἠνάγκακα' },
+      'perf.mp': { '1sg': 'ἠνάγκασμαι' },
+      'aor.pass': { '1sg': 'ἠναγκάσθην' }
+    },
+  },
+  pp_analisko: {
+    kind: 'verb', label: 'ἀναλίσκω (spend)', literal: true,
+    subtitle: 'ἀναλίσκω, ἀναλώσω, ἀνήλωσα, ἀνήλωκα, ἀνήλωμαι, ἀνηλώθην — spend',
+    example: { lemma: 'ἀναλίσκω', class: 'pp_analisko', meaning: 'spend' },
+    // Att. augmented ἀνηλ- forms; ἀναλ- aorist/perfect later or epigraphic. Side-form pres. ἀναλόω. Fut. pass. ἀναλωθήσομαι.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀναλίσκω' },
+      'fut.act': { '1sg': 'ἀναλώσω' },
+      'aor.act': { '1sg': 'ἀνήλωσα' },
+      'perf.act': { '1sg': 'ἀνήλωκα' },
+      'perf.mp': { '1sg': 'ἀνήλωμαι' },
+      'aor.pass': { '1sg': 'ἀνηλώθην' }
+    },
+  },
+  pp_anasso: {
+    kind: 'verb', label: 'ἀνάσσω (rule)', literal: true,
+    subtitle: 'ἀνάσσω — rule',
+    example: { lemma: 'ἀνάσσω', class: 'pp_anasso', meaning: 'rule' },
+    // Epic/poetic verb, mostly present-stem (fut. ἀνάξω Il., aor. ἄναξα Hes. — both poet. only). Prose says ἄρχω/βασιλεύω.
+    categories: ['pres.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀνάσσω' }
+    },
+  },
+  pp_anachoreo: {
+    kind: 'verb', label: 'ἀναχωρέω (retreat, go back)', literal: true,
+    subtitle: 'ἀναχωρέω, ἀναχωρήσω, ἀνεχώρησα, ἀνακεχώρηκα — retreat, go back',
+    example: { lemma: 'ἀναχωρέω', class: 'pp_anachoreo', meaning: 'retreat, go back' },
+    // Regular -έω compound: internal augment ἀνε-, redup. ἀνακε-. Intransitive, so no classical perf. mp / aor. pass.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀναχωρέω' },
+      'fut.act': { '1sg': 'ἀναχωρήσω' },
+      'aor.act': { '1sg': 'ἀνεχώρησα' },
+      'perf.act': { '1sg': 'ἀνακεχώρηκα' }
+    },
+  },
+  pp_andrapodizo: {
+    kind: 'verb', label: 'ἀνδραποδίζω (enslave)', literal: true,
+    subtitle: 'ἀνδραποδίζω, ἀνδραποδιῶ, ἠνδραπόδισα, ἠνδραπόδισμαι, ἠνδραποδίσθην — enslave',
+    example: { lemma: 'ἀνδραποδίζω', class: 'pp_andrapodizo', meaning: 'enslave' },
+    // Att. fut. -ιῶ (X.); Med. also in act. sense; fut. pass. ἀνδραποδισθήσομαι.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀνδραποδίζω' },
+      'fut.act': { '1sg': 'ἀνδραποδιῶ' },
+      'aor.act': { '1sg': 'ἠνδραπόδισα' },
+      'perf.mp': { '1sg': 'ἠνδραπόδισμαι' },
+      'aor.pass': { '1sg': 'ἠνδραποδίσθην' }
+    },
+  },
+  pp_anechomai: {
+    kind: 'verb', label: 'ἀνέχομαι (endure, hold out)', literal: true,
+    subtitle: 'ἀνέχομαι, ἀνέξομαι, ἠνεσχόμην — endure, hold out',
+    example: { lemma: 'ἀνέχομαι', class: 'pp_anechomai', meaning: 'endure, hold out' },
+    // Double augment: impf. ἠνειχόμην, aor. ἠνεσχόμην (Att.). Also fut. ἀνασχήσομαι. Base ἀνέχω 'hold up': fut. ἀνέξω/ἀνασχήσω, aor. ἀνέσχον.
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀνέχομαι' },
+      'fut.act': { '1sg': 'ἀνέξομαι' },
+      'aor.act': { '1sg': 'ἠνεσχόμην' }
+    },
+  },
+  pp_aniemi: {
+    kind: 'verb', label: 'ἀνίημι (let go, relax)', literal: true,
+    subtitle: 'ἀνίημι, ἀνήσω, ἀνῆκα, ἀνεῖκα, ἀνεῖμαι, ἀνείθην — let go, relax',
+    example: { lemma: 'ἀνίημι', class: 'pp_aniemi', meaning: 'let go, relax' },
+    // Compound of ἵημι, same pattern: aor.1 ἀνῆκα sg. / aor.2 ἀνεῖσαν pl.; pass. pf. ἀνεῖμαι (Hdt., A.), aor. ἀνεθείς (Pl.), fut. ἀνεθήσομαι (Th.).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀνίημι' },
+      'fut.act': { '1sg': 'ἀνήσω' },
+      'aor.act': { '1sg': 'ἀνῆκα' },
+      'perf.act': { '1sg': 'ἀνεῖκα' },
+      'perf.mp': { '1sg': 'ἀνεῖμαι' },
+      'aor.pass': { '1sg': 'ἀνείθην' }
+    },
+  },
+  pp_anoignymi: {
+    kind: 'verb', label: 'ἀνοίγνυμι (open)', literal: true,
+    subtitle: 'ἀνοίγνυμι, ἀνοίξω, ἀνέῳξα, ἀνέῳχα, ἀνέῳγμαι, ἀνεῴχθην — open',
+    example: { lemma: 'ἀνοίγνυμι', class: 'pp_anoignymi', meaning: 'open' },
+    // Double/triple augment ἀνέῳ- (impf. ἀνέῳγον). Side-pres. ἀνοίγω; ἤνοιξα X. and late; intr. pf.2 ἀνέῳγα 'stand open' not Attic (only Din.).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀνοίγνυμι' },
+      'fut.act': { '1sg': 'ἀνοίξω' },
+      'aor.act': { '1sg': 'ἀνέῳξα' },
+      'perf.act': { '1sg': 'ἀνέῳχα' },
+      'perf.mp': { '1sg': 'ἀνέῳγμαι' },
+      'aor.pass': { '1sg': 'ἀνεῴχθην' }
+    },
+  },
+  pp_axioo: {
+    kind: 'verb', label: 'ἀξιόω (deem worthy)', literal: true,
+    subtitle: 'ἀξιόω, ἀξιώσω, ἠξίωσα, ἠξίωκα, ἠξίωμαι, ἠξιώθην — deem worthy',
+    example: { lemma: 'ἀξιόω', class: 'pp_axioo', meaning: 'deem worthy' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀξιόω' },
+      'fut.act': { '1sg': 'ἀξιώσω' },
+      'aor.act': { '1sg': 'ἠξίωσα' },
+      'perf.act': { '1sg': 'ἠξίωκα' },
+      'perf.mp': { '1sg': 'ἠξίωμαι' },
+      'aor.pass': { '1sg': 'ἠξιώθην' }
+    },
+  },
+  pp_apallatto: {
+    kind: 'verb', label: 'ἀπαλλάττω (set free, escape)', literal: true,
+    subtitle: 'ἀπαλλάττω, ἀπαλλάξω, ἀπήλλαξα, ἀπήλλαχα, ἀπήλλαγμαι, ἀπηλλάγην — set free, escape',
+    example: { lemma: 'ἀπαλλάττω', class: 'pp_apallatto', meaning: 'set free, escape' },
+    // Aor. pass.: Attic prefers 2nd ἀπηλλάγην; 1st ἀπηλλάχθην also classical (Hdt., trag.). Fut. pass. ἀπαλλαχθήσομαι E., ἀπαλλαγήσομαι also Attic.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀπαλλάττω' },
+      'fut.act': { '1sg': 'ἀπαλλάξω' },
+      'aor.act': { '1sg': 'ἀπήλλαξα' },
+      'perf.act': { '1sg': 'ἀπήλλαχα' },
+      'perf.mp': { '1sg': 'ἀπήλλαγμαι' },
+      'aor.pass': { '1sg': 'ἀπηλλάγην' }
+    },
+  },
+  pp_apantao: {
+    kind: 'verb', label: 'ἀπαντάω (meet (+ dat.))', literal: true,
+    subtitle: 'ἀπαντάω, ἀπαντήσομαι, ἀπήντησα, ἀπήντηκα — meet (+ dat.)',
+    example: { lemma: 'ἀπαντάω', class: 'pp_apantao', meaning: 'meet (+ dat.)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀπαντάω' },
+      'fut.act': { '1sg': 'ἀπαντήσομαι' },
+      'aor.act': { '1sg': 'ἀπήντησα' },
+      'perf.act': { '1sg': 'ἀπήντηκα' }
+    },
+  },
+  pp_apechthanomai: {
+    kind: 'verb', label: 'ἀπεχθάνομαι (be hated)', literal: true,
+    subtitle: 'ἀπεχθάνομαι, ἀπεχθήσομαι, ἀπηχθόμην, ἀπήχθημαι — be hated',
+    example: { lemma: 'ἀπεχθάνομαι', class: 'pp_apechthanomai', meaning: 'be hated' },
+    // Deponent 'incur hatred': aor.2 mid. ἀπηχθόμην (inf. ἀπεχθέσθαι); pf. ἀπήχθημαι (Th., X.). No aor. pass.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀπεχθάνομαι' },
+      'fut.act': { '1sg': 'ἀπεχθήσομαι' },
+      'aor.act': { '1sg': 'ἀπηχθόμην' },
+      'perf.mp': { '1sg': 'ἀπήχθημαι' }
+    },
+  },
+  pp_apecho: {
+    kind: 'verb', label: 'ἀπέχω (be distant)', literal: true,
+    subtitle: 'ἀπέχω, ἀφέξω, ἀπέσχον — be distant',
+    example: { lemma: 'ἀπέχω', class: 'pp_apecho', meaning: 'be distant' },
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀπέχω' },
+      'fut.act': { '1sg': ['ἀφέξω', 'ἀποσχήσω'] },
+      'aor.act': { '1sg': 'ἀπέσχον' }
+    },
+  },
+  pp_apodidomai: {
+    kind: 'verb', label: 'ἀποδίδομαι (sell)', literal: true,
+    subtitle: 'ἀποδίδομαι, ἀποδώσομαι, ἀπεδόμην, πέπρακα, πέπραμαι, ἐπράθην — sell',
+    example: { lemma: 'ἀποδίδομαι', class: 'pp_apodidomai', meaning: 'sell' },
+    // 'Sell' is a suppletive set: pres. πωλῶ/ἀποδίδομαι, fut. ἀποδώσομαι, aor. ἀπεδόμην, perfect system and aor. pass. from πιπράσκω (πέπρακα, πέπραμαι, ἐπράθην). Active ἀποδίδωμι 'give back' follows δίδωμι.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀποδίδομαι' },
+      'fut.act': { '1sg': 'ἀποδώσομαι' },
+      'aor.act': { '1sg': 'ἀπεδόμην' },
+      'perf.act': { '1sg': 'πέπρακα' },
+      'perf.mp': { '1sg': 'πέπραμαι' },
+      'aor.pass': { '1sg': 'ἐπράθην' }
+    },
+  },
+  pp_apothnesko: {
+    kind: 'verb', label: 'ἀποθνῄσκω (die, be killed)', literal: true,
+    subtitle: 'ἀποθνῄσκω, ἀποθανοῦμαι, ἀπέθανον, τέθνηκα — die, be killed',
+    example: { lemma: 'ἀποθνῄσκω', class: 'pp_apothnesko', meaning: 'die, be killed' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀποθνῄσκω' },
+      'fut.act': { '1sg': 'ἀποθανοῦμαι' },
+      'aor.act': { '1sg': 'ἀπέθανον' },
+      'perf.act': { '1sg': 'τέθνηκα' }
+    },
+  },
+  pp_apokrinomai: {
+    kind: 'verb', label: 'ἀποκρίνομαι (reply)', literal: true,
+    subtitle: 'ἀποκρίνομαι, ἀποκρινοῦμαι, ἀπεκρινάμην, ἀποκέκριμαι — reply',
+    example: { lemma: 'ἀποκρίνομαι', class: 'pp_apokrinomai', meaning: 'reply' },
+    // 'Answer', deponent. Pf. ἀποκέκριμαι in middle sense (Pl.). ἀπεκρίθην = 'was separated' in Attic; 'answered' only in later Greek (NT).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀποκρίνομαι' },
+      'fut.act': { '1sg': 'ἀποκρινοῦμαι' },
+      'aor.act': { '1sg': 'ἀπεκρινάμην' },
+      'perf.mp': { '1sg': 'ἀποκέκριμαι' }
+    },
+  },
+  pp_apokteino: {
+    kind: 'verb', label: 'ἀποκτείνω (kill)', literal: true,
+    subtitle: 'ἀποκτείνω, ἀποκτενῶ, ἀπέκτεινα, ἀπέκτονα — kill',
+    example: { lemma: 'ἀποκτείνω', class: 'pp_apokteino', meaning: 'kill' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀποκτείνω' },
+      'fut.act': { '1sg': 'ἀποκτενῶ' },
+      'aor.act': { '1sg': 'ἀπέκτεινα' },
+      'perf.act': { '1sg': 'ἀπέκτονα' }
+    },
+  },
+  pp_apologeomai: {
+    kind: 'verb', label: 'ἀπολογέομαι (defend oneself)', literal: true,
+    subtitle: 'ἀπολογέομαι, ἀπολογήσομαι, ἀπελογησάμην, ἀπολελόγημαι — defend oneself',
+    example: { lemma: 'ἀπολογέομαι', class: 'pp_apologeomai', meaning: 'defend oneself' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀπολογέομαι' },
+      'fut.act': { '1sg': 'ἀπολογήσομαι' },
+      'aor.act': { '1sg': 'ἀπελογησάμην' },
+      'perf.mp': { '1sg': 'ἀπολελόγημαι' }
+    },
+  },
+  pp_aporeo: {
+    kind: 'verb', label: 'ἀπορέω (be at a loss)', literal: true,
+    subtitle: 'ἀπορέω, ἀπορήσω, ἠπόρησα, ἠπόρηκα, ἠπόρημαι, ἠπορήθην — be at a loss',
+    example: { lemma: 'ἀπορέω', class: 'pp_aporeo', meaning: 'be at a loss' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀπορέω' },
+      'fut.act': { '1sg': 'ἀπορήσω' },
+      'aor.act': { '1sg': 'ἠπόρησα' },
+      'perf.act': { '1sg': 'ἠπόρηκα' },
+      'perf.mp': { '1sg': 'ἠπόρημαι' },
+      'aor.pass': { '1sg': 'ἠπορήθην' }
+    },
+  },
+  pp_apostello: {
+    kind: 'verb', label: 'ἀποστέλλω (send away)', literal: true,
+    subtitle: 'ἀποστέλλω, ἀποστελῶ, ἀπέστειλα, ἀπέσταλκα, ἀπέσταλμαι, ἀπεστάλην — send away',
+    example: { lemma: 'ἀποστέλλω', class: 'pp_apostello', meaning: 'send away' },
+    // στέλλω pattern: liquid fut. -στελῶ; aor.2 pass. ἀπεστάλην (ἀποσταλείς E., Hdt.).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀποστέλλω' },
+      'fut.act': { '1sg': 'ἀποστελῶ' },
+      'aor.act': { '1sg': 'ἀπέστειλα' },
+      'perf.act': { '1sg': 'ἀπέσταλκα' },
+      'perf.mp': { '1sg': 'ἀπέσταλμαι' },
+      'aor.pass': { '1sg': 'ἀπεστάλην' }
+    },
+  },
+  pp_apostereo: {
+    kind: 'verb', label: 'ἀποστερέω (deprive (+ acc. of person, gen. of thing))', literal: true,
+    subtitle: 'ἀποστερέω, ἀποστερήσω, ἀπεστέρησα, ἀπεστέρηκα, ἀπεστέρημαι, ἀπεστερήθην — deprive (+ acc. of person, gen. of thing)',
+    example: { lemma: 'ἀποστερέω', class: 'pp_apostereo', meaning: 'deprive (+ acc. of person, gen. of thing)' },
+    // Regular -έω. Fut. pass. both ἀποστερήσομαι (E., Th., D.) and ἀποστερηθήσομαι (Lys.).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀποστερέω' },
+      'fut.act': { '1sg': 'ἀποστερήσω' },
+      'aor.act': { '1sg': 'ἀπεστέρησα' },
+      'perf.act': { '1sg': 'ἀπεστέρηκα' },
+      'perf.mp': { '1sg': 'ἀπεστέρημαι' },
+      'aor.pass': { '1sg': 'ἀπεστερήθην' }
+    },
+  },
+  pp_haptomai: {
+    kind: 'verb', label: 'ἅπτομαι (lay hold of, touch (+ gen.))', literal: true,
+    subtitle: 'ἅπτομαι, ἅψομαι, ἡψάμην, ἧμμαι — lay hold of, touch (+ gen.)',
+    example: { lemma: 'ἅπτομαι', class: 'pp_haptomai', meaning: 'lay hold of, touch (+ gen.)' },
+    // 'Touch' (mid.): pf. ἧμμαι shared with pass. Active ἅπτω 'kindle, fasten': ἅψω, ἧψα. Aor. pass. ἥφθην marginal classically.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἅπτομαι' },
+      'fut.act': { '1sg': 'ἅψομαι' },
+      'aor.act': { '1sg': 'ἡψάμην' },
+      'perf.mp': { '1sg': 'ἧμμαι' }
+    },
+  },
+  pp_aresko: {
+    kind: 'verb', label: 'ἀρέσκω (please (+ dat.))', literal: true,
+    subtitle: 'ἀρέσκω, ἀρέσω, ἤρεσα — please (+ dat.)',
+    example: { lemma: 'ἀρέσκω', class: 'pp_aresko', meaning: 'please (+ dat.)' },
+    // Short-vowel σ-stem: ἀρέσω/ἤρεσα (NOT -ήσω). Pf. ἀρήρεκα late only (Corn., S.E.); aor. pass. ἠρέσθην late (med. sense once in S.).
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀρέσκω' },
+      'fut.act': { '1sg': 'ἀρέσω' },
+      'aor.act': { '1sg': 'ἤρεσα' }
+    },
+  },
+  pp_arkeo: {
+    kind: 'verb', label: 'ἀρκέω (suffice)', literal: true,
+    subtitle: 'ἀρκέω, ἀρκέσω, ἤρκεσα — suffice',
+    example: { lemma: 'ἀρκέω', class: 'pp_arkeo', meaning: 'suffice' },
+    // Short-vowel σ-stem: ἀρκέσω/ἤρκεσα. No classical perfect; pass. forms late.
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀρκέω' },
+      'fut.act': { '1sg': 'ἀρκέσω' },
+      'aor.act': { '1sg': 'ἤρκεσα' }
+    },
+  },
+  pp_harpazo: {
+    kind: 'verb', label: 'ἁρπάζω (seize)', literal: true,
+    subtitle: 'ἁρπάζω, ἁρπάσομαι, ἥρπασα, ἥρπακα, ἥρπασμαι, ἡρπάσθην — seize',
+    example: { lemma: 'ἁρπάζω', class: 'pp_harpazo', meaning: 'seize' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἁρπάζω' },
+      'fut.act': { '1sg': 'ἁρπάσομαι' },
+      'aor.act': { '1sg': 'ἥρπασα' },
+      'perf.act': { '1sg': 'ἥρπακα' },
+      'perf.mp': { '1sg': 'ἥρπασμαι' },
+      'aor.pass': { '1sg': 'ἡρπάσθην' }
+    },
+  },
+  pp_archo: {
+    kind: 'verb', label: 'ἄρχω (rule; mid. begin (+ gen.))', literal: true,
+    subtitle: 'ἄρχω, ἄρξω, ἦρξα, ἦρχα, ἦργμαι, ἤρχθην — rule; mid. begin (+ gen.)',
+    example: { lemma: 'ἄρχω', class: 'pp_archo', meaning: 'rule; mid. begin (+ gen.)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἄρχω' },
+      'fut.act': { '1sg': 'ἄρξω' },
+      'aor.act': { '1sg': 'ἦρξα' },
+      'perf.act': { '1sg': 'ἦρχα' },
+      'perf.mp': { '1sg': 'ἦργμαι' },
+      'aor.pass': { '1sg': 'ἤρχθην' }
+    },
+  },
+  pp_askeo: {
+    kind: 'verb', label: 'ἀσκέω (adorn, exercise)', literal: true,
+    subtitle: 'ἀσκέω, ἀσκήσω, ἤσκησα, ἤσκηκα, ἤσκημαι — adorn, exercise',
+    example: { lemma: 'ἀσκέω', class: 'pp_askeo', meaning: 'adorn, exercise' },
+    // Regular -έω; pf. act. ἠσκήκαμεν D. 3.28, pf. pass. ἤσκημαι common. Aor. pass. not in common classical use.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀσκέω' },
+      'fut.act': { '1sg': 'ἀσκήσω' },
+      'aor.act': { '1sg': 'ἤσκησα' },
+      'perf.act': { '1sg': 'ἤσκηκα' },
+      'perf.mp': { '1sg': 'ἤσκημαι' }
+    },
+  },
+  pp_aulizomai: {
+    kind: 'verb', label: 'αὐλίζομαι (encamp)', literal: true,
+    subtitle: 'αὐλίζομαι, ηὐλισάμην, ηὐλίσθην — encamp',
+    example: { lemma: 'αὐλίζομαι', class: 'pp_aulizomai', meaning: 'encamp' },
+    // 'Encamp', deponent. Thucydides always uses aor. mid. ηὐλισάμην, Xenophon always aor. pass. ηὐλίσθην — both classical. Pf. ηὔλισμαι post-classical; no classical future.
+    categories: ['pres.act', 'aor.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'αὐλίζομαι' },
+      'aor.act': { '1sg': 'ηὐλισάμην' },
+      'aor.pass': { '1sg': 'ηὐλίσθην' }
+    },
+  },
+  pp_auxano: {
+    kind: 'verb', label: 'αὐξάνω (increase)', literal: true,
+    subtitle: 'αὐξάνω, αὐξήσω, ηὔξησα, ηὔξηκα, ηὔξημαι, ηὐξήθην — increase',
+    example: { lemma: 'αὐξάνω', class: 'pp_auxano', meaning: 'increase' },
+    // Side-form αὔξω equally classical. Fut. pass. αὐξηθήσομαι (D.) and αὐξήσομαι (X., Pl.).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'αὐξάνω' },
+      'fut.act': { '1sg': 'αὐξήσω' },
+      'aor.act': { '1sg': 'ηὔξησα' },
+      'perf.act': { '1sg': 'ηὔξηκα' },
+      'perf.mp': { '1sg': 'ηὔξημαι' },
+      'aor.pass': { '1sg': 'ηὐξήθην' }
+    },
+  },
+  pp_aphiemi: {
+    kind: 'verb', label: 'ἀφίημι (let go)', literal: true,
+    subtitle: 'ἀφίημι, ἀφήσω, ἀφῆκα, ἀφεῖκα, ἀφεῖμαι, ἀφείθην — let go',
+    example: { lemma: 'ἀφίημι', class: 'pp_aphiemi', meaning: 'let go' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀφίημι' },
+      'fut.act': { '1sg': 'ἀφήσω' },
+      'aor.act': { '1sg': 'ἀφῆκα' },
+      'perf.act': { '1sg': 'ἀφεῖκα' },
+      'perf.mp': { '1sg': 'ἀφεῖμαι' },
+      'aor.pass': { '1sg': 'ἀφείθην' }
+    },
+  },
+  pp_aphikneomai: {
+    kind: 'verb', label: 'ἀφικνέομαι (arrive)', literal: true,
+    subtitle: 'ἀφικνέομαι, ἀφίξομαι, ἀφικόμην, ἀφῖγμαι — arrive',
+    example: { lemma: 'ἀφικνέομαι', class: 'pp_aphikneomai', meaning: 'arrive' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀφικνέομαι' },
+      'fut.act': { '1sg': 'ἀφίξομαι' },
+      'aor.act': { '1sg': 'ἀφικόμην' },
+      'perf.mp': { '1sg': 'ἀφῖγμαι' }
+    },
+  },
+  pp_aphistamai: {
+    kind: 'verb', label: 'ἀφίσταμαι (revolt)', literal: true,
+    subtitle: 'ἀφίσταμαι, ἀποστήσομαι, ἀπέστην, ἀφέστηκα — revolt',
+    example: { lemma: 'ἀφίσταμαι', class: 'pp_aphistamai', meaning: 'revolt' },
+    // 'Revolt / stand aloof', intransitive system of ἀφίστημι: aor.2 ἀπέστην, pf. ἀφέστηκα with present sense (syncop. pl. ἀφέσταμεν). Trans. 'make revolt': ἀποστήσω, ἀπέστησα. Aor. pass. ἀπεστάθην poet./rare.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἀφίσταμαι' },
+      'fut.act': { '1sg': 'ἀποστήσομαι' },
+      'aor.act': { '1sg': 'ἀπέστην' },
+      'perf.act': { '1sg': 'ἀφέστηκα' }
+    },
+  },
+  pp_ballo: {
+    kind: 'verb', label: 'βάλλω (throw)', literal: true,
+    subtitle: 'βάλλω, βαλῶ, ἔβαλον, βέβληκα, βέβλημαι, ἐβλήθην — throw',
+    example: { lemma: 'βάλλω', class: 'pp_ballo', meaning: 'throw' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'βάλλω' },
+      'fut.act': { '1sg': 'βαλῶ' },
+      'aor.act': { '1sg': 'ἔβαλον' },
+      'perf.act': { '1sg': 'βέβληκα' },
+      'perf.mp': { '1sg': 'βέβλημαι' },
+      'aor.pass': { '1sg': 'ἐβλήθην' }
+    },
+  },
+  pp_biazo: {
+    kind: 'verb', label: 'βιάζω (compel)', literal: true,
+    subtitle: 'βιάζω, βιάσομαι, ἐβιασάμην, βεβίασμαι, ἐβιάσθην — compel',
+    example: { lemma: 'βιάζω', class: 'pp_biazo', meaning: 'compel' },
+    // In practice mid. βιάζομαι 'use force, compel'; act. rare. ἐβιάσθην = 'was forced' (Th., D.); pf. βεβίασμαι both mid. (D.) and pass. (X.) sense.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'βιάζω' },
+      'fut.act': { '1sg': 'βιάσομαι' },
+      'aor.act': { '1sg': 'ἐβιασάμην' },
+      'perf.mp': { '1sg': 'βεβίασμαι' },
+      'aor.pass': { '1sg': 'ἐβιάσθην' }
+    },
+  },
+  pp_blapto: {
+    kind: 'verb', label: 'βλάπτω (harm, injure)', literal: true,
+    subtitle: 'βλάπτω, βλάψω, ἔβλαψα, βέβλαφα, βέβλαμμαι, ἐβλάβην — harm, injure',
+    example: { lemma: 'βλάπτω', class: 'pp_blapto', meaning: 'harm, injure' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'βλάπτω' },
+      'fut.act': { '1sg': 'βλάψω' },
+      'aor.act': { '1sg': 'ἔβλαψα' },
+      'perf.act': { '1sg': 'βέβλαφα' },
+      'perf.mp': { '1sg': 'βέβλαμμαι' },
+      'aor.pass': { '1sg': ['ἐβλάβην', 'ἐβλάφθην'] }
+    },
+  },
+  pp_blepo: {
+    kind: 'verb', label: 'βλέπω (see)', literal: true,
+    subtitle: 'βλέπω, βλέψομαι, ἔβλεψα — see',
+    example: { lemma: 'βλέπω', class: 'pp_blepo', meaning: 'see' },
+    // Attic future is middle βλέψομαι (D.); βλέψω only late. Chiefly pres./aor. in classical authors; no classical perfect (βέβλεφα late, in compound).
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'βλέπω' },
+      'fut.act': { '1sg': 'βλέψομαι' },
+      'aor.act': { '1sg': 'ἔβλεψα' }
+    },
+  },
+  pp_boetheo: {
+    kind: 'verb', label: 'βοηθέω (help (+ dat.))', literal: true,
+    subtitle: 'βοηθέω, βοηθήσω, ἐβοήθησα, βεβοήθηκα, βεβοήθημαι — help (+ dat.)',
+    example: { lemma: 'βοηθέω', class: 'pp_boetheo', meaning: 'help (+ dat.)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'βοηθέω' },
+      'fut.act': { '1sg': 'βοηθήσω' },
+      'aor.act': { '1sg': 'ἐβοήθησα' },
+      'perf.act': { '1sg': 'βεβοήθηκα' },
+      'perf.mp': { '1sg': 'βεβοήθημαι' }
+    },
+  },
+  pp_bouleuo: {
+    kind: 'verb', label: 'βουλεύω (take counsel)', literal: true,
+    subtitle: 'βουλεύω, βουλεύσω, ἐβούλευσα, βεβούλευκα, βεβούλευμαι, ἐβουλεύθην — take counsel',
+    example: { lemma: 'βουλεύω', class: 'pp_bouleuo', meaning: 'take counsel' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'βουλεύω' },
+      'fut.act': { '1sg': 'βουλεύσω' },
+      'aor.act': { '1sg': 'ἐβούλευσα' },
+      'perf.act': { '1sg': 'βεβούλευκα' },
+      'perf.mp': { '1sg': 'βεβούλευμαι' },
+      'aor.pass': { '1sg': 'ἐβουλεύθην' }
+    },
+  },
+  pp_boulomai: {
+    kind: 'verb', label: 'βούλομαι (wish, want)', literal: true,
+    subtitle: 'βούλομαι, βουλήσομαι, βεβούλημαι, ἐβουλήθην — wish, want',
+    example: { lemma: 'βούλομαι', class: 'pp_boulomai', meaning: 'wish, want' },
+    categories: ['pres.act', 'fut.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'βούλομαι' },
+      'fut.act': { '1sg': 'βουλήσομαι' },
+      'perf.mp': { '1sg': 'βεβούλημαι' },
+      'aor.pass': { '1sg': 'ἐβουλήθην' }
+    },
+  },
+  pp_gameo: {
+    kind: 'verb', label: 'γαμέω (marry)', literal: true,
+    subtitle: 'γαμέω, γαμῶ, ἔγημα, γεγάμηκα, γεγάμημαι — marry',
+    example: { lemma: 'γαμέω', class: 'pp_gameo', meaning: 'marry' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'γαμέω' },
+      'fut.act': { '1sg': 'γαμῶ' },
+      'aor.act': { '1sg': 'ἔγημα' },
+      'perf.act': { '1sg': 'γεγάμηκα' },
+      'perf.mp': { '1sg': 'γεγάμημαι' }
+    },
+  },
+  pp_gelao: {
+    kind: 'verb', label: 'γελάω (laugh)', literal: true,
+    subtitle: 'γελάω, γελάσομαι, ἐγέλασα, ἐγελάσθην — laugh',
+    example: { lemma: 'γελάω', class: 'pp_gelao', meaning: 'laugh' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'γελάω' },
+      'fut.act': { '1sg': 'γελάσομαι' },
+      'aor.act': { '1sg': 'ἐγέλασα' },
+      'aor.pass': { '1sg': 'ἐγελάσθην' }
+    },
+  },
+  pp_gignomai: {
+    kind: 'verb', label: 'γίγνομαι (become, happen)', literal: true,
+    subtitle: 'γίγνομαι, γενήσομαι, ἐγενόμην, γέγονα, γεγένημαι, ἐγενήθην — become, happen',
+    example: { lemma: 'γίγνομαι', class: 'pp_gignomai', meaning: 'become, happen' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'γίγνομαι' },
+      'fut.act': { '1sg': 'γενήσομαι' },
+      'aor.act': { '1sg': 'ἐγενόμην' },
+      'perf.act': { '1sg': 'γέγονα' },
+      'perf.mp': { '1sg': 'γεγένημαι' },
+      'aor.pass': { '1sg': 'ἐγενήθην' }
+    },
+  },
+  pp_grapho: {
+    kind: 'verb', label: 'γράφω (write)', literal: true,
+    subtitle: 'γράφω, γράψω, ἔγραψα, γέγραφα, γέγραμμαι, ἐγράφην — write',
+    example: { lemma: 'γράφω', class: 'pp_grapho', meaning: 'write' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'γράφω' },
+      'fut.act': { '1sg': 'γράψω' },
+      'aor.act': { '1sg': 'ἔγραψα' },
+      'perf.act': { '1sg': 'γέγραφα' },
+      'perf.mp': { '1sg': 'γέγραμμαι' },
+      'aor.pass': { '1sg': 'ἐγράφην' }
+    },
+  },
+  pp_dakryo: {
+    kind: 'verb', label: 'δακρύω (cry)', literal: true,
+    subtitle: 'δακρύω, δακρύσω, ἐδάκρυσα, δεδάκρυμαι — cry',
+    example: { lemma: 'δακρύω', class: 'pp_dakryo', meaning: 'cry' },
+    // Pf. pass. δεδάκρυμαι 'be in tears' (Hom. onwards) is the living perfect; act. δεδάκρυκα late.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'δακρύω' },
+      'fut.act': { '1sg': 'δακρύσω' },
+      'aor.act': { '1sg': 'ἐδάκρυσα' },
+      'perf.mp': { '1sg': 'δεδάκρυμαι' }
+    },
+  },
+  pp_dei: {
+    kind: 'verb', label: 'δεῖ (it is necessary)', literal: true,
+    subtitle: 'δεῖ, δεήσει, ἐδέησε — it is necessary',
+    example: { lemma: 'δεῖ', class: 'pp_dei', meaning: 'it is necessary' },
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'δεῖ' },
+      'fut.act': { '1sg': 'δεήσει' },
+      'aor.act': { '1sg': 'ἐδέησε' }
+    },
+  },
+  pp_dechomai: {
+    kind: 'verb', label: 'δέχομαι (receive)', literal: true,
+    subtitle: 'δέχομαι, δέξομαι, ἐδεξάμην, δέδεγμαι — receive',
+    example: { lemma: 'δέχομαι', class: 'pp_dechomai', meaning: 'receive' },
+    // Deponent. Aor. pass. ἐδέχθην only late or in compounds; Ep. athematic forms (ἐδέγμην, δέκτο) poetic.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'δέχομαι' },
+      'fut.act': { '1sg': 'δέξομαι' },
+      'aor.act': { '1sg': 'ἐδεξάμην' },
+      'perf.mp': { '1sg': 'δέδεγμαι' }
+    },
+  },
+  pp_deobind: {
+    kind: 'verb', label: 'δέω (bind)', literal: true,
+    subtitle: 'δέω, δεήσω, ἐδέησα, δεδέηκα, δεδέημαι, ἐδεήθην — bind',
+    example: { lemma: 'δέω', class: 'pp_deobind', meaning: 'bind' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'δέω' },
+      'fut.act': { '1sg': 'δεήσω' },
+      'aor.act': { '1sg': 'ἐδέησα' },
+      'perf.act': { '1sg': 'δεδέηκα' },
+      'perf.mp': { '1sg': 'δεδέημαι' },
+      'aor.pass': { '1sg': 'ἐδεήθην' }
+    },
+  },
+  pp_diaphtheiro: {
+    kind: 'verb', label: 'διαφθείρω (destroy)', literal: true,
+    subtitle: 'διαφθείρω, διαφθερῶ, διέφθειρα, διέφθαρκα, διέφθαρμαι, διεφθάρην — destroy',
+    example: { lemma: 'διαφθείρω', class: 'pp_diaphtheiro', meaning: 'destroy' },
+    // A second, intransitive-sense perfect διέφθορα ('am ruined') is also cited, alongside this transitive perf.act -- same shape as ἀπόλλυμι/ἀπόλωλα.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'διαφθείρω' },
+      'fut.act': { '1sg': 'διαφθερῶ' },
+      'aor.act': { '1sg': 'διέφθειρα' },
+      'perf.act': { '1sg': 'διέφθαρκα' },
+      'perf.mp': { '1sg': 'διέφθαρμαι' },
+      'aor.pass': { '1sg': 'διεφθάρην' }
+    },
+  },
+  pp_didasko: {
+    kind: 'verb', label: 'διδάσκω (teach)', literal: true,
+    subtitle: 'διδάσκω, διδάξω, ἐδίδαξα, δεδίδαχα, δεδίδαγμαι, ἐδιδάχθην — teach',
+    example: { lemma: 'διδάσκω', class: 'pp_didasko', meaning: 'teach' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'διδάσκω' },
+      'fut.act': { '1sg': 'διδάξω' },
+      'aor.act': { '1sg': 'ἐδίδαξα' },
+      'perf.act': { '1sg': 'δεδίδαχα' },
+      'perf.mp': { '1sg': 'δεδίδαγμαι' },
+      'aor.pass': { '1sg': 'ἐδιδάχθην' }
+    },
+  },
+  pp_dioko: {
+    kind: 'verb', label: 'διώκω (pursue)', literal: true,
+    subtitle: 'διώκω, διώξομαι, ἐδίωξα, δεδίωχα, ἐδιώχθην — pursue',
+    example: { lemma: 'διώκω', class: 'pp_dioko', meaning: 'pursue' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'διώκω' },
+      'fut.act': { '1sg': ['διώξομαι', 'διώξω'] },
+      'aor.act': { '1sg': 'ἐδίωξα' },
+      'perf.act': { '1sg': 'δεδίωχα' },
+      'aor.pass': { '1sg': 'ἐδιώχθην' }
+    },
+  },
+  pp_dokeo: {
+    kind: 'verb', label: 'δοκέω (think; impers. it seems good (+ dat.))', literal: true,
+    subtitle: 'δοκέω, δόξω, ἔδοξα, δέδογμαι — think; impers. it seems good (+ dat.)',
+    example: { lemma: 'δοκέω', class: 'pp_dokeo', meaning: 'think; impers. it seems good (+ dat.)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'δοκέω' },
+      'fut.act': { '1sg': 'δόξω' },
+      'aor.act': { '1sg': 'ἔδοξα' },
+      'perf.mp': { '1sg': 'δέδογμαι' }
+    },
+  },
+  pp_drao: {
+    kind: 'verb', label: 'δράω (do)', literal: true,
+    subtitle: 'δράω, δράσω, ἔδρασα, δέδρακα, δέδραμαι, ἐδράσθην — do',
+    example: { lemma: 'δράω', class: 'pp_drao', meaning: 'do' },
+    // ᾱ-stem contract: -ᾱσ- forms (ρ precedes). All six classical; aor. pass. ἐδράσθην in Th.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'δράω' },
+      'fut.act': { '1sg': 'δράσω' },
+      'aor.act': { '1sg': 'ἔδρασα' },
+      'perf.act': { '1sg': 'δέδρακα' },
+      'perf.mp': { '1sg': 'δέδραμαι' },
+      'aor.pass': { '1sg': 'ἐδράσθην' }
+    },
+  },
+  pp_dynamai: {
+    kind: 'verb', label: 'δύναμαι (be able)', literal: true,
+    subtitle: 'δύναμαι, δυνήσομαι, δεδύνημαι, ἐδυνήθην — be able',
+    example: { lemma: 'δύναμαι', class: 'pp_dynamai', meaning: 'be able' },
+    categories: ['pres.act', 'fut.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'δύναμαι' },
+      'fut.act': { '1sg': 'δυνήσομαι' },
+      'perf.mp': { '1sg': 'δεδύνημαι' },
+      'aor.pass': { '1sg': 'ἐδυνήθην' }
+    },
+  },
+  pp_eao: {
+    kind: 'verb', label: 'ἐάω (allow)', literal: true,
+    subtitle: 'ἐάω, ἐάσω, εἴασα, εἴακα, εἴαμαι, εἰάθην — allow',
+    example: { lemma: 'ἐάω', class: 'pp_eao', meaning: 'allow' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἐάω' },
+      'fut.act': { '1sg': 'ἐάσω' },
+      'aor.act': { '1sg': 'εἴασα' },
+      'perf.act': { '1sg': 'εἴακα' },
+      'perf.mp': { '1sg': 'εἴαμαι' },
+      'aor.pass': { '1sg': 'εἰάθην' }
+    },
+  },
+  pp_egeiro: {
+    kind: 'verb', label: 'ἐγείρω (rouse, stir up)', literal: true,
+    subtitle: 'ἐγείρω, ἐγερῶ, ἤγειρα, ἐγρήγορα, ἠγέρθην — rouse, stir up',
+    example: { lemma: 'ἐγείρω', class: 'pp_egeiro', meaning: 'rouse, stir up' },
+    // Pf. slot: intr. ἐγρήγορα 'am awake' (present sense; Ar., Pl.) — the perfect worth knowing; trans. ἐγήγερκα late; pf. pass. ἐγήγερμαι only v.l. Th. Poet. aor. mid. ἠγρόμην 'woke up'.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἐγείρω' },
+      'fut.act': { '1sg': 'ἐγερῶ' },
+      'aor.act': { '1sg': 'ἤγειρα' },
+      'perf.act': { '1sg': 'ἐγρήγορα' },
+      'aor.pass': { '1sg': 'ἠγέρθην' }
+    },
+  },
+  pp_egkaleo: {
+    kind: 'verb', label: 'ἐγκαλέω (accuse (+ dat.))', literal: true,
+    subtitle: 'ἐγκαλέω, ἐγκαλῶ, ἐνεκάλεσα, ἐγκέκληκα, ἐγκέκλημαι, ἐνεκλήθην — accuse (+ dat.)',
+    example: { lemma: 'ἐγκαλέω', class: 'pp_egkaleo', meaning: 'accuse (+ dat.)' },
+    // Compound of καλέω: Attic contract future ἐγκαλῶ (spelt like the present); internal augment ἐνε-; pf. pass. τὰ ἐγκεκλημένα 'charges'.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἐγκαλέω' },
+      'fut.act': { '1sg': 'ἐγκαλῶ' },
+      'aor.act': { '1sg': 'ἐνεκάλεσα' },
+      'perf.act': { '1sg': 'ἐγκέκληκα' },
+      'perf.mp': { '1sg': 'ἐγκέκλημαι' },
+      'aor.pass': { '1sg': 'ἐνεκλήθην' }
+    },
+  },
+  pp_ethelo: {
+    kind: 'verb', label: 'ἐθέλω (wish, want)', literal: true,
+    subtitle: 'ἐθέλω, ἐθελήσω, ἠθέλησα, ἠθέληκα — wish, want',
+    example: { lemma: 'ἐθέλω', class: 'pp_ethelo', meaning: 'wish, want' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἐθέλω' },
+      'fut.act': { '1sg': 'ἐθελήσω' },
+      'aor.act': { '1sg': 'ἠθέλησα' },
+      'perf.act': { '1sg': 'ἠθέληκα' }
+    },
+  },
+  pp_eiko: {
+    kind: 'verb', label: 'εἴκω (yield)', literal: true,
+    subtitle: 'εἴκω, εἴξω, εἶξα — yield',
+    example: { lemma: 'εἴκω', class: 'pp_eiko', meaning: 'yield' },
+    // 'Yield': intransitive, no passive system; no classical perfect.
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'εἴκω' },
+      'fut.act': { '1sg': 'εἴξω' },
+      'aor.act': { '1sg': 'εἶξα' }
+    },
+  },
+  pp_eirgo: {
+    kind: 'verb', label: 'εἴργω (prevent, hinder, shut out)', literal: true,
+    subtitle: 'εἴργω, εἴρξω, εἶρξα, εἶργμαι, εἴρχθην — prevent, hinder, shut out',
+    example: { lemma: 'εἴργω', class: 'pp_eirgo', meaning: 'prevent, hinder, shut out' },
+    // Smooth breathing 'shut out', rough εἵργω 'shut in' (Attic distinction per Eustathius; both spellings in codd.). No perfect active. Fut. mid. εἴρξομαι in pass. sense (X.).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'εἴργω' },
+      'fut.act': { '1sg': 'εἴρξω' },
+      'aor.act': { '1sg': 'εἶρξα' },
+      'perf.mp': { '1sg': 'εἶργμαι' },
+      'aor.pass': { '1sg': 'εἴρχθην' }
+    },
+  },
+  pp_ekpletto: {
+    kind: 'verb', label: 'ἐκπλήττω (strike with panic)', literal: true,
+    subtitle: 'ἐκπλήττω, ἐκπλήξω, ἐξέπληξα, ἐκπέπληγμαι, ἐξεπλάγην — strike with panic',
+    example: { lemma: 'ἐκπλήττω', class: 'pp_ekpletto', meaning: 'strike with panic' },
+    // The living forms are passive: aor.2 pass. ἐξεπλάγην 'was astounded' (not -ήχθην), pf. ἐκπέπληγμαι. LSJ lemmatizes ἐκπλήσσω.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἐκπλήττω' },
+      'fut.act': { '1sg': 'ἐκπλήξω' },
+      'aor.act': { '1sg': 'ἐξέπληξα' },
+      'perf.mp': { '1sg': 'ἐκπέπληγμαι' },
+      'aor.pass': { '1sg': 'ἐξεπλάγην' }
+    },
+  },
+  pp_elauno: {
+    kind: 'verb', label: 'ἐλαύνω (drive)', literal: true,
+    subtitle: 'ἐλαύνω, ἐλάω, ἤλασα, ἐλήλαμαι, ἠλάθην — drive',
+    example: { lemma: 'ἐλαύνω', class: 'pp_elauno', meaning: 'drive' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἐλαύνω' },
+      'fut.act': { '1sg': 'ἐλάω' },
+      'aor.act': { '1sg': 'ἤλασα' },
+      'perf.mp': { '1sg': 'ἐλήλαμαι' },
+      'aor.pass': { '1sg': 'ἠλάθην' }
+    },
+  },
+  pp_elegcho: {
+    kind: 'verb', label: 'ἐλέγχω (examine, refute)', literal: true,
+    subtitle: 'ἐλέγχω, ἐλέγξω, ἤλεγξα, ἐλήλεγμαι, ἠλέγχθην — examine, refute',
+    example: { lemma: 'ἐλέγχω', class: 'pp_elegcho', meaning: 'examine, refute' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἐλέγχω' },
+      'fut.act': { '1sg': 'ἐλέγξω' },
+      'aor.act': { '1sg': 'ἤλεγξα' },
+      'perf.mp': { '1sg': 'ἐλήλεγμαι' },
+      'aor.pass': { '1sg': 'ἠλέγχθην' }
+    },
+  },
+  pp_elpizo: {
+    kind: 'verb', label: 'ἐλπίζω (hope)', literal: true,
+    subtitle: 'ἐλπίζω, ἐλπιῶ, ἤλπισα, ἠλπίσθην — hope',
+    example: { lemma: 'ἐλπίζω', class: 'pp_elpizo', meaning: 'hope' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἐλπίζω' },
+      'fut.act': { '1sg': 'ἐλπιῶ' },
+      'aor.act': { '1sg': 'ἤλπισα' },
+      'aor.pass': { '1sg': 'ἠλπίσθην' }
+    },
+  },
+  pp_exapatao: {
+    kind: 'verb', label: 'ἐξαπατάω (deceive)', literal: true,
+    subtitle: 'ἐξαπατάω, ἐξαπατήσω, ἐξηπάτησα, ἐξηπάτηκα, ἐξηπάτημαι, ἐξηπατήθην — deceive',
+    example: { lemma: 'ἐξαπατάω', class: 'pp_exapatao', meaning: 'deceive' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἐξαπατάω' },
+      'fut.act': { '1sg': 'ἐξαπατήσω' },
+      'aor.act': { '1sg': 'ἐξηπάτησα' },
+      'perf.act': { '1sg': 'ἐξηπάτηκα' },
+      'perf.mp': { '1sg': 'ἐξηπάτημαι' },
+      'aor.pass': { '1sg': 'ἐξηπατήθην' }
+    },
+  },
+  pp_exetazo: {
+    kind: 'verb', label: 'ἐξετάζω (examine, review (an army))', literal: true,
+    subtitle: 'ἐξετάζω, ἐξετάσω, ἐξήτασα, ἐξήτακα, ἐξήτασμαι, ἐξητάσθην — examine, review (an army)',
+    example: { lemma: 'ἐξετάζω', class: 'pp_exetazo', meaning: 'examine, review (an army)' },
+    // All six classical; fut. ἐξετάσω (rarely Attic contract ἐξετῶ, Isoc.); fut. pass. ἐξετασθήσομαι D.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἐξετάζω' },
+      'fut.act': { '1sg': 'ἐξετάσω' },
+      'aor.act': { '1sg': 'ἐξήτασα' },
+      'perf.act': { '1sg': 'ἐξήτακα' },
+      'perf.mp': { '1sg': 'ἐξήτασμαι' },
+      'aor.pass': { '1sg': 'ἐξητάσθην' }
+    },
+  },
+  pp_epaineo: {
+    kind: 'verb', label: 'ἐπαινέω (praise)', literal: true,
+    subtitle: 'ἐπαινέω, ἐπαινέσομαι, ἐπῄνεσα, ἐπῄνεκα, ἐπῄνημαι, ἐπῃνέθην — praise',
+    example: { lemma: 'ἐπαινέω', class: 'pp_epaineo', meaning: 'praise' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἐπαινέω' },
+      'fut.act': { '1sg': ['ἐπαινέσομαι', 'ἐπαινέσω'] },
+      'aor.act': { '1sg': 'ἐπῄνεσα' },
+      'perf.act': { '1sg': 'ἐπῄνεκα' },
+      'perf.mp': { '1sg': 'ἐπῄνημαι' },
+      'aor.pass': { '1sg': 'ἐπῃνέθην' }
+    },
+  },
+  pp_epanerchomai: {
+    kind: 'verb', label: 'ἐπανέρχομαι (return)', literal: true,
+    subtitle: 'ἐπανέρχομαι, ἐπάνειμι, ἐπανῆλθον, ἐπανελήλυθα — return',
+    example: { lemma: 'ἐπανέρχομαι', class: 'pp_epanerchomai', meaning: 'return' },
+    // Compound of ἔρχομαι: in Attic the future is supplied by ἐπάνειμι (εἶμι), not -ελεύσομαι.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἐπανέρχομαι' },
+      'fut.act': { '1sg': 'ἐπάνειμι' },
+      'aor.act': { '1sg': 'ἐπανῆλθον' },
+      'perf.act': { '1sg': 'ἐπανελήλυθα' }
+    },
+  },
+  pp_epeigo: {
+    kind: 'verb', label: 'ἐπείγω (urge on, hasten)', literal: true,
+    subtitle: 'ἐπείγω, ἐπείξομαι, ἠπείχθην — urge on, hasten',
+    example: { lemma: 'ἐπείγω', class: 'pp_epeigo', meaning: 'urge on, hasten' },
+    // Living classical usage: pres./impf. act. and mid. ἐπείγομαι 'hurry'; 'hurried' = aor. pass. ἠπείχθην (Th., Pl.). Act. aor. ἤπειξα post-classical. κατεπείγω commoner in Attic prose.
+    categories: ['pres.act', 'fut.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἐπείγω' },
+      'fut.act': { '1sg': 'ἐπείξομαι' },
+      'aor.pass': { '1sg': 'ἠπείχθην' }
+    },
+  },
+  pp_epithymeo: {
+    kind: 'verb', label: 'ἐπιθυμέω (desire (+ gen.))', literal: true,
+    subtitle: 'ἐπιθυμέω, ἐπιθυμήσω, ἐπεθύμησα, ἐπιτεθύμηκα — desire (+ gen.)',
+    example: { lemma: 'ἐπιθυμέω', class: 'pp_epithymeo', meaning: 'desire (+ gen.)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἐπιθυμέω' },
+      'fut.act': { '1sg': 'ἐπιθυμήσω' },
+      'aor.act': { '1sg': 'ἐπεθύμησα' },
+      'perf.act': { '1sg': 'ἐπιτεθύμηκα' }
+    },
+  },
+  pp_epilanthanomai: {
+    kind: 'verb', label: 'ἐπιλανθάνομαι (forget (+ gen.))', literal: true,
+    subtitle: 'ἐπιλανθάνομαι, ἐπιλήσομαι, ἐπελαθόμην, ἐπιλέλησμαι — forget (+ gen.)',
+    example: { lemma: 'ἐπιλανθάνομαι', class: 'pp_epilanthanomai', meaning: 'forget (+ gen.)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἐπιλανθάνομαι' },
+      'fut.act': { '1sg': 'ἐπιλήσομαι' },
+      'aor.act': { '1sg': 'ἐπελαθόμην' },
+      'perf.mp': { '1sg': 'ἐπιλέλησμαι' }
+    },
+  },
+  pp_epistamai: {
+    kind: 'verb', label: 'ἐπίσταμαι (understand)', literal: true,
+    subtitle: 'ἐπίσταμαι, ἐπιστήσομαι, ἠπιστήθην — understand',
+    example: { lemma: 'ἐπίσταμαι', class: 'pp_epistamai', meaning: 'understand' },
+    categories: ['pres.act', 'fut.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἐπίσταμαι' },
+      'fut.act': { '1sg': 'ἐπιστήσομαι' },
+      'aor.pass': { '1sg': 'ἠπιστήθην' }
+    },
+  },
+  pp_epitrepo: {
+    kind: 'verb', label: 'ἐπιτρέπω (entrust)', literal: true,
+    subtitle: 'ἐπιτρέπω, ἐπιτρέψω, ἐπέτρεψα, ἐπιτέτραφα, ἐπιτέτραμμαι, ἐπετράπην — entrust',
+    example: { lemma: 'ἐπιτρέπω', class: 'pp_epitrepo', meaning: 'entrust' },
+    // LSJ-checked 2026-08-30, review closed. The source row was garbled (a
+    // parenthesis spanning two mis-split slots) and the reconstruction had
+    // picked ἐπιτέτροφα for the perfect. LSJ s.v. ἐπιτρέπω gives exactly one
+    // perfect active -- "pf. -τέτρα^φα (Plb. 30.6.6)" -- and ἐπιτέτροφα does
+    // not appear in the entry at all, so the perfect is ἐπιτέτραφα here.
+    // (τέτροφα IS a perfect of the simplex τρέπω, which is presumably how the
+    // reconstruction reached for it; it is not attested for this compound.)
+    // Kept rather than emptied even though Polybius is post-classical, because
+    // Mastronarde prints a perfect for this verb; drop the slot if the
+    // Attic-prose-only rule is ever applied strictly. The other two slots are
+    // confirmed: perf.mp ἐπιτέτραμμαι (Th. 1.126 ἐπιτετραμμένοι) and aor. pass.
+    // ἐπετράπην ("aor. 2 -ετράπην, Th. 5.31"), both squarely Attic prose;
+    // ἐπετρέφθην is LSJ's aor. 1 passive (Antipho) and is deliberately not
+    // listed as an alternate.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἐπιτρέπω' },
+      'fut.act': { '1sg': 'ἐπιτρέψω' },
+      'aor.act': { '1sg': 'ἐπέτρεψα' },
+      'perf.act': { '1sg': 'ἐπιτέτραφα' },
+      'perf.mp': { '1sg': 'ἐπιτέτραμμαι' },
+      'aor.pass': { '1sg': 'ἐπετράπην' }
+    },
+  },
+  pp_hepomai: {
+    kind: 'verb', label: 'ἕπομαι (follow)', literal: true,
+    subtitle: 'ἕπομαι, ἕψομαι, ἑσπόμην — follow',
+    example: { lemma: 'ἕπομαι', class: 'pp_hepomai', meaning: 'follow' },
+    // Impf. εἱπόμην; aor.2 moods without the augment vowel (σπέσθαι, σπόμενος, imper. σποῦ). No perfect. LSJ: replaced by ἀκολουθέω in later Greek.
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἕπομαι' },
+      'fut.act': { '1sg': 'ἕψομαι' },
+      'aor.act': { '1sg': 'ἑσπόμην' }
+    },
+  },
+  pp_ergazomai: {
+    kind: 'verb', label: 'ἐργάζομαι (work)', literal: true,
+    subtitle: 'ἐργάζομαι, ἐργάσομαι, ἠργασάμην, εἴργασμαι, ἠργάσθην — work',
+    example: { lemma: 'ἐργάζομαι', class: 'pp_ergazomai', meaning: 'work' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἐργάζομαι' },
+      'fut.act': { '1sg': 'ἐργάσομαι' },
+      'aor.act': { '1sg': 'ἠργασάμην' },
+      'perf.mp': { '1sg': 'εἴργασμαι' },
+      'aor.pass': { '1sg': 'ἠργάσθην' }
+    },
+  },
+  pp_erchomai: {
+    kind: 'verb', label: 'ἔρχομαι (come, go)', literal: true,
+    subtitle: 'ἔρχομαι, ἐλεύσομαι, ἦλθον, ἐλήλυθα — come, go',
+    example: { lemma: 'ἔρχομαι', class: 'pp_erchomai', meaning: 'come, go' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἔρχομαι' },
+      'fut.act': { '1sg': 'ἐλεύσομαι' },
+      'aor.act': { '1sg': 'ἦλθον' },
+      'perf.act': { '1sg': 'ἐλήλυθα' }
+    },
+  },
+  pp_esthio: {
+    kind: 'verb', label: 'ἐσθίω (eat)', literal: true,
+    subtitle: 'ἐσθίω, ἔδομαι, ἔφαγον, ἐδήδοκα, ἠδέσθην — eat',
+    example: { lemma: 'ἐσθίω', class: 'pp_esthio', meaning: 'eat' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἐσθίω' },
+      'fut.act': { '1sg': 'ἔδομαι' },
+      'aor.act': { '1sg': 'ἔφαγον' },
+      'perf.act': { '1sg': 'ἐδήδοκα' },
+      'aor.pass': { '1sg': 'ἠδέσθην' }
+    },
+  },
+  pp_heurisko: {
+    kind: 'verb', label: 'εὑρίσκω (find, invent)', literal: true,
+    subtitle: 'εὑρίσκω, εὑρήσω, ηὗρον, ηὕρηκα, ηὕρημαι, ηὑρέθην — find, invent',
+    example: { lemma: 'εὑρίσκω', class: 'pp_heurisko', meaning: 'find, invent' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'εὑρίσκω' },
+      'fut.act': { '1sg': 'εὑρήσω' },
+      'aor.act': { '1sg': 'ηὗρον' },
+      'perf.act': { '1sg': 'ηὕρηκα' },
+      'perf.mp': { '1sg': 'ηὕρημαι' },
+      'aor.pass': { '1sg': 'ηὑρέθην' }
+    },
+  },
+  pp_euchomai: {
+    kind: 'verb', label: 'εὔχομαι (pray)', literal: true,
+    subtitle: 'εὔχομαι, εὔξομαι, ηὐξάμην, ηὖγμαι — pray',
+    example: { lemma: 'εὔχομαι', class: 'pp_euchomai', meaning: 'pray' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'εὔχομαι' },
+      'fut.act': { '1sg': 'εὔξομαι' },
+      'aor.act': { '1sg': 'ηὐξάμην' },
+      'perf.mp': { '1sg': 'ηὖγμαι' }
+    },
+  },
+  pp_echo: {
+    kind: 'verb', label: 'ἔχω (have)', literal: true,
+    subtitle: 'ἔχω, ἕξω, ἔσχον, ἔσχηκα, ἐσχέθην — have',
+    example: { lemma: 'ἔχω', class: 'pp_echo', meaning: 'have' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἔχω' },
+      'fut.act': { '1sg': ['ἕξω', 'σχήσω'] },
+      'aor.act': { '1sg': 'ἔσχον' },
+      'perf.act': { '1sg': 'ἔσχηκα' },
+      'aor.pass': { '1sg': 'ἐσχέθην' }
+    },
+  },
+  pp_zao: {
+    kind: 'verb', label: 'ζάω (live)', literal: true,
+    subtitle: 'ζῶ, ζήσω, ἔζησα — live',
+    example: { lemma: 'ζάω', class: 'pp_zao', meaning: 'live' },
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ζῶ' },
+      'fut.act': { '1sg': 'ζήσω' },
+      'aor.act': { '1sg': 'ἔζησα' }
+    },
+  },
+  pp_zeugnymi: {
+    kind: 'verb', label: 'ζεύγνυμι (yoke)', literal: true,
+    subtitle: 'ζεύγνυμι, ζεύξω, ἔζευξα, ἔζευγμαι, ἐζύγην — yoke',
+    example: { lemma: 'ζεύγνυμι', class: 'pp_zeugnymi', meaning: 'yoke' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ζεύγνυμι' },
+      'fut.act': { '1sg': 'ζεύξω' },
+      'aor.act': { '1sg': 'ἔζευξα' },
+      'perf.mp': { '1sg': 'ἔζευγμαι' },
+      'aor.pass': { '1sg': ['ἐζύγην', 'ἐζεύχθην'] }
+    },
+  },
+  pp_zeloo: {
+    kind: 'verb', label: 'ζηλόω (envy)', literal: true,
+    subtitle: 'ζηλόω, ζηλώσω, ἐζήλωσα, ἐζήλωκα, ἐζήλωμαι, ἐζηλώθην — envy',
+    example: { lemma: 'ζηλόω', class: 'pp_zeloo', meaning: 'envy' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ζηλόω' },
+      'fut.act': { '1sg': 'ζηλώσω' },
+      'aor.act': { '1sg': 'ἐζήλωσα' },
+      'perf.act': { '1sg': 'ἐζήλωκα' },
+      'perf.mp': { '1sg': 'ἐζήλωμαι' },
+      'aor.pass': { '1sg': 'ἐζηλώθην' }
+    },
+  },
+  pp_zeteo: {
+    kind: 'verb', label: 'ζητέω (seek)', literal: true,
+    subtitle: 'ζητέω, ζητήσω, ἐζήτησα, ἐζήτηκα, ἐζήτημαι, ἐζητήθην — seek',
+    example: { lemma: 'ζητέω', class: 'pp_zeteo', meaning: 'seek' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ζητέω' },
+      'fut.act': { '1sg': 'ζητήσω' },
+      'aor.act': { '1sg': 'ἐζήτησα' },
+      'perf.act': { '1sg': 'ἐζήτηκα' },
+      'perf.mp': { '1sg': 'ἐζήτημαι' },
+      'aor.pass': { '1sg': 'ἐζητήθην' }
+    },
+  },
+  pp_hegeomai: {
+    kind: 'verb', label: 'ἡγέομαι (lead (+ dat.), consider)', literal: true,
+    subtitle: 'ἡγέομαι, ἡγήσομαι, ἡγησάμην, ἥγημαι — lead (+ dat.), consider',
+    example: { lemma: 'ἡγέομαι', class: 'pp_hegeomai', meaning: 'lead (+ dat.), consider' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἡγέομαι' },
+      'fut.act': { '1sg': 'ἡγήσομαι' },
+      'aor.act': { '1sg': 'ἡγησάμην' },
+      'perf.mp': { '1sg': 'ἥγημαι' }
+    },
+  },
+  pp_hedomai: {
+    kind: 'verb', label: 'ἥδομαι (enjoy, take pleasure, rejoice)', literal: true,
+    subtitle: 'ἥδομαι, ἡσθήσομαι, ἥσθην — enjoy, take pleasure, rejoice',
+    example: { lemma: 'ἥδομαι', class: 'pp_hedomai', meaning: 'enjoy, take pleasure, rejoice' },
+    categories: ['pres.act', 'fut.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἥδομαι' },
+      'fut.act': { '1sg': 'ἡσθήσομαι' },
+      'aor.pass': { '1sg': 'ἥσθην' }
+    },
+  },
+  pp_heko: {
+    kind: 'verb', label: 'ἥκω (have come)', literal: true,
+    subtitle: 'ἥκω, ἥξω — have come',
+    example: { lemma: 'ἥκω', class: 'pp_heko', meaning: 'have come' },
+    categories: ['pres.act', 'fut.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἥκω' },
+      'fut.act': { '1sg': 'ἥξω' }
+    },
+  },
+  pp_hesychazo: {
+    kind: 'verb', label: 'ἡσυχάζω (be quiet)', literal: true,
+    subtitle: 'ἡσυχάζω, ἡσυχάσω, ἡσύχασα — be quiet',
+    example: { lemma: 'ἡσυχάζω', class: 'pp_hesychazo', meaning: 'be quiet' },
+    // Intransitive; fut. -άσω (Th.; -άσομαι Luc.); augment invisible on η-.
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἡσυχάζω' },
+      'fut.act': { '1sg': 'ἡσυχάσω' },
+      'aor.act': { '1sg': 'ἡσύχασα' }
+    },
+  },
+  pp_hettaomai: {
+    kind: 'verb', label: 'ἡττάομαι (be defeated)', literal: true,
+    subtitle: 'ἡττάομαι, ἡττήσομαι, ἥττημαι, ἡττήθην — be defeated',
+    example: { lemma: 'ἡττάομαι', class: 'pp_hettaomai', meaning: 'be defeated' },
+    categories: ['pres.act', 'fut.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἡττάομαι' },
+      'fut.act': { '1sg': 'ἡττήσομαι' },
+      'perf.mp': { '1sg': 'ἥττημαι' },
+      'aor.pass': { '1sg': 'ἡττήθην' }
+    },
+  },
+  pp_thapto: {
+    kind: 'verb', label: 'θάπτω (bury)', literal: true,
+    subtitle: 'θάπτω, θάψω, ἔθαψα, τέθαμμαι, ἐτάφην — bury',
+    example: { lemma: 'θάπτω', class: 'pp_thapto', meaning: 'bury' },
+    // No perfect active. Aor.2 pass. ἐτάφην always in Attic (ἐθάφθην Ion./rare); fut. pass. ταφήσομαι and τεθάψομαι. Grassmann pair θ-/τ- in τέθαμμαι/ἐτάφην.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'θάπτω' },
+      'fut.act': { '1sg': 'θάψω' },
+      'aor.act': { '1sg': 'ἔθαψα' },
+      'perf.mp': { '1sg': 'τέθαμμαι' },
+      'aor.pass': { '1sg': 'ἐτάφην' }
+    },
+  },
+  pp_tharseo: {
+    kind: 'verb', label: 'θαρσέω (be encouraged)', literal: true,
+    subtitle: 'θαρσέω, θαρσήσω, ἐθάρσησα, τεθάρσηκα — be encouraged',
+    example: { lemma: 'θαρσέω', class: 'pp_tharseo', meaning: 'be encouraged' },
+    // Attic spells θαρρέω (θαρρήσω, ἐθάρρησα, τεθάρρηκα) — same -ρσ-/-ρρ- pair as the deck's -ττ-/-σσ- words. Pf. τεθάρσηκα already in Homer, τεθαρρηκώς Plu.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'θαρσέω' },
+      'fut.act': { '1sg': 'θαρσήσω' },
+      'aor.act': { '1sg': 'ἐθάρσησα' },
+      'perf.act': { '1sg': 'τεθάρσηκα' }
+    },
+  },
+  pp_thaumazo: {
+    kind: 'verb', label: 'θαυμάζω (wonder (at))', literal: true,
+    subtitle: 'θαυμάζω, θαυμάσομαι, ἐθαύμασα, τεθαύμακα, τεθαύμασμαι, ἐθαυμάσθην — wonder (at)',
+    example: { lemma: 'θαυμάζω', class: 'pp_thaumazo', meaning: 'wonder (at)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'θαυμάζω' },
+      'fut.act': { '1sg': 'θαυμάσομαι' },
+      'aor.act': { '1sg': 'ἐθαύμασα' },
+      'perf.act': { '1sg': 'τεθαύμακα' },
+      'perf.mp': { '1sg': 'τεθαύμασμαι' },
+      'aor.pass': { '1sg': 'ἐθαυμάσθην' }
+    },
+  },
+  pp_theaomai: {
+    kind: 'verb', label: 'θεάομαι (look at)', literal: true,
+    subtitle: 'θεάομαι, θεάσομαι, ἐθεασάμην, τεθέαμαι — look at',
+    example: { lemma: 'θεάομαι', class: 'pp_theaomai', meaning: 'look at' },
+    // Deponent; -ᾱ- kept after ε (θεάσομαι, not -ήσομαι). Pf. τεθέαμαι X. Aor. pass. ἐθεάθην late only.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'θεάομαι' },
+      'fut.act': { '1sg': 'θεάσομαι' },
+      'aor.act': { '1sg': 'ἐθεασάμην' },
+      'perf.mp': { '1sg': 'τεθέαμαι' }
+    },
+  },
+  pp_therapeuo: {
+    kind: 'verb', label: 'θεραπεύω (attend (as servant))', literal: true,
+    subtitle: 'θεραπεύω, θεραπεύσω, ἐθεράπευσα, τεθεράπευμαι, ἐθεραπεύθην — attend (as servant)',
+    example: { lemma: 'θεραπεύω', class: 'pp_therapeuo', meaning: 'attend (as servant)' },
+    // Regular -εύω; fut. mid. θεραπεύσομαι in passive sense (Antipho, Pl.). Pf. act. τεθεράπευκα not securely classical.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'θεραπεύω' },
+      'fut.act': { '1sg': 'θεραπεύσω' },
+      'aor.act': { '1sg': 'ἐθεράπευσα' },
+      'perf.mp': { '1sg': 'τεθεράπευμαι' },
+      'aor.pass': { '1sg': 'ἐθεραπεύθην' }
+    },
+  },
+  pp_theoreo: {
+    kind: 'verb', label: 'θεωρέω (look at)', literal: true,
+    subtitle: 'θεωρέω, θεωρήσω, ἐθεώρησα, τεθεώρηκα, τεθεώρημαι — look at',
+    example: { lemma: 'θεωρέω', class: 'pp_theoreo', meaning: 'look at' },
+    // Regular -έω; pf. τεθεώρηκα Ar. V. 1188; pf. pass. τεθεώρηται Arist. Aor. pass. classical evidence thin (fut. -ηθήσομαι only S.E.).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'θεωρέω' },
+      'fut.act': { '1sg': 'θεωρήσω' },
+      'aor.act': { '1sg': 'ἐθεώρησα' },
+      'perf.act': { '1sg': 'τεθεώρηκα' },
+      'perf.mp': { '1sg': 'τεθεώρημαι' }
+    },
+  },
+  pp_therao: {
+    kind: 'verb', label: 'θηράω (hunt)', literal: true,
+    subtitle: 'θηράω, θηράσομαι, ἐθήρασα, τεθήρακα, ἐθηράθην — hunt',
+    example: { lemma: 'θηράω', class: 'pp_therao', meaning: 'hunt' },
+    // -ᾱ- after ρ throughout (θηράσω/ἐθήρασα). Moeris: the true Attic future is middle θηράσομαι. Aor. pass. ἐθηράθην A., E., X.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'θηράω' },
+      'fut.act': { '1sg': 'θηράσομαι' },
+      'aor.act': { '1sg': 'ἐθήρασα' },
+      'perf.act': { '1sg': 'τεθήρακα' },
+      'aor.pass': { '1sg': 'ἐθηράθην' }
+    },
+  },
+  pp_thereuo: {
+    kind: 'verb', label: 'θηρεύω (hunt)', literal: true,
+    subtitle: 'θηρεύω, θηρεύσω, ἐθήρευσα, τεθήρευκα, τεθήρευμαι, ἐθηρεύθην — hunt',
+    example: { lemma: 'θηρεύω', class: 'pp_thereuo', meaning: 'hunt' },
+    // All attested (pf. act. and aor. pass. in Plato/Hdt.). Tragedy prefers θηράω where metre allows.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'θηρεύω' },
+      'fut.act': { '1sg': 'θηρεύσω' },
+      'aor.act': { '1sg': 'ἐθήρευσα' },
+      'perf.act': { '1sg': 'τεθήρευκα' },
+      'perf.mp': { '1sg': 'τεθήρευμαι' },
+      'aor.pass': { '1sg': 'ἐθηρεύθην' }
+    },
+  },
+  pp_threneo: {
+    kind: 'verb', label: 'θρηνέω (lament, mourn)', literal: true,
+    subtitle: 'θρηνέω, θρηνήσω, ἐθρήνησα — lament, mourn',
+    example: { lemma: 'θρηνέω', class: 'pp_threneo', meaning: 'lament, mourn' },
+    // Regular -έω; pf. pass. only impersonal (ἅλις τεθρήνηται S. Ph. 1401).
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'θρηνέω' },
+      'fut.act': { '1sg': 'θρηνήσω' },
+      'aor.act': { '1sg': 'ἐθρήνησα' }
+    },
+  },
+  pp_thyo: {
+    kind: 'verb', label: 'θύω (sacrifice)', literal: true,
+    subtitle: 'θύω, θύσω, ἔθυσα, τέθυκα, τέθυμαι, ἐτύθην — sacrifice',
+    example: { lemma: 'θύω', class: 'pp_thyo', meaning: 'sacrifice' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'θύω' },
+      'fut.act': { '1sg': 'θύσω' },
+      'aor.act': { '1sg': 'ἔθυσα' },
+      'perf.act': { '1sg': 'τέθυκα' },
+      'perf.mp': { '1sg': 'τέθυμαι' },
+      'aor.pass': { '1sg': 'ἐτύθην' }
+    },
+  },
+  pp_hiketeuo: {
+    kind: 'verb', label: 'ἱκετεύω (beseech)', literal: true,
+    subtitle: 'ἱκετεύω, ἱκετεύσω, ἱκέτευσα — beseech',
+    example: { lemma: 'ἱκετεύω', class: 'pp_hiketeuo', meaning: 'beseech' },
+    // Regular -εύω; the augment lengthens ἱ- (ῑ) without changing the spelling.
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ἱκετεύω' },
+      'fut.act': { '1sg': 'ἱκετεύσω' },
+      'aor.act': { '1sg': 'ἱκέτευσα' }
+    },
+  },
+  pp_kathairo: {
+    kind: 'verb', label: 'καθαίρω (cleanse, purify)', literal: true,
+    subtitle: 'καθαίρω, καθαρῶ, ἐκάθηρα, κεκάθαρμαι, ἐκαθάρθην — cleanse, purify',
+    example: { lemma: 'καθαίρω', class: 'pp_kathairo', meaning: 'cleanse, purify' },
+    // Liquid stem: fut. καθαρῶ, Attic aor. ἐκάθηρα (ἐκάθᾱρα later); not a κατα- compound — augments at the front. Pf. pass. κεκάθαρμαι Pl. Phd.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'καθαίρω' },
+      'fut.act': { '1sg': 'καθαρῶ' },
+      'aor.act': { '1sg': 'ἐκάθηρα' },
+      'perf.mp': { '1sg': 'κεκάθαρμαι' },
+      'aor.pass': { '1sg': 'ἐκαθάρθην' }
+    },
+  },
+  pp_kathezomai: {
+    kind: 'verb', label: 'καθέζομαι (sit)', literal: true,
+    subtitle: 'καθέζομαι, καθεδοῦμαι — sit',
+    example: { lemma: 'καθέζομαι', class: 'pp_kathezomai', meaning: 'sit' },
+    // Fut. καθεδοῦμαι (Ar., Pl., D.). No classical aorist of its own: the impf. ἐκαθεζόμην does aorist duty, or Attic uses ἐκαθισάμην/ἐκάθισα from καθίζω. καθεσθείς late.
+    categories: ['pres.act', 'fut.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'καθέζομαι' },
+      'fut.act': { '1sg': 'καθεδοῦμαι' }
+    },
+  },
+  pp_katheudo: {
+    kind: 'verb', label: 'καθεύδω (sleep)', literal: true,
+    subtitle: 'καθεύδω, καθευδήσω — sleep',
+    example: { lemma: 'καθεύδω', class: 'pp_katheudo', meaning: 'sleep' },
+    // No Attic aorist (ἐκαθεύδησα only Luc.): 'slept' is the imperfect — ἐκάθευδον or καθηῦδον, both Attic. Fut. καθευδήσω Ar., X.
+    categories: ['pres.act', 'fut.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'καθεύδω' },
+      'fut.act': { '1sg': 'καθευδήσω' }
+    },
+  },
+  pp_kathemai: {
+    kind: 'verb', label: 'κάθημαι (sit)', literal: true,
+    subtitle: 'κάθημαι — sit',
+    example: { lemma: 'κάθημαι', class: 'pp_kathemai', meaning: 'sit' },
+    // Athematic present-only verb ('sit', perfect-shaped like οἶδα): impf. ἐκαθήμην or unaugmented-looking καθῆστο/καθῆτο (D.). No future/aorist — supplied by καθέζομαι (fut. καθεδοῦμαι) and καθίζω (ἐκάθισα).
+    categories: ['pres.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κάθημαι' }
+    },
+  },
+  pp_kaio: {
+    kind: 'verb', label: 'καίω (burn)', literal: true,
+    subtitle: 'καίω, καύσω, ἔκαυσα, κέκαυμαι, ἐκαύθην — burn',
+    example: { lemma: 'καίω', class: 'pp_kaio', meaning: 'burn' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': ['καίω', 'κάω'] },
+      'fut.act': { '1sg': 'καύσω' },
+      'aor.act': { '1sg': 'ἔκαυσα' },
+      'perf.mp': { '1sg': 'κέκαυμαι' },
+      'aor.pass': { '1sg': 'ἐκαύθην' }
+    },
+  },
+  pp_kaleo: {
+    kind: 'verb', label: 'καλέω (call)', literal: true,
+    subtitle: 'καλέω, καλῶ, ἐκάλεσα, κέκληκα, κέκλημαι, ἐκλήθην — call',
+    example: { lemma: 'καλέω', class: 'pp_kaleo', meaning: 'call' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'καλέω' },
+      'fut.act': { '1sg': 'καλῶ' },
+      'aor.act': { '1sg': 'ἐκάλεσα' },
+      'perf.act': { '1sg': 'κέκληκα' },
+      'perf.mp': { '1sg': 'κέκλημαι' },
+      'aor.pass': { '1sg': 'ἐκλήθην' }
+    },
+  },
+  pp_kamno: {
+    kind: 'verb', label: 'κάμνω (toil)', literal: true,
+    subtitle: 'κάμνω, καμοῦμαι, ἔκαμον, κέκμηκα — toil',
+    example: { lemma: 'κάμνω', class: 'pp_kamno', meaning: 'toil' },
+    // Contract future καμοῦμαι; aor.2 ἔκαμον; pf. κέκμηκα 'am weary' (οἱ κεκμηκότες = the dead).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κάμνω' },
+      'fut.act': { '1sg': 'καμοῦμαι' },
+      'aor.act': { '1sg': 'ἔκαμον' },
+      'perf.act': { '1sg': 'κέκμηκα' }
+    },
+  },
+  pp_kartereo: {
+    kind: 'verb', label: 'καρτερέω (endure)', literal: true,
+    subtitle: 'καρτερέω, καρτερήσω, ἐκαρτέρησα — endure',
+    example: { lemma: 'καρτερέω', class: 'pp_kartereo', meaning: 'endure' },
+    // Regular -έω (LSJ header lists no forms); pf. pass. only impersonal κεκαρτέρηται (E. Hipp.).
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'καρτερέω' },
+      'fut.act': { '1sg': 'καρτερήσω' },
+      'aor.act': { '1sg': 'ἐκαρτέρησα' }
+    },
+  },
+  pp_katagignosko: {
+    kind: 'verb', label: 'καταγιγνώσκω (accuse, condemn (+ gen. of pers., acc. of thing))', literal: true,
+    subtitle: 'καταγιγνώσκω, καταγνώσομαι, κατέγνων, κατέγνωκα, κατέγνωσμαι, κατεγνώσθην — accuse, condemn (+ gen. of pers., acc. of thing)',
+    example: { lemma: 'καταγιγνώσκω', class: 'pp_katagignosko', meaning: 'accuse, condemn (+ gen. of pers., acc. of thing)' },
+    // γιγνώσκω pattern with κατα-: fut. mid. καταγνώσομαι (Pl.); κατεγνωσμένος 'condemned/despised'. (The row whose missing sigma was the shipped 2026.08.26.1 typo fix.)
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'καταγιγνώσκω' },
+      'fut.act': { '1sg': 'καταγνώσομαι' },
+      'aor.act': { '1sg': 'κατέγνων' },
+      'perf.act': { '1sg': 'κατέγνωκα' },
+      'perf.mp': { '1sg': 'κατέγνωσμαι' },
+      'aor.pass': { '1sg': 'κατεγνώσθην' }
+    },
+  },
+  pp_katakrinomai: {
+    kind: 'verb', label: 'κατακρίνομαι (condemn (+ acc. of pers.))', literal: true,
+    subtitle: 'κατακρίνομαι, κατακριθήσομαι, κατακέκριμαι, κατεκρίθην — condemn (+ acc. of pers.)',
+    example: { lemma: 'κατακρίνομαι', class: 'pp_katakrinomai', meaning: 'condemn (+ acc. of pers.)' },
+    // Deck lemma is the passive 'be condemned': aor. κατεκρίθην (X. Ap.), plpf. κατεκέκριτο (Hdt.). Active κατακρίνω follows κρίνω (-κρινῶ, -έκρινα, -κέκρικα).
+    categories: ['pres.act', 'fut.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κατακρίνομαι' },
+      'fut.act': { '1sg': 'κατακριθήσομαι' },
+      'perf.mp': { '1sg': 'κατακέκριμαι' },
+      'aor.pass': { '1sg': 'κατεκρίθην' }
+    },
+  },
+  pp_katastrephomai: {
+    kind: 'verb', label: 'καταστρέφομαι (subdue)', literal: true,
+    subtitle: 'καταστρέφομαι, καταστρέψομαι, κατεστρεψάμην, κατέστραμμαι, κατεστράφην — subdue',
+    example: { lemma: 'καταστρέφομαι', class: 'pp_katastrephomai', meaning: 'subdue' },
+    // Middle 'subdue' (Hdt., Th., D.): aor. κατεστρεψάμην; pf. κατέστραμμαι in middle sense too (D. 4.6). Aor.2 pass. κατεστράφην 'was subdued'.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'καταστρέφομαι' },
+      'fut.act': { '1sg': 'καταστρέψομαι' },
+      'aor.act': { '1sg': 'κατεστρεψάμην' },
+      'perf.mp': { '1sg': 'κατέστραμμαι' },
+      'aor.pass': { '1sg': 'κατεστράφην' }
+    },
+  },
+  pp_katecho: {
+    kind: 'verb', label: 'κατέχω (restrain, hold back)', literal: true,
+    subtitle: 'κατέχω, καθέξω, κατέσχον, κατέσχηκα — restrain, hold back',
+    example: { lemma: 'κατέχω', class: 'pp_katecho', meaning: 'restrain, hold back' },
+    // Double future like ἔχω: καθέξω (duration) / κατασχήσω (momentary). Aor. κατέσχον, imper. κατάσχες.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κατέχω' },
+      'fut.act': { '1sg': 'καθέξω' },
+      'aor.act': { '1sg': 'κατέσχον' },
+      'perf.act': { '1sg': 'κατέσχηκα' }
+    },
+  },
+  pp_kategoreo: {
+    kind: 'verb', label: 'κατηγορέω (accuse (+ gen. of pers., acc. of thing))', literal: true,
+    subtitle: 'κατηγορέω, κατηγορήσω, κατηγόρησα, κατηγόρηκα, κατηγόρημαι, κατηγορήθην — accuse (+ gen. of pers., acc. of thing)',
+    example: { lemma: 'κατηγορέω', class: 'pp_kategoreo', meaning: 'accuse (+ gen. of pers., acc. of thing)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κατηγορέω' },
+      'fut.act': { '1sg': 'κατηγορήσω' },
+      'aor.act': { '1sg': 'κατηγόρησα' },
+      'perf.act': { '1sg': 'κατηγόρηκα' },
+      'perf.mp': { '1sg': 'κατηγόρημαι' },
+      'aor.pass': { '1sg': 'κατηγορήθην' }
+    },
+  },
+  pp_keleuo: {
+    kind: 'verb', label: 'κελεύω (order)', literal: true,
+    subtitle: 'κελεύω, κελεύσω, ἐκέλευσα, κεκέλευκα, κεκέλευσμαι, ἐκελεύσθην — order',
+    example: { lemma: 'κελεύω', class: 'pp_keleuo', meaning: 'order' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κελεύω' },
+      'fut.act': { '1sg': 'κελεύσω' },
+      'aor.act': { '1sg': 'ἐκέλευσα' },
+      'perf.act': { '1sg': 'κεκέλευκα' },
+      'perf.mp': { '1sg': 'κεκέλευσμαι' },
+      'aor.pass': { '1sg': 'ἐκελεύσθην' }
+    },
+  },
+  pp_kerytto: {
+    kind: 'verb', label: 'κηρύττω (announce)', literal: true,
+    subtitle: 'κηρύττω, κηρύξω, ἐκήρυξα, κεκήρυχα, κεκήρυγμαι, ἐκηρύχθην — announce',
+    example: { lemma: 'κηρύττω', class: 'pp_kerytto', meaning: 'announce' },
+    // All six classical (κηρυχθῆναι Lys. 19.63). LSJ lemmatizes κηρύσσω — the deck now carries both spellings on the card.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κηρύττω' },
+      'fut.act': { '1sg': 'κηρύξω' },
+      'aor.act': { '1sg': 'ἐκήρυξα' },
+      'perf.act': { '1sg': 'κεκήρυχα' },
+      'perf.mp': { '1sg': 'κεκήρυγμαι' },
+      'aor.pass': { '1sg': 'ἐκηρύχθην' }
+    },
+  },
+  pp_kineo: {
+    kind: 'verb', label: 'κινέω (move)', literal: true,
+    subtitle: 'κινέω, κινήσω, ἐκίνησα, κεκίνημαι, ἐκινήθην — move',
+    example: { lemma: 'κινέω', class: 'pp_kineo', meaning: 'move' },
+    // Regular -έω; fut. mid. κινήσομαι in passive sense (Pl., D.) beside κινηθήσομαι. Pf. act. not securely classical.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κινέω' },
+      'fut.act': { '1sg': 'κινήσω' },
+      'aor.act': { '1sg': 'ἐκίνησα' },
+      'perf.mp': { '1sg': 'κεκίνημαι' },
+      'aor.pass': { '1sg': 'ἐκινήθην' }
+    },
+  },
+  pp_klaio: {
+    kind: 'verb', label: 'κλαίω (weep, cry)', literal: true,
+    subtitle: 'κλαίω, κλαύσομαι, ἔκλαυσα, κέκλαυμαι — weep, cry',
+    example: { lemma: 'κλαίω', class: 'pp_klaio', meaning: 'weep, cry' },
+    // Old Att. κλάω. Fut. mid. κλαύσομαι (also κλαήσω D.); 'κλαύσει' = colloquial 'you'll be sorry'. Pf. pass. κέκλαυμαι A., S.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κλαίω' },
+      'fut.act': { '1sg': 'κλαύσομαι' },
+      'aor.act': { '1sg': 'ἔκλαυσα' },
+      'perf.mp': { '1sg': 'κέκλαυμαι' }
+    },
+  },
+  pp_kleio: {
+    kind: 'verb', label: 'κλείω (shut, close)', literal: true,
+    subtitle: 'κλείω, κλείσω, ἔκλεισα, κέκλεικα, κέκλειμαι, ἐκλείσθην — shut, close',
+    example: { lemma: 'κλείω', class: 'pp_kleio', meaning: 'shut, close' },
+    // Old Attic spelling κλῄω (ἔκλῃσα Th., E.; κέκλῃμαι); κλείω is the later standard. Ion. κληΐω.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κλείω' },
+      'fut.act': { '1sg': 'κλείσω' },
+      'aor.act': { '1sg': 'ἔκλεισα' },
+      'perf.act': { '1sg': 'κέκλεικα' },
+      'perf.mp': { '1sg': 'κέκλειμαι' },
+      'aor.pass': { '1sg': 'ἐκλείσθην' }
+    },
+  },
+  pp_klepto: {
+    kind: 'verb', label: 'κλέπτω (steal)', literal: true,
+    subtitle: 'κλέπτω, κλέψω, ἔκλεψα, κέκλοφα, κέκλεμμαι, ἐκλάπην — steal',
+    example: { lemma: 'κλέπτω', class: 'pp_klepto', meaning: 'steal' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κλέπτω' },
+      'fut.act': { '1sg': 'κλέψω' },
+      'aor.act': { '1sg': 'ἔκλεψα' },
+      'perf.act': { '1sg': 'κέκλοφα' },
+      'perf.mp': { '1sg': 'κέκλεμμαι' },
+      'aor.pass': { '1sg': 'ἐκλάπην' }
+    },
+  },
+  pp_klino: {
+    kind: 'verb', label: 'κλίνω (bend, incline, make to lean)', literal: true,
+    subtitle: 'κλίνω, κλινῶ, ἔκλινα, κέκλιμαι, ἐκλίθην — bend, incline, make to lean',
+    example: { lemma: 'κλίνω', class: 'pp_klino', meaning: 'bend, incline, make to lean' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κλίνω' },
+      'fut.act': { '1sg': 'κλινῶ' },
+      'aor.act': { '1sg': 'ἔκλινα' },
+      'perf.mp': { '1sg': 'κέκλιμαι' },
+      'aor.pass': { '1sg': 'ἐκλίθην' }
+    },
+  },
+  pp_klyo: {
+    kind: 'verb', label: 'κλύω (hear)', literal: true,
+    subtitle: 'κλύω — hear',
+    example: { lemma: 'κλύω', class: 'pp_klyo', meaning: 'hear' },
+    // Poetic verb: pres. + impf. ἔκλυον (with aorist force), imper. κλῦθι/κλῦτε. Prose uses ἀκούω.
+    categories: ['pres.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κλύω' }
+    },
+  },
+  pp_kolazo: {
+    kind: 'verb', label: 'κολάζω (punish)', literal: true,
+    subtitle: 'κολάζω, κολάσω, ἐκόλασα, κεκόλασμαι, ἐκολάσθην — punish',
+    example: { lemma: 'κολάζω', class: 'pp_kolazo', meaning: 'punish' },
+    // fut. κολάσω (not -ιῶ); mid. fut. κολάσομαι/Ar. contr. κολῶμαι 'have someone punished'. Fut. pass. κολασθήσομαι Th.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κολάζω' },
+      'fut.act': { '1sg': 'κολάσω' },
+      'aor.act': { '1sg': 'ἐκόλασα' },
+      'perf.mp': { '1sg': 'κεκόλασμαι' },
+      'aor.pass': { '1sg': 'ἐκολάσθην' }
+    },
+  },
+  pp_komizo: {
+    kind: 'verb', label: 'κομίζω (convey, carry, bring)', literal: true,
+    subtitle: 'κομίζω, κομιῶ, ἐκόμισα, κεκόμικα, κεκόμισμαι, ἐκομίσθην — convey, carry, bring',
+    example: { lemma: 'κομίζω', class: 'pp_komizo', meaning: 'convey, carry, bring' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κομίζω' },
+      'fut.act': { '1sg': 'κομιῶ' },
+      'aor.act': { '1sg': 'ἐκόμισα' },
+      'perf.act': { '1sg': 'κεκόμικα' },
+      'perf.mp': { '1sg': 'κεκόμισμαι' },
+      'aor.pass': { '1sg': 'ἐκομίσθην' }
+    },
+  },
+  pp_kopto: {
+    kind: 'verb', label: 'κόπτω (cut)', literal: true,
+    subtitle: 'κόπτω, κόψω, ἔκοψα, κέκομμαι — cut',
+    example: { lemma: 'κόπτω', class: 'pp_kopto', meaning: 'cut' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κόπτω' },
+      'fut.act': { '1sg': 'κόψω' },
+      'aor.act': { '1sg': 'ἔκοψα' },
+      'perf.mp': { '1sg': 'κέκομμαι' }
+    },
+  },
+  pp_kosmeo: {
+    kind: 'verb', label: 'κοσμέω (adorn, arrange)', literal: true,
+    subtitle: 'κοσμέω, κοσμήσω, ἐκόσμησα, κεκόσμημαι, ἐκοσμήθην — adorn, arrange',
+    example: { lemma: 'κοσμέω', class: 'pp_kosmeo', meaning: 'adorn, arrange' },
+    // Regular -έω; pf. pass. κεκόσμημαι common (Hdt., Pl.).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κοσμέω' },
+      'fut.act': { '1sg': 'κοσμήσω' },
+      'aor.act': { '1sg': 'ἐκόσμησα' },
+      'perf.mp': { '1sg': 'κεκόσμημαι' },
+      'aor.pass': { '1sg': 'ἐκοσμήθην' }
+    },
+  },
+  pp_krateo: {
+    kind: 'verb', label: 'κρατέω (rule, conquer (+ gen.))', literal: true,
+    subtitle: 'κρατέω, κρατήσω, ἐκράτησα, κεκράτηκα, κεκράτημαι, ἐκρατήθην — rule, conquer (+ gen.)',
+    example: { lemma: 'κρατέω', class: 'pp_krateo', meaning: 'rule, conquer (+ gen.)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κρατέω' },
+      'fut.act': { '1sg': 'κρατήσω' },
+      'aor.act': { '1sg': 'ἐκράτησα' },
+      'perf.act': { '1sg': 'κεκράτηκα' },
+      'perf.mp': { '1sg': 'κεκράτημαι' },
+      'aor.pass': { '1sg': 'ἐκρατήθην' }
+    },
+  },
+  pp_krino: {
+    kind: 'verb', label: 'κρίνω (judge)', literal: true,
+    subtitle: 'κρίνω, κρινῶ, ἔκρινα, κέκρικα, κέκριμαι, ἐκρίθην — judge',
+    example: { lemma: 'κρίνω', class: 'pp_krino', meaning: 'judge' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κρίνω' },
+      'fut.act': { '1sg': 'κρινῶ' },
+      'aor.act': { '1sg': 'ἔκρινα' },
+      'perf.act': { '1sg': 'κέκρικα' },
+      'perf.mp': { '1sg': 'κέκριμαι' },
+      'aor.pass': { '1sg': 'ἐκρίθην' }
+    },
+  },
+  pp_krypto: {
+    kind: 'verb', label: 'κρύπτω (hide)', literal: true,
+    subtitle: 'κρύπτω, κρύψω, ἔκρυψα, κέκρυμμαι, ἐκρύφθην — hide',
+    example: { lemma: 'κρύπτω', class: 'pp_krypto', meaning: 'hide' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κρύπτω' },
+      'fut.act': { '1sg': 'κρύψω' },
+      'aor.act': { '1sg': 'ἔκρυψα' },
+      'perf.mp': { '1sg': 'κέκρυμμαι' },
+      'aor.pass': { '1sg': 'ἐκρύφθην' }
+    },
+  },
+  pp_ktaomai: {
+    kind: 'verb', label: 'κτάομαι (obtain)', literal: true,
+    subtitle: 'κτάομαι, κτήσομαι, ἐκτησάμην, κέκτημαι, ἐκτήθην — obtain',
+    example: { lemma: 'κτάομαι', class: 'pp_ktaomai', meaning: 'obtain' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κτάομαι' },
+      'fut.act': { '1sg': 'κτήσομαι' },
+      'aor.act': { '1sg': 'ἐκτησάμην' },
+      'perf.mp': { '1sg': 'κέκτημαι' },
+      'aor.pass': { '1sg': 'ἐκτήθην' }
+    },
+  },
+  pp_kteino: {
+    kind: 'verb', label: 'κτείνω (kill)', literal: true,
+    subtitle: 'κτείνω, κτενῶ, ἔκτεινα — kill',
+    example: { lemma: 'κτείνω', class: 'pp_kteino', meaning: 'kill' },
+    // Poet./early; in Attic prose ἀποκτείνω prevailed (its pf. = ἀπέκτονα). No uncompounded perfect; 'be killed' is supplied by ἀποθνῄσκω. Poet. aor.2 ἔκτανον.
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κτείνω' },
+      'fut.act': { '1sg': 'κτενῶ' },
+      'aor.act': { '1sg': 'ἔκτεινα' }
+    },
+  },
+  pp_kyreo: {
+    kind: 'verb', label: 'κυρέω (meet with (+ gen.), happen)', literal: true,
+    subtitle: 'κυρέω, κυρήσω, ἐκύρησα — meet with (+ gen.), happen',
+    example: { lemma: 'κυρέω', class: 'pp_kyreo', meaning: 'meet with (+ gen.), happen' },
+    // Poetic/Ionic ('meet with, obtain'); side-form κύρω, aor. ἔκυρσα. Prose says τυγχάνω. Short-vowel danger avoided: -ήσω is correct here.
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κυρέω' },
+      'fut.act': { '1sg': 'κυρήσω' },
+      'aor.act': { '1sg': 'ἐκύρησα' }
+    },
+  },
+  pp_kolyo: {
+    kind: 'verb', label: 'κωλύω (hinder)', literal: true,
+    subtitle: 'κωλύω, κωλύσω, ἐκώλυσα, κεκώλυκα, κεκώλυμαι, ἐκωλύθην — hinder',
+    example: { lemma: 'κωλύω', class: 'pp_kolyo', meaning: 'hinder' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'κωλύω' },
+      'fut.act': { '1sg': 'κωλύσω' },
+      'aor.act': { '1sg': 'ἐκώλυσα' },
+      'perf.act': { '1sg': 'κεκώλυκα' },
+      'perf.mp': { '1sg': 'κεκώλυμαι' },
+      'aor.pass': { '1sg': 'ἐκωλύθην' }
+    },
+  },
+  pp_lagchano: {
+    kind: 'verb', label: 'λαγχάνω (obtain by lot)', literal: true,
+    subtitle: 'λαγχάνω, λήξομαι, ἔλαχον, εἴληχα, εἴληγμαι, ἐλήχθην — obtain by lot',
+    example: { lemma: 'λαγχάνω', class: 'pp_lagchano', meaning: 'obtain by lot' },
+    // All six: fut. mid. λήξομαι; pf. εἴληχα (poet./Ion. λέλογχα); pass. aor. ἐλήχθην in law contexts (Lys., D.).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'λαγχάνω' },
+      'fut.act': { '1sg': 'λήξομαι' },
+      'aor.act': { '1sg': 'ἔλαχον' },
+      'perf.act': { '1sg': 'εἴληχα' },
+      'perf.mp': { '1sg': 'εἴληγμαι' },
+      'aor.pass': { '1sg': 'ἐλήχθην' }
+    },
+  },
+  pp_lambano: {
+    kind: 'verb', label: 'λαμβάνω (take)', literal: true,
+    subtitle: 'λαμβάνω, λήψομαι, ἔλαβον, εἴληφα, εἴλημμαι, ἐλήφθην — take',
+    example: { lemma: 'λαμβάνω', class: 'pp_lambano', meaning: 'take' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'λαμβάνω' },
+      'fut.act': { '1sg': 'λήψομαι' },
+      'aor.act': { '1sg': 'ἔλαβον' },
+      'perf.act': { '1sg': 'εἴληφα' },
+      'perf.mp': { '1sg': 'εἴλημμαι' },
+      'aor.pass': { '1sg': 'ἐλήφθην' }
+    },
+  },
+  pp_lanthano: {
+    kind: 'verb', label: 'λανθάνω (lie hid, escape notice (of))', literal: true,
+    subtitle: 'λανθάνω, λήσω, ἔλαθον, λέληθα — lie hid, escape notice (of)',
+    example: { lemma: 'λανθάνω', class: 'pp_lanthano', meaning: 'lie hid, escape notice (of)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'λανθάνω' },
+      'fut.act': { '1sg': 'λήσω' },
+      'aor.act': { '1sg': 'ἔλαθον' },
+      'perf.act': { '1sg': 'λέληθα' }
+    },
+  },
+  pp_lego: {
+    kind: 'verb', label: 'λέγω (say)', literal: true,
+    subtitle: 'λέγω, λέξω, ἔλεξα, λέλεγμαι, ἐλέχθην — say',
+    example: { lemma: 'λέγω', class: 'pp_lego', meaning: 'say' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'λέγω' },
+      'fut.act': { '1sg': 'λέξω' },
+      'aor.act': { '1sg': 'ἔλεξα' },
+      'perf.mp': { '1sg': 'λέλεγμαι' },
+      'aor.pass': { '1sg': 'ἐλέχθην' }
+    },
+  },
+  pp_leipo: {
+    kind: 'verb', label: 'λείπω (leave)', literal: true,
+    subtitle: 'λείπω, λείψω, ἔλιπον, λέλοιπα, λέλειμμαι, ἐλείφθην — leave',
+    example: { lemma: 'λείπω', class: 'pp_leipo', meaning: 'leave' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'λείπω' },
+      'fut.act': { '1sg': 'λείψω' },
+      'aor.act': { '1sg': 'ἔλιπον' },
+      'perf.act': { '1sg': 'λέλοιπα' },
+      'perf.mp': { '1sg': 'λέλειμμαι' },
+      'aor.pass': { '1sg': 'ἐλείφθην' }
+    },
+  },
+  pp_leusso: {
+    kind: 'verb', label: 'λεύσσω (behold)', literal: true,
+    subtitle: 'λεύσσω — behold',
+    example: { lemma: 'λεύσσω', class: 'pp_leusso', meaning: 'behold' },
+    // Poetic; good authors use only pres./impf. One of the native -σσ- verbs (no Attic -ττ- form).
+    categories: ['pres.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'λεύσσω' }
+    },
+  },
+  pp_legocease: {
+    kind: 'verb', label: 'λήγω (cease, desist)', literal: true,
+    subtitle: 'λήγω, λήξω, ἔληξα — cease, desist',
+    example: { lemma: 'λήγω', class: 'pp_legocease', meaning: 'cease, desist' },
+    // 'Cease': fut. λήξω, aor. ἔληξα; no perfect or passive system in classical use.
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'λήγω' },
+      'fut.act': { '1sg': 'λήξω' },
+      'aor.act': { '1sg': 'ἔληξα' }
+    },
+  },
+  pp_lissomai: {
+    kind: 'verb', label: 'λίσσομαι (beg)', literal: true,
+    subtitle: 'λίσσομαι, ἐλισάμην — beg',
+    example: { lemma: 'λίσσομαι', class: 'pp_lissomai', meaning: 'beg' },
+    // Poetic ('beseech'); aor.1 ἐλισάμην, poet. aor.2 λιτέσθαι — cf. the side-form λίτομαι the card carries. Prose uses δέομαι, ἱκετεύω.
+    categories: ['pres.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'λίσσομαι' },
+      'aor.act': { '1sg': 'ἐλισάμην' }
+    },
+  },
+  pp_logizomai: {
+    kind: 'verb', label: 'λογίζομαι (consider)', literal: true,
+    subtitle: 'λογίζομαι, λογιοῦμαι, ἐλογισάμην, λελόγισμαι — consider',
+    example: { lemma: 'λογίζομαι', class: 'pp_logizomai', meaning: 'consider' },
+    // Deponent; Attic contract future λογιοῦμαι; pf. λελόγισμαι also in passive sense ('stands reckoned', Lys.).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'λογίζομαι' },
+      'fut.act': { '1sg': 'λογιοῦμαι' },
+      'aor.act': { '1sg': 'ἐλογισάμην' },
+      'perf.mp': { '1sg': 'λελόγισμαι' }
+    },
+  },
+  pp_loidoreo: {
+    kind: 'verb', label: 'λοιδορέω (abuse)', literal: true,
+    subtitle: 'λοιδορέω, λοιδορήσω, ἐλοιδόρησα, λελοιδόρηκα, ἐλοιδορήθην — abuse',
+    example: { lemma: 'λοιδορέω', class: 'pp_loidoreo', meaning: 'abuse' },
+    // Pf. λελοιδόρηκα Pl. Phdr. As middle 'rail at (+dat.)' the Attic aorist is the passive-form ἐλοιδορήθην (D.), commoner than ἐλοιδορησάμην.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'λοιδορέω' },
+      'fut.act': { '1sg': 'λοιδορήσω' },
+      'aor.act': { '1sg': 'ἐλοιδόρησα' },
+      'perf.act': { '1sg': 'λελοιδόρηκα' },
+      'aor.pass': { '1sg': 'ἐλοιδορήθην' }
+    },
+  },
+  pp_mainomai: {
+    kind: 'verb', label: 'μαίνομαι (be mad)', literal: true,
+    subtitle: 'μαίνομαι, μέμηνα, ἐμάνην — be mad',
+    example: { lemma: 'μαίνομαι', class: 'pp_mainomai', meaning: 'be mad' },
+    // 'Went mad' = aor.2 pass. ἐμάνην; pf. μέμηνα has present sense 'am raving'. No Attic future (μανοῦμαι Hdt. only). Act. μαίνω 'madden' rare.
+    categories: ['pres.act', 'perf.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'μαίνομαι' },
+      'perf.act': { '1sg': 'μέμηνα' },
+      'aor.pass': { '1sg': 'ἐμάνην' }
+    },
+  },
+  pp_manthano: {
+    kind: 'verb', label: 'μανθάνω (learn)', literal: true,
+    subtitle: 'μανθάνω, μαθήσομαι, ἔμαθον, μεμάθηκα — learn',
+    example: { lemma: 'μανθάνω', class: 'pp_manthano', meaning: 'learn' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'μανθάνω' },
+      'fut.act': { '1sg': 'μαθήσομαι' },
+      'aor.act': { '1sg': 'ἔμαθον' },
+      'perf.act': { '1sg': 'μεμάθηκα' }
+    },
+  },
+  pp_martyromai: {
+    kind: 'verb', label: 'μαρτύρομαι ((bear) witness)', literal: true,
+    subtitle: 'μαρτύρομαι, ἐμαρτυράμην — (bear) witness',
+    example: { lemma: 'μαρτύρομαι', class: 'pp_martyromai', meaning: '(bear) witness' },
+    // 'Call to witness, protest'; aor. ἐμαρτυράμην Pl. Distinct from μαρτυρέω 'bear witness' (regular -έω, all six).
+    categories: ['pres.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'μαρτύρομαι' },
+      'aor.act': { '1sg': 'ἐμαρτυράμην' }
+    },
+  },
+  pp_machomai: {
+    kind: 'verb', label: 'μάχομαι (fight (+ dat.))', literal: true,
+    subtitle: 'μάχομαι, μαχοῦμαι, ἐμαχεσάμην, μεμάχημαι — fight (+ dat.)',
+    example: { lemma: 'μάχομαι', class: 'pp_machomai', meaning: 'fight (+ dat.)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'μάχομαι' },
+      'fut.act': { '1sg': 'μαχοῦμαι' },
+      'aor.act': { '1sg': 'ἐμαχεσάμην' },
+      'perf.mp': { '1sg': 'μεμάχημαι' }
+    },
+  },
+  pp_mello: {
+    kind: 'verb', label: 'μέλλω (intend)', literal: true,
+    subtitle: 'μέλλω, μελλήσω, ἐμέλλησα — intend',
+    example: { lemma: 'μέλλω', class: 'pp_mello', meaning: 'intend' },
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'μέλλω' },
+      'fut.act': { '1sg': 'μελλήσω' },
+      'aor.act': { '1sg': 'ἐμέλλησα' }
+    },
+  },
+  pp_memnemai: {
+    kind: 'verb', label: 'μέμνημαι (remember (+ gen.))', literal: true,
+    subtitle: 'μέμνημαι, μεμνήσομαι, μέμνημαι, ἐμνήσθην — remember (+ gen.)',
+    example: { lemma: 'μέμνημαι', class: 'pp_memnemai', meaning: 'remember (+ gen.)' },
+    // Itself the pf. mid. of μιμνῄσκω, with present sense 'remember' (subj. μεμνῶμαι, opt. μεμνῄμην); fut. pf. μεμνήσομαι 'shall remember'; aor. ἐμνήσθην 'remembered, made mention'.
+    categories: ['pres.act', 'fut.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'μέμνημαι' },
+      'fut.act': { '1sg': 'μεμνήσομαι' },
+      'perf.mp': { '1sg': 'μέμνημαι' },
+      'aor.pass': { '1sg': 'ἐμνήσθην' }
+    },
+  },
+  pp_memphomai: {
+    kind: 'verb', label: 'μέμφομαι (blame)', literal: true,
+    subtitle: 'μέμφομαι, μέμψομαι, ἐμεμψάμην — blame',
+    example: { lemma: 'μέμφομαι', class: 'pp_memphomai', meaning: 'blame' },
+    // Deponent; beside ἐμεμψάμην the passive-form aor. ἐμέμφθην is equally classical in the same active sense (Hdt., E., Th.).
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'μέμφομαι' },
+      'fut.act': { '1sg': 'μέμψομαι' },
+      'aor.act': { '1sg': 'ἐμεμψάμην' }
+    },
+  },
+  pp_meno: {
+    kind: 'verb', label: 'μένω (remain)', literal: true,
+    subtitle: 'μένω, μενῶ, ἔμεινα, μεμένηκα — remain',
+    example: { lemma: 'μένω', class: 'pp_meno', meaning: 'remain' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'μένω' },
+      'fut.act': { '1sg': 'μενῶ' },
+      'aor.act': { '1sg': 'ἔμεινα' },
+      'perf.act': { '1sg': 'μεμένηκα' }
+    },
+  },
+  pp_metecho: {
+    kind: 'verb', label: 'μετέχω (have a share in (+ gen.))', literal: true,
+    subtitle: 'μετέχω, μεθέξω, μετέσχον, μετέσχηκα — have a share in (+ gen.)',
+    example: { lemma: 'μετέχω', class: 'pp_metecho', meaning: 'have a share in (+ gen.)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'μετέχω' },
+      'fut.act': { '1sg': ['μεθέξω', 'μετασχήσω'] },
+      'aor.act': { '1sg': 'μετέσχον' },
+      'perf.act': { '1sg': 'μετέσχηκα' }
+    },
+  },
+  pp_mechanaomai: {
+    kind: 'verb', label: 'μηχανάομαι (contrive)', literal: true,
+    subtitle: 'μηχανάομαι, μηχανήσομαι, ἐμηχανησάμην, μεμηχάνημαι — contrive',
+    example: { lemma: 'μηχανάομαι', class: 'pp_mechanaomai', meaning: 'contrive' },
+    // Deponent; -η- after ν. Pf. μεμηχάνημαι also in pass. sense.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'μηχανάομαι' },
+      'fut.act': { '1sg': 'μηχανήσομαι' },
+      'aor.act': { '1sg': 'ἐμηχανησάμην' },
+      'perf.mp': { '1sg': 'μεμηχάνημαι' }
+    },
+  },
+  pp_mimno: {
+    kind: 'verb', label: 'μίμνω (remain)', literal: true,
+    subtitle: 'μίμνω — remain',
+    example: { lemma: 'μίμνω', class: 'pp_mimno', meaning: 'remain' },
+    // Poetic reduplicated form of μένω — parts are μένω's: μενῶ, ἔμεινα, μεμένηκα.
+    categories: ['pres.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'μίμνω' }
+    },
+  },
+  pp_miseo: {
+    kind: 'verb', label: 'μισέω (hate)', literal: true,
+    subtitle: 'μισέω, μισήσω, ἐμίσησα, μεμίσηκα, μεμίσημαι, ἐμισήθην — hate',
+    example: { lemma: 'μισέω', class: 'pp_miseo', meaning: 'hate' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'μισέω' },
+      'fut.act': { '1sg': 'μισήσω' },
+      'aor.act': { '1sg': 'ἐμίσησα' },
+      'perf.act': { '1sg': 'μεμίσηκα' },
+      'perf.mp': { '1sg': 'μεμίσημαι' },
+      'aor.pass': { '1sg': 'ἐμισήθην' }
+    },
+  },
+  pp_naio: {
+    kind: 'verb', label: 'ναίω (dwell)', literal: true,
+    subtitle: 'ναίω — dwell',
+    example: { lemma: 'ναίω', class: 'pp_naio', meaning: 'dwell' },
+    // Poetic 'dwell': pres./impf. only in ordinary use (causal aor. ἔνασσα, pass. ἐνάσθην 'settled' are Epic). Prose οἰκέω.
+    categories: ['pres.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ναίω' }
+    },
+  },
+  pp_naumacheo: {
+    kind: 'verb', label: 'ναυμαχέω (fight a sea-battle)', literal: true,
+    subtitle: 'ναυμαχέω, ναυμαχήσω, ἐναυμάχησα — fight a sea-battle',
+    example: { lemma: 'ναυμαχέω', class: 'pp_naumacheo', meaning: 'fight a sea-battle' },
+    // Regular -έω (D. 18.208 τοὺς ναυμαχήσαντας); augments at the front (ἐναυμάχουν Th.).
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ναυμαχέω' },
+      'fut.act': { '1sg': 'ναυμαχήσω' },
+      'aor.act': { '1sg': 'ἐναυμάχησα' }
+    },
+  },
+  pp_nemo: {
+    kind: 'verb', label: 'νέμω (distribute, manage)', literal: true,
+    subtitle: 'νέμω, νεμῶ, ἔνειμα, νενέμηκα, νενέμημαι, ἐνεμήθην — distribute, manage',
+    example: { lemma: 'νέμω', class: 'pp_nemo', meaning: 'distribute, manage' },
+    // Liquid fut. νεμῶ; mid. νέμομαι 'graze/possess' (fut. νεμοῦμαι, aor. ἐνειμάμην 'divided among themselves').
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'νέμω' },
+      'fut.act': { '1sg': 'νεμῶ' },
+      'aor.act': { '1sg': 'ἔνειμα' },
+      'perf.act': { '1sg': 'νενέμηκα' },
+      'perf.mp': { '1sg': 'νενέμημαι' },
+      'aor.pass': { '1sg': 'ἐνεμήθην' }
+    },
+  },
+  pp_nikao: {
+    kind: 'verb', label: 'νικάω (conquer)', literal: true,
+    subtitle: 'νικάω, νικήσω, ἐνίκησα, νενίκηκα, νενίκημαι, ἐνικήθην — conquer',
+    example: { lemma: 'νικάω', class: 'pp_nikao', meaning: 'conquer' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'νικάω' },
+      'fut.act': { '1sg': 'νικήσω' },
+      'aor.act': { '1sg': 'ἐνίκησα' },
+      'perf.act': { '1sg': 'νενίκηκα' },
+      'perf.mp': { '1sg': 'νενίκημαι' },
+      'aor.pass': { '1sg': 'ἐνικήθην' }
+    },
+  },
+  pp_noeo: {
+    kind: 'verb', label: 'νοέω (have in mind, recognise)', literal: true,
+    subtitle: 'νοέω, νοήσω, ἐνόησα, νενόηκα, νενόημαι, ἐνοήθην — have in mind, recognise',
+    example: { lemma: 'νοέω', class: 'pp_noeo', meaning: 'have in mind, recognise' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'νοέω' },
+      'fut.act': { '1sg': 'νοήσω' },
+      'aor.act': { '1sg': 'ἐνόησα' },
+      'perf.act': { '1sg': 'νενόηκα' },
+      'perf.mp': { '1sg': 'νενόημαι' },
+      'aor.pass': { '1sg': 'ἐνοήθην' }
+    },
+  },
+  pp_nomizo: {
+    kind: 'verb', label: 'νομίζω (consider, think)', literal: true,
+    subtitle: 'νομίζω, νομιῶ, ἐνόμισα, νενόμικα, νενόμισμαι, ἐνομίσθην — consider, think',
+    example: { lemma: 'νομίζω', class: 'pp_nomizo', meaning: 'consider, think' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'νομίζω' },
+      'fut.act': { '1sg': 'νομιῶ' },
+      'aor.act': { '1sg': 'ἐνόμισα' },
+      'perf.act': { '1sg': 'νενόμικα' },
+      'perf.mp': { '1sg': 'νενόμισμαι' },
+      'aor.pass': { '1sg': 'ἐνομίσθην' }
+    },
+  },
+  pp_noseo: {
+    kind: 'verb', label: 'νοσέω (be ill)', literal: true,
+    subtitle: 'νοσέω, νοσήσω, ἐνόσησα, νενόσηκα — be ill',
+    example: { lemma: 'νοσέω', class: 'pp_noseo', meaning: 'be ill' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'νοσέω' },
+      'fut.act': { '1sg': 'νοσήσω' },
+      'aor.act': { '1sg': 'ἐνόσησα' },
+      'perf.act': { '1sg': 'νενόσηκα' }
+    },
+  },
+  pp_odyromai: {
+    kind: 'verb', label: 'ὀδύρομαι (lament)', literal: true,
+    subtitle: 'ὀδύρομαι, ὀδυροῦμαι, ὠδυράμην — lament',
+    example: { lemma: 'ὀδύρομαι', class: 'pp_odyromai', meaning: 'lament' },
+    // Mostly pres./impf.; fut. ὀδυροῦμαι D., aor. ὠδυράμην Isoc.
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὀδύρομαι' },
+      'fut.act': { '1sg': 'ὀδυροῦμαι' },
+      'aor.act': { '1sg': 'ὠδυράμην' }
+    },
+  },
+  pp_oikeo: {
+    kind: 'verb', label: 'οἰκέω (dwell, inhabit)', literal: true,
+    subtitle: 'οἰκέω, οἰκήσω, ᾤκησα, ᾤκηκα, ᾤκημαι, ᾠκήθην — dwell, inhabit',
+    example: { lemma: 'οἰκέω', class: 'pp_oikeo', meaning: 'dwell, inhabit' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'οἰκέω' },
+      'fut.act': { '1sg': 'οἰκήσω' },
+      'aor.act': { '1sg': 'ᾤκησα' },
+      'perf.act': { '1sg': 'ᾤκηκα' },
+      'perf.mp': { '1sg': 'ᾤκημαι' },
+      'aor.pass': { '1sg': 'ᾠκήθην' }
+    },
+  },
+  pp_oikteiro: {
+    kind: 'verb', label: 'οἰκτείρω (pity)', literal: true,
+    subtitle: 'οἰκτείρω, οἰκτερῶ, ᾤκτειρα — pity',
+    example: { lemma: 'οἰκτείρω', class: 'pp_oikteiro', meaning: 'pity' },
+    // Attic spelling οἰκτίρω (long ι). Liquid stem; no perfect; passive only pres.
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'οἰκτείρω' },
+      'fut.act': { '1sg': 'οἰκτερῶ' },
+      'aor.act': { '1sg': 'ᾤκτειρα' }
+    },
+  },
+  pp_oimai: {
+    kind: 'verb', label: 'οἶμαι (think)', literal: true,
+    subtitle: 'οἶμαι, οἰήσομαι, ᾠήθην — think',
+    example: { lemma: 'οἶμαι', class: 'pp_oimai', meaning: 'think' },
+    categories: ['pres.act', 'fut.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': ['οἶμαι', 'οἴομαι'] },
+      'fut.act': { '1sg': 'οἰήσομαι' },
+      'aor.pass': { '1sg': 'ᾠήθην' }
+    },
+  },
+  pp_oichomai: {
+    kind: 'verb', label: 'οἴχομαι (am gone)', literal: true,
+    subtitle: 'οἴχομαι, οἰχήσομαι, οἴχωκα — am gone',
+    example: { lemma: 'οἴχομαι', class: 'pp_oichomai', meaning: 'am gone' },
+    // 'Be gone' — present has perfect sense, impf. ᾠχόμην = 'had gone'. Pf. οἴχωκα S./Hdt. (ᾤχωκα A.); no aorist.
+    categories: ['pres.act', 'fut.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'οἴχομαι' },
+      'fut.act': { '1sg': 'οἰχήσομαι' },
+      'perf.act': { '1sg': 'οἴχωκα' }
+    },
+  },
+  pp_okneo: {
+    kind: 'verb', label: 'ὀκνέω (shrink from)', literal: true,
+    subtitle: 'ὀκνέω, ὀκνήσω, ὤκνησα — shrink from',
+    example: { lemma: 'ὀκνέω', class: 'pp_okneo', meaning: 'shrink from' },
+    // Regular -έω.
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὀκνέω' },
+      'fut.act': { '1sg': 'ὀκνήσω' },
+      'aor.act': { '1sg': 'ὤκνησα' }
+    },
+  },
+  pp_oligoreo: {
+    kind: 'verb', label: 'ὀλιγωρέω (despise, disdain)', literal: true,
+    subtitle: 'ὀλιγωρέω, ὀλιγωρήσω, ὠλιγώρησα, ὠλιγώρημαι — despise, disdain',
+    example: { lemma: 'ὀλιγωρέω', class: 'pp_oligoreo', meaning: 'despise, disdain' },
+    // Regular -έω, +gen.; pf. pass. τοῖς ὠλιγωρημένοις D.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὀλιγωρέω' },
+      'fut.act': { '1sg': 'ὀλιγωρήσω' },
+      'aor.act': { '1sg': 'ὠλιγώρησα' },
+      'perf.mp': { '1sg': 'ὠλιγώρημαι' }
+    },
+  },
+  pp_ollymi: {
+    kind: 'verb', label: 'ὄλλυμι (destroy)', literal: true,
+    subtitle: 'ὄλλυμι, ὀλῶ, ὤλεσα, ὄλωλα — destroy',
+    example: { lemma: 'ὄλλυμι', class: 'pp_ollymi', meaning: 'destroy' },
+    // Poet. simple verb; prose uses ἀπόλλυμι (ἀπολῶ, ἀπώλεσα, trans. pf. ἀπολώλεκα). Mid. 'perish': ὀλοῦμαι, ὠλόμην; pf. ὄλωλα intransitive 'am undone'.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὄλλυμι' },
+      'fut.act': { '1sg': 'ὀλῶ' },
+      'aor.act': { '1sg': 'ὤλεσα' },
+      'perf.act': { '1sg': 'ὄλωλα' }
+    },
+  },
+  pp_olophyromai: {
+    kind: 'verb', label: 'ὀλοφύρομαι (lament)', literal: true,
+    subtitle: 'ὀλοφύρομαι, ὀλοφυροῦμαι, ὠλοφυράμην — lament',
+    example: { lemma: 'ὀλοφύρομαι', class: 'pp_olophyromai', meaning: 'lament' },
+    // Aor. pass. part. ὀλοφυρθείς in same sense (Th. 6.78).
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὀλοφύρομαι' },
+      'fut.act': { '1sg': 'ὀλοφυροῦμαι' },
+      'aor.act': { '1sg': 'ὠλοφυράμην' }
+    },
+  },
+  pp_homileo: {
+    kind: 'verb', label: 'ὁμιλέω (associate with)', literal: true,
+    subtitle: 'ὁμιλέω, ὁμιλήσω, ὡμίλησα — associate with',
+    example: { lemma: 'ὁμιλέω', class: 'pp_homileo', meaning: 'associate with' },
+    // Regular -έω (LSJ header lists no forms).
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὁμιλέω' },
+      'fut.act': { '1sg': 'ὁμιλήσω' },
+      'aor.act': { '1sg': 'ὡμίλησα' }
+    },
+  },
+  pp_omnymi: {
+    kind: 'verb', label: 'ὄμνυμι (swear)', literal: true,
+    subtitle: 'ὄμνυμι, ὀμοῦμαι, ὤμοσα, ὀμώμοκα, ὀμώμοσμαι, ὠμόσθην — swear',
+    example: { lemma: 'ὄμνυμι', class: 'pp_omnymi', meaning: 'swear' },
+    // LSJ-checked 2026-08-30, review closed. The source row was garbled (a value
+    // split mid-word across two slots) and had left the future as ὀμέομαι --
+    // a form LSJ does not record anywhere in the entry, and one no one writes:
+    // LSJ gives "fut. ὀμοῦμαι (Il., Hes., Ar., Lys., X.HG)", with ὀμόσω marked
+    // later. Corrected to ὀμοῦμαι, along with the twenty other uncontracted
+    // futures found in the same sweep (see this batch's header comment).
+    // The other two slots are confirmed as the right choice of the pair the
+    // source offered: perf.mp ὀμώμοσμαι (LSJ's 3sg ὀμώμοσται, part.
+    // ὀμωμοσμένος in D. and Arist. -- the σ-less ὀμώμοται is also attested but
+    // is the tragic one), and aor. pass. ὠμόσθην (X. HG 7.4.10), which LSJ
+    // lists before "but ὠμόθην (Is. 2.40)".
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὄμνυμι' },
+      'fut.act': { '1sg': 'ὀμοῦμαι' },
+      'aor.act': { '1sg': 'ὤμοσα' },
+      'perf.act': { '1sg': 'ὀμώμοκα' },
+      'perf.mp': { '1sg': 'ὀμώμοσμαι' },
+      'aor.pass': { '1sg': 'ὠμόσθην' }
+    },
+  },
+  pp_homologeo: {
+    kind: 'verb', label: 'ὁμολογέω (agree)', literal: true,
+    subtitle: 'ὁμολογέω, ὁμολογήσω, ὡμολόγησα, ὡμολόγηκα, ὡμολόγημαι, ὡμολογήθην — agree',
+    example: { lemma: 'ὁμολογέω', class: 'pp_homologeo', meaning: 'agree' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὁμολογέω' },
+      'fut.act': { '1sg': 'ὁμολογήσω' },
+      'aor.act': { '1sg': 'ὡμολόγησα' },
+      'perf.act': { '1sg': 'ὡμολόγηκα' },
+      'perf.mp': { '1sg': 'ὡμολόγημαι' },
+      'aor.pass': { '1sg': 'ὡμολογήθην' }
+    },
+  },
+  pp_oneidizo: {
+    kind: 'verb', label: 'ὀνειδίζω (revile (+ dat.))', literal: true,
+    subtitle: 'ὀνειδίζω, ὀνειδιῶ, ὠνείδισα, ὠνείδικα — revile (+ dat.)',
+    example: { lemma: 'ὀνειδίζω', class: 'pp_oneidizo', meaning: 'revile (+ dat.)' },
+    // Att. contract fut. -ιῶ; pf. ὠνείδικα Lys. 16.15.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὀνειδίζω' },
+      'fut.act': { '1sg': 'ὀνειδιῶ' },
+      'aor.act': { '1sg': 'ὠνείδισα' },
+      'perf.act': { '1sg': 'ὠνείδικα' }
+    },
+  },
+  pp_onomazo: {
+    kind: 'verb', label: 'ὀνομάζω (name)', literal: true,
+    subtitle: 'ὀνομάζω, ὀνομάσω, ὠνόμασα, ὠνόμακα, ὠνόμασμαι, ὠνομάσθην — name',
+    example: { lemma: 'ὀνομάζω', class: 'pp_onomazo', meaning: 'name' },
+    // All six classical (pf. ὠνόμακα Pl.).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὀνομάζω' },
+      'fut.act': { '1sg': 'ὀνομάσω' },
+      'aor.act': { '1sg': 'ὠνόμασα' },
+      'perf.act': { '1sg': 'ὠνόμακα' },
+      'perf.mp': { '1sg': 'ὠνόμασμαι' },
+      'aor.pass': { '1sg': 'ὠνομάσθην' }
+    },
+  },
+  pp_hoplizo: {
+    kind: 'verb', label: 'ὁπλίζω (arm)', literal: true,
+    subtitle: 'ὁπλίζω, ὥπλισα, ὥπλισμαι, ὡπλίσθην — arm',
+    example: { lemma: 'ὁπλίζω', class: 'pp_hoplizo', meaning: 'arm' },
+    // Future barely attested classically; mid. ὡπλισάμην 'armed oneself'.
+    categories: ['pres.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὁπλίζω' },
+      'aor.act': { '1sg': 'ὥπλισα' },
+      'perf.mp': { '1sg': 'ὥπλισμαι' },
+      'aor.pass': { '1sg': 'ὡπλίσθην' }
+    },
+  },
+  pp_horao: {
+    kind: 'verb', label: 'ὁράω (see)', literal: true,
+    subtitle: 'ὁράω, ὄψομαι, εἶδον, ἑώρακα, ἑώραμαι, ὤφθην — see',
+    example: { lemma: 'ὁράω', class: 'pp_horao', meaning: 'see' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὁράω' },
+      'fut.act': { '1sg': 'ὄψομαι' },
+      'aor.act': { '1sg': 'εἶδον' },
+      'perf.act': { '1sg': ['ἑώρακα', 'ἑόρακα'] },
+      'perf.mp': { '1sg': ['ἑώραμαι', 'ὦμμαι'] },
+      'aor.pass': { '1sg': 'ὤφθην' }
+    },
+  },
+  pp_orgizomai: {
+    kind: 'verb', label: 'ὀργίζομαι (be angry)', literal: true,
+    subtitle: 'ὀργίζομαι, ὀργιοῦμαι, ὤργισμαι, ὠργίσθην — be angry',
+    example: { lemma: 'ὀργίζομαι', class: 'pp_orgizomai', meaning: 'be angry' },
+    categories: ['pres.act', 'fut.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὀργίζομαι' },
+      'fut.act': { '1sg': 'ὀργιοῦμαι' },
+      'perf.mp': { '1sg': 'ὤργισμαι' },
+      'aor.pass': { '1sg': 'ὠργίσθην' }
+    },
+  },
+  pp_hormao: {
+    kind: 'verb', label: 'ὁρμάω (rush; mid. set out)', literal: true,
+    subtitle: 'ὁρμάω, ὁρμήσω, ὥρμησα, ὥρμηκα, ὥρμημαι, ὡρμήθην — rush; mid. set out',
+    example: { lemma: 'ὁρμάω', class: 'pp_hormao', meaning: 'rush; mid. set out' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὁρμάω' },
+      'fut.act': { '1sg': 'ὁρμήσω' },
+      'aor.act': { '1sg': 'ὥρμησα' },
+      'perf.act': { '1sg': 'ὥρμηκα' },
+      'perf.mp': { '1sg': 'ὥρμημαι' },
+      'aor.pass': { '1sg': 'ὡρμήθην' }
+    },
+  },
+  pp_opheilo: {
+    kind: 'verb', label: 'ὀφείλω (owe)', literal: true,
+    subtitle: 'ὀφείλω, ὀφειλήσω, ὠφείλησα, ὠφείληκα, ὠφειλήθην — owe',
+    example: { lemma: 'ὀφείλω', class: 'pp_opheilo', meaning: 'owe' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὀφείλω' },
+      'fut.act': { '1sg': 'ὀφειλήσω' },
+      'aor.act': { '1sg': ['ὠφείλησα', 'ὤφελον'] },
+      'perf.act': { '1sg': 'ὠφείληκα' },
+      'aor.pass': { '1sg': 'ὠφειλήθην' }
+    },
+  },
+  pp_paideuo: {
+    kind: 'verb', label: 'παιδεύω (educate)', literal: true,
+    subtitle: 'παιδεύω, παιδεύσω, ἐπαίδευσα, πεπαίδευκα, πεπαίδευμαι, ἐπαιδεύθην — educate',
+    example: { lemma: 'παιδεύω', class: 'pp_paideuo', meaning: 'educate' },
+    // The grammars' paradigm verb; all six everywhere.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'παιδεύω' },
+      'fut.act': { '1sg': 'παιδεύσω' },
+      'aor.act': { '1sg': 'ἐπαίδευσα' },
+      'perf.act': { '1sg': 'πεπαίδευκα' },
+      'perf.mp': { '1sg': 'πεπαίδευμαι' },
+      'aor.pass': { '1sg': 'ἐπαιδεύθην' }
+    },
+  },
+  pp_paraineo: {
+    kind: 'verb', label: 'παραινέω (advise)', literal: true,
+    subtitle: 'παραινέω, παραινέσω, παρῄνεσα, παρῄνεκα, παρῄνημαι, παρῃνέθην — advise',
+    example: { lemma: 'παραινέω', class: 'pp_paraineo', meaning: 'advise' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'παραινέω' },
+      'fut.act': { '1sg': 'παραινέσω' },
+      'aor.act': { '1sg': 'παρῄνεσα' },
+      'perf.act': { '1sg': 'παρῄνεκα' },
+      'perf.mp': { '1sg': 'παρῄνημαι' },
+      'aor.pass': { '1sg': 'παρῃνέθην' }
+    },
+  },
+  pp_parakeleuomai: {
+    kind: 'verb', label: 'παρακελεύομαι (exhort, encourage (+ dat.))', literal: true,
+    subtitle: 'παρακελεύομαι, παρακελεύσομαι, παρεκελευσάμην, παρακεκέλευσμαι — exhort, encourage (+ dat.)',
+    example: { lemma: 'παρακελεύομαι', class: 'pp_parakeleuomai', meaning: 'exhort, encourage (+ dat.)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'παρακελεύομαι' },
+      'fut.act': { '1sg': 'παρακελεύσομαι' },
+      'aor.act': { '1sg': 'παρεκελευσάμην' },
+      'perf.mp': { '1sg': 'παρακεκέλευσμαι' }
+    },
+  },
+  pp_paraskeuazo: {
+    kind: 'verb', label: 'παρασκευάζω (prepare)', literal: true,
+    subtitle: 'παρασκευάζω, παρασκευάσω, παρεσκεύασα, παρεσκεύασμαι, παρεσκευάσθην — prepare',
+    example: { lemma: 'παρασκευάζω', class: 'pp_paraskeuazo', meaning: 'prepare' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'παρασκευάζω' },
+      'fut.act': { '1sg': 'παρασκευάσω' },
+      'aor.act': { '1sg': 'παρεσκεύασα' },
+      'perf.mp': { '1sg': 'παρεσκεύασμαι' },
+      'aor.pass': { '1sg': 'παρεσκευάσθην' }
+    },
+  },
+  pp_pareimi: {
+    kind: 'verb', label: 'πάρειμι (am present)', literal: true,
+    subtitle: 'πάρειμι, παρέσομαι — am present',
+    example: { lemma: 'πάρειμι', class: 'pp_pareimi', meaning: 'am present' },
+    categories: ['pres.act', 'fut.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'πάρειμι' },
+      'fut.act': { '1sg': 'παρέσομαι' }
+    },
+  },
+  pp_parecho: {
+    kind: 'verb', label: 'παρέχω (provide)', literal: true,
+    subtitle: 'παρέχω, παρέξω, παρέσχον, παρέσχηκα — provide',
+    example: { lemma: 'παρέχω', class: 'pp_parecho', meaning: 'provide' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'παρέχω' },
+      'fut.act': { '1sg': ['παρέξω', 'παρασχήσω'] },
+      'aor.act': { '1sg': 'παρέσχον' },
+      'perf.act': { '1sg': 'παρέσχηκα' }
+    },
+  },
+  pp_pascho: {
+    kind: 'verb', label: 'πάσχω (suffer)', literal: true,
+    subtitle: 'πάσχω, πείσομαι, ἔπαθον, πέπονθα — suffer',
+    example: { lemma: 'πάσχω', class: 'pp_pascho', meaning: 'suffer' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'πάσχω' },
+      'fut.act': { '1sg': 'πείσομαι' },
+      'aor.act': { '1sg': 'ἔπαθον' },
+      'perf.act': { '1sg': 'πέπονθα' }
+    },
+  },
+  pp_pauo: {
+    kind: 'verb', label: 'παύω (stop)', literal: true,
+    subtitle: 'παύω, παύσω, ἔπαυσα, πέπαυκα, πέπαυμαι, ἐπαύθην — stop',
+    example: { lemma: 'παύω', class: 'pp_pauo', meaning: 'stop' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'παύω' },
+      'fut.act': { '1sg': 'παύσω' },
+      'aor.act': { '1sg': 'ἔπαυσα' },
+      'perf.act': { '1sg': 'πέπαυκα' },
+      'perf.mp': { '1sg': 'πέπαυμαι' },
+      'aor.pass': { '1sg': 'ἐπαύθην' }
+    },
+  },
+  pp_peitho: {
+    kind: 'verb', label: 'πείθω (persuade; mid. obey (+ dat.))', literal: true,
+    subtitle: 'πείθω, πείσω, ἔπεισα, πέπεικα, πέπεισμαι, ἐπείσθην — persuade; mid. obey (+ dat.)',
+    example: { lemma: 'πείθω', class: 'pp_peitho', meaning: 'persuade; mid. obey (+ dat.)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'πείθω' },
+      'fut.act': { '1sg': 'πείσω' },
+      'aor.act': { '1sg': 'ἔπεισα' },
+      'perf.act': { '1sg': 'πέπεικα' },
+      'perf.mp': { '1sg': 'πέπεισμαι' },
+      'aor.pass': { '1sg': 'ἐπείσθην' }
+    },
+  },
+  pp_peiraomai: {
+    kind: 'verb', label: 'πειράομαι (try)', literal: true,
+    subtitle: 'πειράομαι, πειράσομαι, πεπείραμαι, ἐπειράθην — try',
+    example: { lemma: 'πειράομαι', class: 'pp_peiraomai', meaning: 'try' },
+    // -ᾱ- after ρ (πειράσομαι). Attic 'tried' is the passive-form ἐπειράθην; ἐπειρασάμην mostly Ionic. Act. πειράω 'test' also exists.
+    categories: ['pres.act', 'fut.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'πειράομαι' },
+      'fut.act': { '1sg': 'πειράσομαι' },
+      'perf.mp': { '1sg': 'πεπείραμαι' },
+      'aor.pass': { '1sg': 'ἐπειράθην' }
+    },
+  },
+  pp_pempo: {
+    kind: 'verb', label: 'πέμπω (send)', literal: true,
+    subtitle: 'πέμπω, πέμψω, ἔπεμψα, πέπομφα, πέπεμμαι, ἐπέμφθην — send',
+    example: { lemma: 'πέμπω', class: 'pp_pempo', meaning: 'send' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'πέμπω' },
+      'fut.act': { '1sg': 'πέμψω' },
+      'aor.act': { '1sg': 'ἔπεμψα' },
+      'perf.act': { '1sg': 'πέπομφα' },
+      'perf.mp': { '1sg': 'πέπεμμαι' },
+      'aor.pass': { '1sg': 'ἐπέμφθην' }
+    },
+  },
+  pp_peraino: {
+    kind: 'verb', label: 'περαίνω (accomplish)', literal: true,
+    subtitle: 'περαίνω, περανῶ, ἐπέρανα, πεπέρασμαι, ἐπεράνθην — accomplish',
+    example: { lemma: 'περαίνω', class: 'pp_peraino', meaning: 'accomplish' },
+    // Liquid stem; pf. part. πεπερασμένος 'finite' (Arist.).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'περαίνω' },
+      'fut.act': { '1sg': 'περανῶ' },
+      'aor.act': { '1sg': 'ἐπέρανα' },
+      'perf.mp': { '1sg': 'πεπέρασμαι' },
+      'aor.pass': { '1sg': 'ἐπεράνθην' }
+    },
+  },
+  pp_piezo: {
+    kind: 'verb', label: 'πιέζω (oppress)', literal: true,
+    subtitle: 'πιέζω, πιέσω, ἐπίεσα, ἐπιέσθην — oppress',
+    example: { lemma: 'πιέζω', class: 'pp_piezo', meaning: 'oppress' },
+    // σ-forms despite -ζω: aor. ἐπίεσα Hdt., Th.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'πιέζω' },
+      'fut.act': { '1sg': 'πιέσω' },
+      'aor.act': { '1sg': 'ἐπίεσα' },
+      'aor.pass': { '1sg': 'ἐπιέσθην' }
+    },
+  },
+  pp_pimplemi: {
+    kind: 'verb', label: 'πίμπλημι (fill)', literal: true,
+    subtitle: 'πίμπλημι, πλήσω, ἔπλησα, πέπληκα, πέπλησμαι, ἐπλήσθην — fill',
+    example: { lemma: 'πίμπλημι', class: 'pp_pimplemi', meaning: 'fill' },
+    // Tenses from πλη-; prose prefers the compound ἐμπίμπλημι.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'πίμπλημι' },
+      'fut.act': { '1sg': 'πλήσω' },
+      'aor.act': { '1sg': 'ἔπλησα' },
+      'perf.act': { '1sg': 'πέπληκα' },
+      'perf.mp': { '1sg': 'πέπλησμαι' },
+      'aor.pass': { '1sg': 'ἐπλήσθην' }
+    },
+  },
+  pp_pino: {
+    kind: 'verb', label: 'πίνω (drink)', literal: true,
+    subtitle: 'πίνω, πίομαι, ἔπιον, πέπωκα — drink',
+    example: { lemma: 'πίνω', class: 'pp_pino', meaning: 'drink' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'πίνω' },
+      'fut.act': { '1sg': ['πίομαι', 'πιέομαι'] },
+      'aor.act': { '1sg': 'ἔπιον' },
+      'perf.act': { '1sg': 'πέπωκα' }
+    },
+  },
+  pp_pipto: {
+    kind: 'verb', label: 'πίπτω (fall)', literal: true,
+    subtitle: 'πίπτω, πεσοῦμαι, ἔπεσον, πέπτωκα — fall',
+    example: { lemma: 'πίπτω', class: 'pp_pipto', meaning: 'fall' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'πίπτω' },
+      'fut.act': { '1sg': 'πεσοῦμαι' },
+      'aor.act': { '1sg': 'ἔπεσον' },
+      'perf.act': { '1sg': 'πέπτωκα' }
+    },
+  },
+  pp_pisteuo: {
+    kind: 'verb', label: 'πιστεύω (believe, trust (+ dat.))', literal: true,
+    subtitle: 'πιστεύω, πιστεύσω, ἐπίστευσα, πεπίστευκα, πεπίστευμαι, ἐπιστεύθην — believe, trust (+ dat.)',
+    example: { lemma: 'πιστεύω', class: 'pp_pisteuo', meaning: 'believe, trust (+ dat.)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'πιστεύω' },
+      'fut.act': { '1sg': 'πιστεύσω' },
+      'aor.act': { '1sg': 'ἐπίστευσα' },
+      'perf.act': { '1sg': 'πεπίστευκα' },
+      'perf.mp': { '1sg': 'πεπίστευμαι' },
+      'aor.pass': { '1sg': 'ἐπιστεύθην' }
+    },
+  },
+  pp_pleo: {
+    kind: 'verb', label: 'πλέω (sail)', literal: true,
+    subtitle: 'πλέω, πλεύσομαι, ἔπλευσα, πέπλευκα, πέπλευσμαι — sail',
+    example: { lemma: 'πλέω', class: 'pp_pleo', meaning: 'sail' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'πλέω' },
+      'fut.act': { '1sg': ['πλεύσομαι', 'πλευσέομαι'] },
+      'aor.act': { '1sg': 'ἔπλευσα' },
+      'perf.act': { '1sg': 'πέπλευκα' },
+      'perf.mp': { '1sg': 'πέπλευσμαι' }
+    },
+  },
+  pp_pleroo: {
+    kind: 'verb', label: 'πληρόω (fill)', literal: true,
+    subtitle: 'πληρόω, πληρώσω, ἐπλήρωσα, πεπλήρωκα, πεπλήρωμαι, ἐπληρώθην — fill',
+    example: { lemma: 'πληρόω', class: 'pp_pleroo', meaning: 'fill' },
+    // Regular -όω; all six.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'πληρόω' },
+      'fut.act': { '1sg': 'πληρώσω' },
+      'aor.act': { '1sg': 'ἐπλήρωσα' },
+      'perf.act': { '1sg': 'πεπλήρωκα' },
+      'perf.mp': { '1sg': 'πεπλήρωμαι' },
+      'aor.pass': { '1sg': 'ἐπληρώθην' }
+    },
+  },
+  pp_pneo: {
+    kind: 'verb', label: 'πνέω (breathe, blow)', literal: true,
+    subtitle: 'πνέω, πνεύσομαι, ἔπνευσα — breathe, blow',
+    example: { lemma: 'πνέω', class: 'pp_pneo', meaning: 'breathe, blow' },
+    // Monosyllabic ε-stem: πνεύσομαι/πνευσοῦμαι (Ar.), NOT -ήσω. Pf. πέπνευκα in compounds (Pl.).
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'πνέω' },
+      'fut.act': { '1sg': 'πνεύσομαι' },
+      'aor.act': { '1sg': 'ἔπνευσα' }
+    },
+  },
+  pp_potheo: {
+    kind: 'verb', label: 'ποθέω (desire)', literal: true,
+    subtitle: 'ποθέω, ποθήσω, ἐπόθησα — desire',
+    example: { lemma: 'ποθέω', class: 'pp_potheo', meaning: 'desire' },
+    // Double stem: also fut. ποθέσομαι (Lys., Pl.) and aor. ἐπόθεσα (Isoc.) with short vowel — both classical.
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ποθέω' },
+      'fut.act': { '1sg': 'ποθήσω' },
+      'aor.act': { '1sg': 'ἐπόθησα' }
+    },
+  },
+  pp_poliorkeo: {
+    kind: 'verb', label: 'πολιορκέω (besiege)', literal: true,
+    subtitle: 'πολιορκέω, πολιορκήσω, ἐπολιόρκησα, ἐπολιορκήθην — besiege',
+    example: { lemma: 'πολιορκέω', class: 'pp_poliorkeo', meaning: 'besiege' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'πολιορκέω' },
+      'fut.act': { '1sg': 'πολιορκήσω' },
+      'aor.act': { '1sg': 'ἐπολιόρκησα' },
+      'aor.pass': { '1sg': 'ἐπολιορκήθην' }
+    },
+  },
+  pp_poreuomai: {
+    kind: 'verb', label: 'πορεύομαι (march, journey)', literal: true,
+    subtitle: 'πορεύομαι, πορεύσομαι, πεπόρευμαι, ἐπορεύθην — march, journey',
+    example: { lemma: 'πορεύομαι', class: 'pp_poreuomai', meaning: 'march, journey' },
+    // Passive deponent: 'travelled' = ἐπορεύθην (X. passim). Act. πορεύω 'convey' (E., X.).
+    categories: ['pres.act', 'fut.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'πορεύομαι' },
+      'fut.act': { '1sg': 'πορεύσομαι' },
+      'perf.mp': { '1sg': 'πεπόρευμαι' },
+      'aor.pass': { '1sg': 'ἐπορεύθην' }
+    },
+  },
+  pp_porizo: {
+    kind: 'verb', label: 'πορίζω (provide)', literal: true,
+    subtitle: 'πορίζω, ποριῶ, ἐπόρισα, πεπόρικα, πεπόρισμαι, ἐπορίσθην — provide',
+    example: { lemma: 'πορίζω', class: 'pp_porizo', meaning: 'provide' },
+    // Att. contract fut. ποριῶ; all six classical; mid. 'procure for oneself'.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'πορίζω' },
+      'fut.act': { '1sg': 'ποριῶ' },
+      'aor.act': { '1sg': 'ἐπόρισα' },
+      'perf.act': { '1sg': 'πεπόρικα' },
+      'perf.mp': { '1sg': 'πεπόρισμαι' },
+      'aor.pass': { '1sg': 'ἐπορίσθην' }
+    },
+  },
+  pp_pratto: {
+    kind: 'verb', label: 'πράττω (do)', literal: true,
+    subtitle: 'πράττω, πράξω, ἔπραξα, πέπραγα, πέπραγμαι, ἐπράχθην — do',
+    example: { lemma: 'πράττω', class: 'pp_pratto', meaning: 'do' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'πράττω' },
+      'fut.act': { '1sg': 'πράξω' },
+      'aor.act': { '1sg': 'ἔπραξα' },
+      'perf.act': { '1sg': ['πέπραγα', 'πέπραχα'] },
+      'perf.mp': { '1sg': 'πέπραγμαι' },
+      'aor.pass': { '1sg': 'ἐπράχθην' }
+    },
+  },
+  pp_prodidomi: {
+    kind: 'verb', label: 'προδίδωμι (betray)', literal: true,
+    subtitle: 'προδίδωμι, προδώσω, προέδωκα, προδέδωκα, προδέδομαι, προεδόθην — betray',
+    example: { lemma: 'προδίδωμι', class: 'pp_prodidomi', meaning: 'betray' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'προδίδωμι' },
+      'fut.act': { '1sg': 'προδώσω' },
+      'aor.act': { '1sg': 'προέδωκα' },
+      'perf.act': { '1sg': 'προδέδωκα' },
+      'perf.mp': { '1sg': 'προδέδομαι' },
+      'aor.pass': { '1sg': 'προεδόθην' }
+    },
+  },
+  pp_pynthanomai: {
+    kind: 'verb', label: 'πυνθάνομαι (perceive, ascertain)', literal: true,
+    subtitle: 'πυνθάνομαι, πεύσομαι, ἐπυθόμην, πέπυσμαι — perceive, ascertain',
+    example: { lemma: 'πυνθάνομαι', class: 'pp_pynthanomai', meaning: 'perceive, ascertain' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'πυνθάνομαι' },
+      'fut.act': { '1sg': 'πεύσομαι' },
+      'aor.act': { '1sg': 'ἐπυθόμην' },
+      'perf.mp': { '1sg': 'πέπυσμαι' }
+    },
+  },
+  pp_poleo: {
+    kind: 'verb', label: 'πωλέω (sell)', literal: true,
+    subtitle: 'πωλέω, πωλήσω, ἐπώλησα, ἐπωλήθην — sell',
+    example: { lemma: 'πωλέω', class: 'pp_poleo', meaning: 'sell' },
+    // 'Offer for sale'; the completed sale is ἀπεδόμην/πέπρακα (suppletive set). Aor. act. mostly post-classical, impf. usual.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'πωλέω' },
+      'fut.act': { '1sg': 'πωλήσω' },
+      'aor.act': { '1sg': 'ἐπώλησα' },
+      'aor.pass': { '1sg': 'ἐπωλήθην' }
+    },
+  },
+  pp_rheo: {
+    kind: 'verb', label: 'ῥέω (flow)', literal: true,
+    subtitle: 'ῥέω, ῥυήσομαι, ἐρρύηκα, ἐρρύην — flow',
+    example: { lemma: 'ῥέω', class: 'pp_rheo', meaning: 'flow' },
+    categories: ['pres.act', 'fut.act', 'perf.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ῥέω' },
+      'fut.act': { '1sg': 'ῥυήσομαι' },
+      'perf.act': { '1sg': 'ἐρρύηκα' },
+      'aor.pass': { '1sg': 'ἐρρύην' }
+    },
+  },
+  pp_rhegnymi: {
+    kind: 'verb', label: 'ῥήγνυμι (break)', literal: true,
+    subtitle: 'ῥήγνυμι, ῥήξω, ἔρρηξα, ἐρράγην — break',
+    example: { lemma: 'ῥήγνυμι', class: 'pp_rhegnymi', meaning: 'break' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ῥήγνυμι' },
+      'fut.act': { '1sg': 'ῥήξω' },
+      'aor.act': { '1sg': 'ἔρρηξα' },
+      'aor.pass': { '1sg': 'ἐρράγην' }
+    },
+  },
+  pp_rhipto: {
+    kind: 'verb', label: 'ῥίπτω (throw)', literal: true,
+    subtitle: 'ῥίπτω, ῥίψω, ἔρριψα, ἔρριφα, ἔρριμμαι, ἐρρίφθην — throw',
+    example: { lemma: 'ῥίπτω', class: 'pp_rhipto', meaning: 'throw' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ῥίπτω' },
+      'fut.act': { '1sg': 'ῥίψω' },
+      'aor.act': { '1sg': 'ἔρριψα' },
+      'perf.act': { '1sg': 'ἔρριφα' },
+      'perf.mp': { '1sg': 'ἔρριμμαι' },
+      'aor.pass': { '1sg': ['ἐρρίφθην', 'ἐρρίφην'] }
+    },
+  },
+  pp_sebomai: {
+    kind: 'verb', label: 'σέβομαι (worship, honour, venerate)', literal: true,
+    subtitle: 'σέβομαι, ἐσέφθην — worship, honour, venerate',
+    example: { lemma: 'σέβομαι', class: 'pp_sebomai', meaning: 'worship, honour, venerate' },
+    // Present-system verb ('revere'); rare aor. pass. ἐσέφθην 'was awe-struck' (Pl.).
+    categories: ['pres.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'σέβομαι' },
+      'aor.pass': { '1sg': 'ἐσέφθην' }
+    },
+  },
+  pp_semaino: {
+    kind: 'verb', label: 'σημαίνω (show)', literal: true,
+    subtitle: 'σημαίνω, σημανῶ, ἐσήμηνα, σεσήμασμαι, ἐσημάνθην — show',
+    example: { lemma: 'σημαίνω', class: 'pp_semaino', meaning: 'show' },
+    // Liquid stem: Att. aor. ἐσήμηνα (ἐσήμανα X. and later); pf. pass. σεσήμασμαι 'stands sealed' (Hdt., Lys.).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'σημαίνω' },
+      'fut.act': { '1sg': 'σημανῶ' },
+      'aor.act': { '1sg': 'ἐσήμηνα' },
+      'perf.mp': { '1sg': 'σεσήμασμαι' },
+      'aor.pass': { '1sg': 'ἐσημάνθην' }
+    },
+  },
+  pp_stheno: {
+    kind: 'verb', label: 'σθένω (be strong)', literal: true,
+    subtitle: 'σθένω — be strong',
+    example: { lemma: 'σθένω', class: 'pp_stheno', meaning: 'be strong' },
+    // Tragic verb, pres./impf. only; prose δύναμαι, ἰσχύω.
+    categories: ['pres.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'σθένω' }
+    },
+  },
+  pp_skopeo: {
+    kind: 'verb', label: 'σκοπέω (look at)', literal: true,
+    subtitle: 'σκοπέω — look at',
+    example: { lemma: 'σκοπέω', class: 'pp_skopeo', meaning: 'look at' },
+    // Mastronarde's row gives the present only, correctly: Attic supplies the other tenses from σκέπτομαι — fut. σκέψομαι, aor. ἐσκεψάμην, pf. ἔσκεμμαι.
+    categories: ['pres.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'σκοπέω' }
+    },
+  },
+  pp_spendo: {
+    kind: 'verb', label: 'σπένδω (make a libation; mid. make peace or a truce)', literal: true,
+    subtitle: 'σπένδω, σπείσω, ἔσπεισα, ἔσπεισμαι — make a libation; mid. make peace or a truce',
+    example: { lemma: 'σπένδω', class: 'pp_spendo', meaning: 'make a libation; mid. make peace or a truce' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'σπένδω' },
+      'fut.act': { '1sg': 'σπείσω' },
+      'aor.act': { '1sg': 'ἔσπεισα' },
+      'perf.mp': { '1sg': 'ἔσπεισμαι' }
+    },
+  },
+  pp_speudo: {
+    kind: 'verb', label: 'σπεύδω (hasten)', literal: true,
+    subtitle: 'σπεύδω, σπεύσω, ἔσπευσα — hasten',
+    example: { lemma: 'σπεύδω', class: 'pp_speudo', meaning: 'hasten' },
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'σπεύδω' },
+      'fut.act': { '1sg': 'σπεύσω' },
+      'aor.act': { '1sg': 'ἔσπευσα' }
+    },
+  },
+  pp_steicho: {
+    kind: 'verb', label: 'στείχω (go)', literal: true,
+    subtitle: 'στείχω — go',
+    example: { lemma: 'στείχω', class: 'pp_steicho', meaning: 'go' },
+    // Poetic 'go, march': pres./impf. in Trag.; aor.2 ἔστιχον epic, never tragic. Prose ἔρχομαι/βαίνω compounds.
+    categories: ['pres.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'στείχω' }
+    },
+  },
+  pp_stello: {
+    kind: 'verb', label: 'στέλλω (equip, dispatch)', literal: true,
+    subtitle: 'στέλλω, στελῶ, ἔστειλα, ἔσταλμαι, ἐστάλην — equip, dispatch',
+    example: { lemma: 'στέλλω', class: 'pp_stello', meaning: 'equip, dispatch' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'στέλλω' },
+      'fut.act': { '1sg': 'στελῶ' },
+      'aor.act': { '1sg': 'ἔστειλα' },
+      'perf.mp': { '1sg': 'ἔσταλμαι' },
+      'aor.pass': { '1sg': 'ἐστάλην' }
+    },
+  },
+  pp_stenazo: {
+    kind: 'verb', label: 'στενάζω (mourn)', literal: true,
+    subtitle: 'στενάζω, στενάξω, ἐστέναξα — mourn',
+    example: { lemma: 'στενάζω', class: 'pp_stenazo', meaning: 'mourn' },
+    // fut. -άξω (Aeschin.); frequentative of στένω.
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'στενάζω' },
+      'fut.act': { '1sg': 'στενάξω' },
+      'aor.act': { '1sg': 'ἐστέναξα' }
+    },
+  },
+  pp_steno: {
+    kind: 'verb', label: 'στένω (mourn)', literal: true,
+    subtitle: 'στένω — mourn',
+    example: { lemma: 'στένω', class: 'pp_steno', meaning: 'mourn' },
+    // Poetic 'groan': pres./impf. only.
+    categories: ['pres.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'στένω' }
+    },
+  },
+  pp_sterisko: {
+    kind: 'verb', label: 'στερίσκω (deprive of)', literal: true,
+    subtitle: 'στερίσκω, στερήσω, ἐστέρησα, ἐστέρηκα, ἐστέρημαι, ἐστερήθην — deprive of',
+    example: { lemma: 'στερίσκω', class: 'pp_sterisko', meaning: 'deprive of' },
+    // Collateral present of στερέω — tenses from στερε-. Pass. ἐστερήθην 'lost' very common; pres. στέρομαι 'be without'.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'στερίσκω' },
+      'fut.act': { '1sg': 'στερήσω' },
+      'aor.act': { '1sg': 'ἐστέρησα' },
+      'perf.act': { '1sg': 'ἐστέρηκα' },
+      'perf.mp': { '1sg': 'ἐστέρημαι' },
+      'aor.pass': { '1sg': 'ἐστερήθην' }
+    },
+  },
+  pp_strepho: {
+    kind: 'verb', label: 'στρέφω (turn)', literal: true,
+    subtitle: 'στρέφω, στρέψω, ἔστρεψα, ἔστραμμαι, ἐστρέφθην — turn',
+    example: { lemma: 'στρέφω', class: 'pp_strepho', meaning: 'turn' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'στρέφω' },
+      'fut.act': { '1sg': 'στρέψω' },
+      'aor.act': { '1sg': 'ἔστρεψα' },
+      'perf.mp': { '1sg': 'ἔστραμμαι' },
+      'aor.pass': { '1sg': ['ἐστρέφθην', 'ἐστράφην'] }
+    },
+  },
+  pp_stygeo: {
+    kind: 'verb', label: 'στυγέω (hate)', literal: true,
+    subtitle: 'στυγέω, ἐστύγησα, ἐστυγήθην — hate',
+    example: { lemma: 'στυγέω', class: 'pp_stygeo', meaning: 'hate' },
+    // Poet./Hdt. 'abhor', never in Attic prose (prose μισέω). Poet. aor.1 ἔστυξα = 'make hateful' (Od.); fut. στυγήσομαι in pass. sense (S.).
+    categories: ['pres.act', 'aor.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'στυγέω' },
+      'aor.act': { '1sg': 'ἐστύγησα' },
+      'aor.pass': { '1sg': 'ἐστυγήθην' }
+    },
+  },
+  pp_syggignosko: {
+    kind: 'verb', label: 'συγγιγνώσκω (pardon (+ dat.))', literal: true,
+    subtitle: 'συγγιγνώσκω, συγγνώσομαι, συνέγνων, συνέγνωκα, συνέγνωσμαι, συνεγνώσθην — pardon (+ dat.)',
+    example: { lemma: 'συγγιγνώσκω', class: 'pp_syggignosko', meaning: 'pardon (+ dat.)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'συγγιγνώσκω' },
+      'fut.act': { '1sg': 'συγγνώσομαι' },
+      'aor.act': { '1sg': 'συνέγνων' },
+      'perf.act': { '1sg': 'συνέγνωκα' },
+      'perf.mp': { '1sg': 'συνέγνωσμαι' },
+      'aor.pass': { '1sg': 'συνεγνώσθην' }
+    },
+  },
+  pp_syllego: {
+    kind: 'verb', label: 'συλλέγω (collect, gather)', literal: true,
+    subtitle: 'συλλέγω, συλλέξω, συνέλεξα, συνείλοχα, συνείλεγμαι, συνελέγην — collect, gather',
+    example: { lemma: 'συλλέγω', class: 'pp_syllego', meaning: 'collect, gather' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'συλλέγω' },
+      'fut.act': { '1sg': 'συλλέξω' },
+      'aor.act': { '1sg': 'συνέλεξα' },
+      'perf.act': { '1sg': 'συνείλοχα' },
+      'perf.mp': { '1sg': 'συνείλεγμαι' },
+      'aor.pass': { '1sg': ['συνελέγην', 'συνελέχθην'] }
+    },
+  },
+  pp_symbaino: {
+    kind: 'verb', label: 'συμβαίνω (happen, agree)', literal: true,
+    subtitle: 'συμβαίνω, συμβήσομαι, συνέβην, συμβέβηκα, συμβέβαμαι, συνεβάθην — happen, agree',
+    example: { lemma: 'συμβαίνω', class: 'pp_symbaino', meaning: 'happen, agree' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'συμβαίνω' },
+      'fut.act': { '1sg': 'συμβήσομαι' },
+      'aor.act': { '1sg': 'συνέβην' },
+      'perf.act': { '1sg': 'συμβέβηκα' },
+      'perf.mp': { '1sg': 'συμβέβαμαι' },
+      'aor.pass': { '1sg': 'συνεβάθην' }
+    },
+  },
+  pp_symbouleuo: {
+    kind: 'verb', label: 'συμβουλεύω (counsel)', literal: true,
+    subtitle: 'συμβουλεύω, συμβουλεύσω, συνεβούλευσα, συμβεβούλευκα, συμβεβούλευμαι, συνεβουλεύθην — counsel',
+    example: { lemma: 'συμβουλεύω', class: 'pp_symbouleuo', meaning: 'counsel' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'συμβουλεύω' },
+      'fut.act': { '1sg': 'συμβουλεύσω' },
+      'aor.act': { '1sg': 'συνεβούλευσα' },
+      'perf.act': { '1sg': 'συμβεβούλευκα' },
+      'perf.mp': { '1sg': 'συμβεβούλευμαι' },
+      'aor.pass': { '1sg': 'συνεβουλεύθην' }
+    },
+  },
+  pp_sphazo: {
+    kind: 'verb', label: 'σφάζω (kill)', literal: true,
+    subtitle: 'σφάζω, σφάξω, ἔσφαξα, ἔσφαγμαι, ἐσφάγην — kill',
+    example: { lemma: 'σφάζω', class: 'pp_sphazo', meaning: 'kill' },
+    // Attic prose pres. σφάττω. Aor.2 pass. ἐσφάγην standard (ἐσφάχθην rare, not Trag.); fut. pass. σφαγήσομαι E./X.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'σφάζω' },
+      'fut.act': { '1sg': 'σφάξω' },
+      'aor.act': { '1sg': 'ἔσφαξα' },
+      'perf.mp': { '1sg': 'ἔσφαγμαι' },
+      'aor.pass': { '1sg': 'ἐσφάγην' }
+    },
+  },
+  pp_sphallo: {
+    kind: 'verb', label: 'σφάλλω (overthrow, trip up, baffle)', literal: true,
+    subtitle: 'σφάλλω, σφαλῶ, ἔσφηλα, ἔσφαλμαι, ἐσφάλην — overthrow, trip up, baffle',
+    example: { lemma: 'σφάλλω', class: 'pp_sphallo', meaning: 'overthrow, trip up, baffle' },
+    // Liquid aor. ἔσφηλα; 'fail, be mistaken' = the passive (ἐσφάλην, σφαλήσομαι/σφαλοῦμαι).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'σφάλλω' },
+      'fut.act': { '1sg': 'σφαλῶ' },
+      'aor.act': { '1sg': 'ἔσφηλα' },
+      'perf.mp': { '1sg': 'ἔσφαλμαι' },
+      'aor.pass': { '1sg': 'ἐσφάλην' }
+    },
+  },
+  pp_sozo: {
+    kind: 'verb', label: 'σῴζω (save)', literal: true,
+    subtitle: 'σῴζω, σώσω, ἔσωσα, σέσωκα, σέσωμαι, ἐσώθην — save',
+    example: { lemma: 'σῴζω', class: 'pp_sozo', meaning: 'save' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'σῴζω' },
+      'fut.act': { '1sg': ['σώσω', 'σῴσω'] },
+      'aor.act': { '1sg': ['ἔσωσα', 'ἔσῳσα'] },
+      'perf.act': { '1sg': 'σέσωκα' },
+      'perf.mp': { '1sg': ['σέσωμαι', 'σέσῳσμαι'] },
+      'aor.pass': { '1sg': 'ἐσώθην' }
+    },
+  },
+  pp_taratto: {
+    kind: 'verb', label: 'ταράττω (confuse, confound, throw into disarray)', literal: true,
+    subtitle: 'ταράττω, ταράξω, ἐτάραξα, τετάραγμαι, ἐταράχθην — confuse, confound, throw into disarray',
+    example: { lemma: 'ταράττω', class: 'pp_taratto', meaning: 'confuse, confound, throw into disarray' },
+    // No classical perfect active (Ep. intr. τέτρηχα 'be in turmoil'). The deck row now carries ταράσσω as well.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ταράττω' },
+      'fut.act': { '1sg': 'ταράξω' },
+      'aor.act': { '1sg': 'ἐτάραξα' },
+      'perf.mp': { '1sg': 'τετάραγμαι' },
+      'aor.pass': { '1sg': 'ἐταράχθην' }
+    },
+  },
+  pp_tatto: {
+    kind: 'verb', label: 'τάττω (arrange, order)', literal: true,
+    subtitle: 'τάττω, τάξω, ἔταξα, τέταχα, τέταγμαι, ἐτάχθην — arrange, order',
+    example: { lemma: 'τάττω', class: 'pp_tatto', meaning: 'arrange, order' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'τάττω' },
+      'fut.act': { '1sg': 'τάξω' },
+      'aor.act': { '1sg': 'ἔταξα' },
+      'perf.act': { '1sg': 'τέταχα' },
+      'perf.mp': { '1sg': 'τέταγμαι' },
+      'aor.pass': { '1sg': 'ἐτάχθην' }
+    },
+  },
+  pp_teichizo: {
+    kind: 'verb', label: 'τειχίζω (fortify)', literal: true,
+    subtitle: 'τειχίζω, τειχιῶ, ἐτείχισα, τετείχικα, τετείχισμαι, ἐτειχίσθην — fortify',
+    example: { lemma: 'τειχίζω', class: 'pp_teichizo', meaning: 'fortify' },
+    // All six classical (pf. τετείχικα D. 19.112); mid. ἐτειχισάμην 'built for themselves' (Il., Th.).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'τειχίζω' },
+      'fut.act': { '1sg': 'τειχιῶ' },
+      'aor.act': { '1sg': 'ἐτείχισα' },
+      'perf.act': { '1sg': 'τετείχικα' },
+      'perf.mp': { '1sg': 'τετείχισμαι' },
+      'aor.pass': { '1sg': 'ἐτειχίσθην' }
+    },
+  },
+  pp_teleutao: {
+    kind: 'verb', label: 'τελευτάω (accomplish, end, die)', literal: true,
+    subtitle: 'τελευτάω, τελευτήσω, ἐτελεύτησα, τετελεύτηκα, τετελεύτημαι, ἐτελευτήθην — accomplish, end, die',
+    example: { lemma: 'τελευτάω', class: 'pp_teleutao', meaning: 'accomplish, end, die' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'τελευτάω' },
+      'fut.act': { '1sg': 'τελευτήσω' },
+      'aor.act': { '1sg': 'ἐτελεύτησα' },
+      'perf.act': { '1sg': 'τετελεύτηκα' },
+      'perf.mp': { '1sg': 'τετελεύτημαι' },
+      'aor.pass': { '1sg': 'ἐτελευτήθην' }
+    },
+  },
+  pp_temno: {
+    kind: 'verb', label: 'τέμνω (cut)', literal: true,
+    subtitle: 'τέμνω, τεμῶ, ἔτεμον, τέτμημαι, ἐτμήθην — cut',
+    example: { lemma: 'τέμνω', class: 'pp_temno', meaning: 'cut' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'τέμνω' },
+      'fut.act': { '1sg': 'τεμῶ' },
+      'aor.act': { '1sg': ['ἔτεμον', 'ἔταμον'] },
+      'perf.mp': { '1sg': 'τέτμημαι' },
+      'aor.pass': { '1sg': 'ἐτμήθην' }
+    },
+  },
+  pp_tereo: {
+    kind: 'verb', label: 'τηρέω (watch (for))', literal: true,
+    subtitle: 'τηρέω, τηρήσω, ἐτήρησα, τετήρηκα, τετήρημαι, ἐτηρήθην — watch (for)',
+    example: { lemma: 'τηρέω', class: 'pp_tereo', meaning: 'watch (for)' },
+    // Regular -έω; fut. mid. τηρήσομαι in pass. sense (Th. 4.30).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'τηρέω' },
+      'fut.act': { '1sg': 'τηρήσω' },
+      'aor.act': { '1sg': 'ἐτήρησα' },
+      'perf.act': { '1sg': 'τετήρηκα' },
+      'perf.mp': { '1sg': 'τετήρημαι' },
+      'aor.pass': { '1sg': 'ἐτηρήθην' }
+    },
+  },
+  pp_tikto: {
+    kind: 'verb', label: 'τίκτω (beget)', literal: true,
+    subtitle: 'τίκτω, τέξομαι, ἔτεκον, τέτοκα, τέτεγμαι, ἐτέχθην — beget',
+    example: { lemma: 'τίκτω', class: 'pp_tikto', meaning: 'beget' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'τίκτω' },
+      'fut.act': { '1sg': 'τέξομαι' },
+      'aor.act': { '1sg': ['ἔτεκον', 'ἔτεξα'] },
+      'perf.act': { '1sg': 'τέτοκα' },
+      'perf.mp': { '1sg': 'τέτεγμαι' },
+      'aor.pass': { '1sg': 'ἐτέχθην' }
+    },
+  },
+  pp_timoreo: {
+    kind: 'verb', label: 'τιμωρέω (avenge, punish)', literal: true,
+    subtitle: 'τιμωρέω, τιμωρήσω, ἐτιμώρησα, τετιμώρημαι, ἐτιμωρήθην — avenge, punish',
+    example: { lemma: 'τιμωρέω', class: 'pp_timoreo', meaning: 'avenge, punish' },
+    // Act. 'avenge (τινι)'; mid. τιμωρήσομαι/ἐτιμωρησάμην 'take vengeance on, punish (τινα)'; pf. τετιμώρημαι in both mid. and pass. sense; pass. 'be punished' (Pl.).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'τιμωρέω' },
+      'fut.act': { '1sg': 'τιμωρήσω' },
+      'aor.act': { '1sg': 'ἐτιμώρησα' },
+      'perf.mp': { '1sg': 'τετιμώρημαι' },
+      'aor.pass': { '1sg': 'ἐτιμωρήθην' }
+    },
+  },
+  pp_titrosko: {
+    kind: 'verb', label: 'τιτρώσκω (wound)', literal: true,
+    subtitle: 'τιτρώσκω, τρώσω, ἔτρωσα, τέτρωμαι, ἐτρώθην — wound',
+    example: { lemma: 'τιτρώσκω', class: 'pp_titrosko', meaning: 'wound' },
+    // τρω- tenses; fut. pass. τρωθήσομαι Pl. No classical pf. act.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'τιτρώσκω' },
+      'fut.act': { '1sg': 'τρώσω' },
+      'aor.act': { '1sg': 'ἔτρωσα' },
+      'perf.mp': { '1sg': 'τέτρωμαι' },
+      'aor.pass': { '1sg': 'ἐτρώθην' }
+    },
+  },
+  pp_tolmao: {
+    kind: 'verb', label: 'τολμάω (dare)', literal: true,
+    subtitle: 'τολμάω, τολμήσω, ἐτόλμησα, τετόλμηκα — dare',
+    example: { lemma: 'τολμάω', class: 'pp_tolmao', meaning: 'dare' },
+    // Regular ᾱ→η contract; pf. τετόλμηκα already A./Pi.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'τολμάω' },
+      'fut.act': { '1sg': 'τολμήσω' },
+      'aor.act': { '1sg': 'ἐτόλμησα' },
+      'perf.act': { '1sg': 'τετόλμηκα' }
+    },
+  },
+  pp_trepo: {
+    kind: 'verb', label: 'τρέπω (turn)', literal: true,
+    subtitle: 'τρέπω, τρέψω, ἔτρεψα, τέτροφα, τέτραμμαι, ἐτρέφθην — turn',
+    example: { lemma: 'τρέπω', class: 'pp_trepo', meaning: 'turn' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'τρέπω' },
+      'fut.act': { '1sg': 'τρέψω' },
+      'aor.act': { '1sg': ['ἔτρεψα', 'ἔτραπον'] },
+      'perf.act': { '1sg': 'τέτροφα' },
+      'perf.mp': { '1sg': 'τέτραμμαι' },
+      'aor.pass': { '1sg': ['ἐτρέφθην', 'ἐτράπην'] }
+    },
+  },
+  pp_trepho: {
+    kind: 'verb', label: 'τρέφω (nourish)', literal: true,
+    subtitle: 'τρέφω, θρέψω, ἔθρεψα, τέτροφα, τέθραμμαι, ἐτράφην — nourish',
+    example: { lemma: 'τρέφω', class: 'pp_trepho', meaning: 'nourish' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'τρέφω' },
+      'fut.act': { '1sg': 'θρέψω' },
+      'aor.act': { '1sg': 'ἔθρεψα' },
+      'perf.act': { '1sg': 'τέτροφα' },
+      'perf.mp': { '1sg': 'τέθραμμαι' },
+      'aor.pass': { '1sg': ['ἐτράφην', 'ἐτρέφθην'] }
+    },
+  },
+  pp_trecho: {
+    kind: 'verb', label: 'τρέχω (run)', literal: true,
+    subtitle: 'τρέχω, δραμοῦμαι, ἔδραμον — run',
+    example: { lemma: 'τρέχω', class: 'pp_trecho', meaning: 'run' },
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'τρέχω' },
+      'fut.act': { '1sg': ['δραμοῦμαι', 'θρέξομαι'] },
+      'aor.act': { '1sg': 'ἔδραμον' }
+    },
+  },
+  pp_tygchano: {
+    kind: 'verb', label: 'τυγχάνω (happen, meet with (+ gen.))', literal: true,
+    subtitle: 'τυγχάνω, τεύξομαι, ἔτυχον, τετύχηκα — happen, meet with (+ gen.)',
+    example: { lemma: 'τυγχάνω', class: 'pp_tygchano', meaning: 'happen, meet with (+ gen.)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'τυγχάνω' },
+      'fut.act': { '1sg': 'τεύξομαι' },
+      'aor.act': { '1sg': 'ἔτυχον' },
+      'perf.act': { '1sg': 'τετύχηκα' }
+    },
+  },
+  pp_typto: {
+    kind: 'verb', label: 'τύπτω (strike)', literal: true,
+    subtitle: 'τύπτω, τυπτήσω — strike',
+    example: { lemma: 'τύπτω', class: 'pp_typto', meaning: 'strike' },
+    // Suppletive in Attic: fut. τυπτήσω (Ar., Pl., D.), but 'struck' = ἐπάταξα (πατάσσω), 'was struck' = ἐπλήγην, pf. πέπληγμαι (πλήττω). The τυπ- aorists (ἔτυψα, ἐτύπην, τέτυμμαι) are poetic/Ionic.
+    categories: ['pres.act', 'fut.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'τύπτω' },
+      'fut.act': { '1sg': 'τυπτήσω' }
+    },
+  },
+  pp_hybrizo: {
+    kind: 'verb', label: 'ὑβρίζω (insult)', literal: true,
+    subtitle: 'ὑβρίζω, ὑβριῶ, ὕβρισα, ὕβρικα, ὕβρισμαι, ὑβρίσθην — insult',
+    example: { lemma: 'ὑβρίζω', class: 'pp_hybrizo', meaning: 'insult' },
+    // All six classical (pf. ὕβρικα Ar., D.); augment invisible on ὑ-.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὑβρίζω' },
+      'fut.act': { '1sg': 'ὑβριῶ' },
+      'aor.act': { '1sg': 'ὕβρισα' },
+      'perf.act': { '1sg': 'ὕβρικα' },
+      'perf.mp': { '1sg': 'ὕβρισμαι' },
+      'aor.pass': { '1sg': 'ὑβρίσθην' }
+    },
+  },
+  pp_hypereteo: {
+    kind: 'verb', label: 'ὑπηρετέω (serve)', literal: true,
+    subtitle: 'ὑπηρετέω, ὑπηρετήσω, ὑπηρέτησα, ὑπηρέτηκα — serve',
+    example: { lemma: 'ὑπηρετέω', class: 'pp_hypereteo', meaning: 'serve' },
+    // Regular -έω (+dat.); plpf. ὑπηρετήκειν X. Denominative — augment leaves spelling unchanged.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὑπηρετέω' },
+      'fut.act': { '1sg': 'ὑπηρετήσω' },
+      'aor.act': { '1sg': 'ὑπηρέτησα' },
+      'perf.act': { '1sg': 'ὑπηρέτηκα' }
+    },
+  },
+  pp_hypischneomai: {
+    kind: 'verb', label: 'ὑπισχνέομαι (promise)', literal: true,
+    subtitle: 'ὑπισχνέομαι, ὑποσχήσομαι, ὑπεσχόμην, ὑπέσχημαι — promise',
+    example: { lemma: 'ὑπισχνέομαι', class: 'pp_hypischneomai', meaning: 'promise' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὑπισχνέομαι' },
+      'fut.act': { '1sg': 'ὑποσχήσομαι' },
+      'aor.act': { '1sg': 'ὑπεσχόμην' },
+      'perf.mp': { '1sg': 'ὑπέσχημαι' }
+    },
+  },
+  pp_hypopteuo: {
+    kind: 'verb', label: 'ὑποπτεύω (suspect)', literal: true,
+    subtitle: 'ὑποπτεύω, ὑποπτεύσω, ὑπώπτευσα, ὑπωπτεύθην — suspect',
+    example: { lemma: 'ὑποπτεύω', class: 'pp_hypopteuo', meaning: 'suspect' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὑποπτεύω' },
+      'fut.act': { '1sg': 'ὑποπτεύσω' },
+      'aor.act': { '1sg': 'ὑπώπτευσα' },
+      'aor.pass': { '1sg': 'ὑπωπτεύθην' }
+    },
+  },
+  pp_phaino: {
+    kind: 'verb', label: 'φαίνω (show; pass. appear)', literal: true,
+    subtitle: 'φαίνω, φανῶ, ἔφηνα, πέφηνα, πέφασμαι, ἐφάνην — show; pass. appear',
+    example: { lemma: 'φαίνω', class: 'pp_phaino', meaning: 'show; pass. appear' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'φαίνω' },
+      'fut.act': { '1sg': 'φανῶ' },
+      'aor.act': { '1sg': 'ἔφηνα' },
+      'perf.act': { '1sg': 'πέφηνα' },
+      'perf.mp': { '1sg': 'πέφασμαι' },
+      'aor.pass': { '1sg': ['ἐφάνην', 'ἐφάνθην'] }
+    },
+  },
+  pp_pheidomai: {
+    kind: 'verb', label: 'φείδομαι (spare (+ gen.))', literal: true,
+    subtitle: 'φείδομαι, φείσομαι, ἐφεισάμην — spare (+ gen.)',
+    example: { lemma: 'φείδομαι', class: 'pp_pheidomai', meaning: 'spare (+ gen.)' },
+    // Deponent (+gen.); Ep. redupl. aor. πεφιδέσθαι.
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'φείδομαι' },
+      'fut.act': { '1sg': 'φείσομαι' },
+      'aor.act': { '1sg': 'ἐφεισάμην' }
+    },
+  },
+  pp_phero: {
+    kind: 'verb', label: 'φέρω (bear, carry)', literal: true,
+    subtitle: 'φέρω, οἴσω, ἤνεγκον, ἐνήνοχα, ἐνήνεγμαι, ἠνέχθην — bear, carry',
+    example: { lemma: 'φέρω', class: 'pp_phero', meaning: 'bear, carry' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'φέρω' },
+      'fut.act': { '1sg': 'οἴσω' },
+      'aor.act': { '1sg': ['ἤνεγκον', 'ἤνεγκα'] },
+      'perf.act': { '1sg': 'ἐνήνοχα' },
+      'perf.mp': { '1sg': 'ἐνήνεγμαι' },
+      'aor.pass': { '1sg': 'ἠνέχθην' }
+    },
+  },
+  pp_pheugo: {
+    kind: 'verb', label: 'φεύγω (flee)', literal: true,
+    subtitle: 'φεύγω, φεύξομαι, ἔφυγον, πέφευγα — flee',
+    example: { lemma: 'φεύγω', class: 'pp_pheugo', meaning: 'flee' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'φεύγω' },
+      'fut.act': { '1sg': ['φεύξομαι', 'φευξέομαι'] },
+      'aor.act': { '1sg': 'ἔφυγον' },
+      'perf.act': { '1sg': 'πέφευγα' }
+    },
+  },
+  pp_phthano: {
+    kind: 'verb', label: 'φθάνω (anticipate)', literal: true,
+    subtitle: 'φθάνω, φθήσομαι, ἔφθασα — anticipate',
+    example: { lemma: 'φθάνω', class: 'pp_phthano', meaning: 'anticipate' },
+    categories: ['pres.act', 'fut.act', 'aor.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'φθάνω' },
+      'fut.act': { '1sg': 'φθήσομαι' },
+      'aor.act': { '1sg': ['ἔφθασα', 'ἔφθην'] }
+    },
+  },
+  pp_phtheggomai: {
+    kind: 'verb', label: 'φθέγγομαι (utter)', literal: true,
+    subtitle: 'φθέγγομαι, φθέγξομαι, ἐφθεγξάμην, ἔφθεγμαι — utter',
+    example: { lemma: 'φθέγγομαι', class: 'pp_phtheggomai', meaning: 'utter' },
+    // Deponent; pf. ἔφθεγμαι Pl.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'φθέγγομαι' },
+      'fut.act': { '1sg': 'φθέγξομαι' },
+      'aor.act': { '1sg': 'ἐφθεγξάμην' },
+      'perf.mp': { '1sg': 'ἔφθεγμαι' }
+    },
+  },
+  pp_phthino: {
+    kind: 'verb', label: 'φθίνω (waste, destroy)', literal: true,
+    subtitle: 'φθίνω — waste, destroy',
+    example: { lemma: 'φθίνω', class: 'pp_phthino', meaning: 'waste, destroy' },
+    // Poetic 'waste away, wane' (LSJ lemmatizes φθίω); the trans. φθίσω/ἔφθισα and mid. ἐφθίμην are Epic. Prose: φθίνοντος τοῦ μηνός.
+    categories: ['pres.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'φθίνω' }
+    },
+  },
+  pp_phthoneo: {
+    kind: 'verb', label: 'φθονέω (envy, grudge)', literal: true,
+    subtitle: 'φθονέω, φθονήσω, ἐφθόνησα, ἐφθονήθην — envy, grudge',
+    example: { lemma: 'φθονέω', class: 'pp_phthoneo', meaning: 'envy, grudge' },
+    // Regular -έω (+dat.); 'be envied' has fut. φθονήσομαι in pass. sense (D. 47.70) beside φθονηθήσομαι (X.).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'φθονέω' },
+      'fut.act': { '1sg': 'φθονήσω' },
+      'aor.act': { '1sg': 'ἐφθόνησα' },
+      'aor.pass': { '1sg': 'ἐφθονήθην' }
+    },
+  },
+  pp_phileo: {
+    kind: 'verb', label: 'φιλέω (love)', literal: true,
+    subtitle: 'φιλέω, φιλήσω, ἐφίλησα, πεφίληκα, πεφίλημαι, ἐφιλήθην — love',
+    example: { lemma: 'φιλέω', class: 'pp_phileo', meaning: 'love' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'φιλέω' },
+      'fut.act': { '1sg': 'φιλήσω' },
+      'aor.act': { '1sg': 'ἐφίλησα' },
+      'perf.act': { '1sg': 'πεφίληκα' },
+      'perf.mp': { '1sg': 'πεφίλημαι' },
+      'aor.pass': { '1sg': 'ἐφιλήθην' }
+    },
+  },
+  pp_phobeomai: {
+    kind: 'verb', label: 'φοβέομαι (be afraid)', literal: true,
+    subtitle: 'φοβέομαι, φοβήσομαι, πεφόβημαι, ἐφοβήθην — be afraid',
+    example: { lemma: 'φοβέομαι', class: 'pp_phobeomai', meaning: 'be afraid' },
+    // Passive deponent: 'feared' = ἐφοβήθην, never *ἐφοβησάμην. Act. φοβέω 'frighten' (ἐφόβησα). fut. also φοβηθήσομαι.
+    categories: ['pres.act', 'fut.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'φοβέομαι' },
+      'fut.act': { '1sg': 'φοβήσομαι' },
+      'perf.mp': { '1sg': 'πεφόβημαι' },
+      'aor.pass': { '1sg': 'ἐφοβήθην' }
+    },
+  },
+  pp_phoneuo: {
+    kind: 'verb', label: 'φονεύω (slaughter)', literal: true,
+    subtitle: 'φονεύω, φονεύσω, ἐφόνευσα, ἐφονεύθην — slaughter',
+    example: { lemma: 'φονεύω', class: 'pp_phoneuo', meaning: 'slaughter' },
+    // Regular -εύω; pass. 'be slain' Th. 8.95. Prose often prefers ἀποκτείνω.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'φονεύω' },
+      'fut.act': { '1sg': 'φονεύσω' },
+      'aor.act': { '1sg': 'ἐφόνευσα' },
+      'aor.pass': { '1sg': 'ἐφονεύθην' }
+    },
+  },
+  pp_phrazo: {
+    kind: 'verb', label: 'φράζω (tell)', literal: true,
+    subtitle: 'φράζω, φράσω, ἔφρασα, πέφρακα, πέφρασμαι, ἐφράσθην — tell',
+    example: { lemma: 'φράζω', class: 'pp_phrazo', meaning: 'tell' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'φράζω' },
+      'fut.act': { '1sg': 'φράσω' },
+      'aor.act': { '1sg': 'ἔφρασα' },
+      'perf.act': { '1sg': 'πέφρακα' },
+      'perf.mp': { '1sg': 'πέφρασμαι' },
+      'aor.pass': { '1sg': 'ἐφράσθην' }
+    },
+  },
+  pp_phroneo: {
+    kind: 'verb', label: 'φρονέω (think, intend)', literal: true,
+    subtitle: 'φρονέω, φρονήσω, ἐφρόνησα, πεφρόνηκα — think, intend',
+    example: { lemma: 'φρονέω', class: 'pp_phroneo', meaning: 'think, intend' },
+    // Regular -έω; pf. πεφρόνηκα Isoc. (μέγα φρονεῖν 'be proud').
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'φρονέω' },
+      'fut.act': { '1sg': 'φρονήσω' },
+      'aor.act': { '1sg': 'ἐφρόνησα' },
+      'perf.act': { '1sg': 'πεφρόνηκα' }
+    },
+  },
+  pp_phroureo: {
+    kind: 'verb', label: 'φρουρέω (guard)', literal: true,
+    subtitle: 'φρουρέω, φρουρήσω, ἐφρούρησα, πεφρούρημαι, ἐφρουρήθην — guard',
+    example: { lemma: 'φρουρέω', class: 'pp_phroureo', meaning: 'guard' },
+    // Regular -έω; fut. mid. φρουρήσομαι in pass. sense (E.).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'φρουρέω' },
+      'fut.act': { '1sg': 'φρουρήσω' },
+      'aor.act': { '1sg': 'ἐφρούρησα' },
+      'perf.mp': { '1sg': 'πεφρούρημαι' },
+      'aor.pass': { '1sg': 'ἐφρουρήθην' }
+    },
+  },
+  pp_phylatto: {
+    kind: 'verb', label: 'φυλάττω (guard)', literal: true,
+    subtitle: 'φυλάττω, φυλάξω, ἐφύλαξα, πεφύλαχα, πεφύλαγμαι, ἐφυλάχθην — guard',
+    example: { lemma: 'φυλάττω', class: 'pp_phylatto', meaning: 'guard' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'φυλάττω' },
+      'fut.act': { '1sg': 'φυλάξω' },
+      'aor.act': { '1sg': 'ἐφύλαξα' },
+      'perf.act': { '1sg': 'πεφύλαχα' },
+      'perf.mp': { '1sg': 'πεφύλαγμαι' },
+      'aor.pass': { '1sg': 'ἐφυλάχθην' }
+    },
+  },
+  pp_phyo: {
+    kind: 'verb', label: 'φύω (beget)', literal: true,
+    subtitle: 'φύω, φύσω, ἔφυσα, πέφυκα — beget',
+    example: { lemma: 'φύω', class: 'pp_phyo', meaning: 'beget' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'φύω' },
+      'fut.act': { '1sg': 'φύσω' },
+      'aor.act': { '1sg': ['ἔφυσα', 'ἔφυν'] },
+      'perf.act': { '1sg': 'πέφυκα' }
+    },
+  },
+  pp_chairo: {
+    kind: 'verb', label: 'χαίρω (rejoice)', literal: true,
+    subtitle: 'χαίρω, χαιρήσω, κεχάρηκα, ἐχάρην — rejoice',
+    example: { lemma: 'χαίρω', class: 'pp_chairo', meaning: 'rejoice' },
+    categories: ['pres.act', 'fut.act', 'perf.act', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'χαίρω' },
+      'fut.act': { '1sg': 'χαιρήσω' },
+      'perf.act': { '1sg': 'κεχάρηκα' },
+      'aor.pass': { '1sg': 'ἐχάρην' }
+    },
+  },
+  pp_chraomai: {
+    kind: 'verb', label: 'χράομαι (use (+ dat.))', literal: true,
+    subtitle: 'χράομαι, χρήσομαι, ἐχρησάμην, κέχρημαι, ἐχρήσθην — use (+ dat.)',
+    example: { lemma: 'χράομαι', class: 'pp_chraomai', meaning: 'use (+ dat.)' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'χράομαι' },
+      'fut.act': { '1sg': 'χρήσομαι' },
+      'aor.act': { '1sg': 'ἐχρησάμην' },
+      'perf.mp': { '1sg': 'κέχρημαι' },
+      'aor.pass': { '1sg': 'ἐχρήσθην' }
+    },
+  },
+  pp_chre: {
+    kind: 'verb', label: 'χρή (it is necessary)', literal: true,
+    subtitle: 'χρή, χρἤσται — it is necessary',
+    example: { lemma: 'χρή', class: 'pp_chre', meaning: 'it is necessary' },
+    categories: ['pres.act', 'fut.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'χρή' },
+      'fut.act': { '1sg': 'χρἤσται' }
+    },
+  },
+  pp_chrezo: {
+    kind: 'verb', label: 'χρῄζω (long for)', literal: true,
+    subtitle: 'χρῄζω — long for',
+    example: { lemma: 'χρῄζω', class: 'pp_chrezo', meaning: 'long for' },
+    // In Attic only pres./impf. ('want, need', +gen.); fut./aor. (χρηΐσω, ἐχρήϊσα) are Ionic. Prose otherwise δέομαι.
+    categories: ['pres.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'χρῄζω' }
+    },
+  },
+  pp_choreo: {
+    kind: 'verb', label: 'χωρέω (go)', literal: true,
+    subtitle: 'χωρέω, χωρήσομαι, ἐχώρησα, κεχώρηκα — go',
+    example: { lemma: 'χωρέω', class: 'pp_choreo', meaning: 'go' },
+    // In Attic the future is middle χωρήσομαι (χωρήσω act. only Th. 1.82 and in compounds); pf. κεχώρηκα 'has gone/spread' (Hdt., Th.).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'χωρέω' },
+      'fut.act': { '1sg': 'χωρήσομαι' },
+      'aor.act': { '1sg': 'ἐχώρησα' },
+      'perf.act': { '1sg': 'κεχώρηκα' }
+    },
+  },
+  pp_pseudo: {
+    kind: 'verb', label: 'ψεύδω (deceive; pass. lie)', literal: true,
+    subtitle: 'ψεύδω, ψεύσω, ἔψευσα, ἔψευσμαι, ἐψεύσθην — deceive; pass. lie',
+    example: { lemma: 'ψεύδω', class: 'pp_pseudo', meaning: 'deceive; pass. lie' },
+    // Act. 'deceive, cheat of'; mid. ψεύδομαι 'lie' (ψεύσομαι, ἐψευσάμην); ἐψεύσθην 'was deceived, was mistaken (+gen.)'; pf. ἔψευσμαι in both senses. OCR lists ψεύδομαι as its own entry.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ψεύδω' },
+      'fut.act': { '1sg': 'ψεύσω' },
+      'aor.act': { '1sg': 'ἔψευσα' },
+      'perf.mp': { '1sg': 'ἔψευσμαι' },
+      'aor.pass': { '1sg': 'ἐψεύσθην' }
+    },
+  },
+  pp_psephizo: {
+    kind: 'verb', label: 'ψηφίζω (vote)', literal: true,
+    subtitle: 'ψηφίζω, ψηφιοῦμαι, ἐψηφισάμην, ἐψήφισμαι, ἐψηφίσθην — vote',
+    example: { lemma: 'ψηφίζω', class: 'pp_psephizo', meaning: 'vote' },
+    // The live verb is mid. ψηφίζομαι 'vote' (Att. fut. ψηφιοῦμαι; pf. ἐψήφισμαι med. sense); pass. of decrees τὰ ψηφισθέντα. Act. = 'count'.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ψηφίζω' },
+      'fut.act': { '1sg': 'ψηφιοῦμαι' },
+      'aor.act': { '1sg': 'ἐψηφισάμην' },
+      'perf.mp': { '1sg': 'ἐψήφισμαι' },
+      'aor.pass': { '1sg': 'ἐψηφίσθην' }
+    },
+  },
+  pp_otheo: {
+    kind: 'verb', label: 'ὠθέω (push)', literal: true,
+    subtitle: 'ὠθέω, ὤσω, ἔωσα, ἔωσμαι, ἐώσθην — push',
+    example: { lemma: 'ὠθέω', class: 'pp_otheo', meaning: 'push' },
+    // Irregular augment ἐω- (impf. ἐώθουν); Attic fut. ὤσω (ὠθήσω poet.); mid. ἐωσάμην 'repulsed' (Th.).
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὠθέω' },
+      'fut.act': { '1sg': 'ὤσω' },
+      'aor.act': { '1sg': 'ἔωσα' },
+      'perf.mp': { '1sg': 'ἔωσμαι' },
+      'aor.pass': { '1sg': 'ἐώσθην' }
+    },
+  },
+  pp_oneomai: {
+    kind: 'verb', label: 'ὠνέομαι (buy)', literal: true,
+    subtitle: 'ὠνέομαι, ὠνήσομαι, ἐπριάμην, ἐώνημαι, ἐωνήθην — buy',
+    example: { lemma: 'ὠνέομαι', class: 'pp_oneomai', meaning: 'buy' },
+    // Suppletive: Attic aorist is ἐπριάμην (ὠνησάμην not Attic before i BC); impf. ἐωνούμην; pf. ἐώνημαι act. sense 'have bought' and pass.; ἐωνήθην 'was bought'. Buy-side of the πωλέω/ἀποδίδομαι/πιπράσκω set.
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὠνέομαι' },
+      'fut.act': { '1sg': 'ὠνήσομαι' },
+      'aor.act': { '1sg': 'ἐπριάμην' },
+      'perf.mp': { '1sg': 'ἐώνημαι' },
+      'aor.pass': { '1sg': 'ἐωνήθην' }
+    },
+  },
+  pp_opheleo: {
+    kind: 'verb', label: 'ὠφελέω (benefit, help)', literal: true,
+    subtitle: 'ὠφελέω, ὠφελήσω, ὠφέλησα, ὠφέληκα, ὠφέλημαι, ὠφελήθην — benefit, help',
+    example: { lemma: 'ὠφελέω', class: 'pp_opheleo', meaning: 'benefit, help' },
+    categories: ['pres.act', 'fut.act', 'aor.act', 'perf.act', 'perf.mp', 'aor.pass'],
+    cellKeys: ['1sg'],
+    endings: {
+      'pres.act': { '1sg': 'ὠφελέω' },
+      'fut.act': { '1sg': 'ὠφελήσω' },
+      'aor.act': { '1sg': 'ὠφέλησα' },
+      'perf.act': { '1sg': 'ὠφέληκα' },
+      'perf.mp': { '1sg': 'ὠφέλημαι' },
+      'aor.pass': { '1sg': 'ὠφελήθην' }
+    },
+  },
 };
 
 const GREEK_CATEGORY_LABELS = {

@@ -61,3 +61,37 @@ function checkAnswerGreek(userInput, accepted, opts){
   const variants = accepted.reduce((acc, a) => acc.concat(expandMovableNu(a)), []);
   return variants.some(a => normalizeGreek(a, opts) === got);
 }
+
+/* ======================================================================
+   Typo-tolerant grading on top of checkAnswerGreek -- built 2026-08-30,
+   the sibling-guard being the load-bearing rule: 88.8% of this deck's
+   cells have some OTHER real cell of the same word exactly one edit away
+   (λύεις/λύει is the two-character example), so a plain "one letter off ->
+   forgiven" rule would just as often erase the very distinction a
+   paradigm drill exists to teach. Two checks, always in this order:
+     1. Does the (normalised) answer exactly match some OTHER cell of this
+        same word? If so it is a genuine confusion, not a slip, and it
+        stays wrong -- no forgiveness, automatic or manual.
+     2. Otherwise, is it exactly one slipped key away from the right
+        answer? If so it is marked right, with the correct spelling still
+        shown so the slip itself is not hidden.
+   `table` is an explicit argument rather than a GREEK_PARADIGMS global,
+   same discipline buildFormIndex() already uses in engine.js -- keeps this
+   testable and, if it is ever wanted, portable to another language later.
+   ====================================================================== */
+function judgeTypedAnswer(table, entry, category, cell, forms, userInput, opts){
+  const got = normalizeGreek(userInput, opts);
+  if (!got) return { correct:false, typoForgiven:false, isSibling:false };
+  const variantsOf = accepted => accepted.reduce((acc, a) => acc.concat(expandMovableNu(a)), [])
+    .map(v => normalizeGreek(v, opts));
+  const own = variantsOf(forms.accepted);
+  if (own.indexOf(got) !== -1) return { correct:true, typoForgiven:false, isSibling:false };
+  const isSibling = orderedCellsFor(table, entry).some(c => {
+    if (c.category === category && c.cell === cell) return false;
+    const sib = formsFor(table, entry, c.category, c.cell);
+    return sib && variantsOf(sib.accepted).indexOf(got) !== -1;
+  });
+  if (isSibling) return { correct:false, typoForgiven:false, isSibling:true };
+  const typo = own.some(v => isOneEditAway(v, got));
+  return { correct:typo, typoForgiven:typo, isSibling:false };
+}

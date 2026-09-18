@@ -9,6 +9,30 @@
    Newest first. Shared by both decks: the app changes, not the language.
    ====================================================================== */
 const CHANGES = [
+  ['2026.09.18.0', [
+    'The new page is now the only page: the old Latin and Greek pages and the launcher are gone.',
+    'Sync lives in the new page. A dot beside the language switch says whether everything is on the server; click it to sync. Settings has the code, Pull, Push, both spares, and a backup file.',
+    'The type is bundled with the app, so it looks the same offline.'
+  ]],
+  ['2026.09.17.0', [
+    'Cotidie has a new page for both languages. The old Latin and Greek pages are still here, unchanged, until the new one has proved itself.',
+    'A daily limit in minutes, one for Latin and Greek together. When it is reached nothing more is asked that day.',
+    'You now meet the grammar a table at a time: type a table once, and if it is all right it comes back as a table. Only the forms you miss are asked one by one.',
+    'On a laptop, Home has a map of every table beside it, with this week, the next seven days, and how often you are right by tense, voice, mood or case.',
+    'New look: three themes (Slate, Stone, Graph paper) and Didot type. Everything has a key.'
+  ]],
+  ['2026.08.31.2', [
+    'Sync can be set up inside each deck now — the code box and "Get a code for this device" are on the Settings screen, not only in the launcher.',
+    'Settings remembers when it last synced instead of forgetting every time you reopen it, and says in plain words what the code does and where your reviews go.',
+    'New: <b>Restore the copy this replaced</b>. This device keeps one step back of its own, so a bad merge can be undone even when the copy on the server is bad too.',
+    'Home warns when a lot of reviews have piled up since the last copy reached the server.'
+  ]],
+  ['2026.08.31.1', [
+    'Home was cramped. The paradigm groups are a list now, with the due counts lined up on the right, so it is obvious at a glance which one is the big one.',
+    'Look up moved to the top bar beside Settings. Review takes the whole width instead and leads with the number.',
+    'Spacing and type redone throughout: cards were set tighter than everything around them by accident, and there were nine text sizes doing the work of three.',
+    'On a laptop, Home is one wide column with a narrower one beside it, instead of two half-empty ones.'
+  ]],
   ['2026.08.30.3', [
     'The four buttons are two. Review takes most of the row, Look up is the magnifier beside it, and Stats and Settings are the icons in the top corners.',
     'New: <b>Where you keep slipping</b> — the cells you get wrong most, with a button that drills only those. Press a row to flag it; the full ranked list is behind it, and can be grouped by tense, voice, mood or case.',

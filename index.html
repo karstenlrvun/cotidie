@@ -1,230 +1,846 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" data-id="slate">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self'; connect-src https://cotidie-sync.karsten-vun.workers.dev; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Cotidie">
-<meta name="theme-color" content="#fbf7ec">
 <link rel="apple-touch-icon" href="icon-180.png">
-<link rel="icon" href="icon-180.png">
 <title>Cotidie</title>
+<link rel="stylesheet" href="fonts/fonts.css?v=202609180">
 <style>
-:root{
-  --serif:"Palatino","Palatino Linotype","Book Antiqua",Georgia,serif;
-  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;
-  --bg:#fbf7ec; --panel:#f5efdf; --ink:#2a2318; --muted:#6f6350; --faint:#988c75;
-  --line:#e3d9c1; --coral:#8c2f26; --accent-soft:#f0e3d8; --raise:#fffdf6;
-}
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg:#1a160f; --panel:#241f16; --ink:#ece3cf; --muted:#a89a80; --faint:#7a6f5c;
-    --line:#3a3222; --coral:#d4795e; --accent-soft:#3f2a1f; --raise:#2c2519;
-  }
-}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0;background:var(--bg)}
-body{
-  color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.6;
-  -webkit-font-smoothing:antialiased; -webkit-text-size-adjust:100%;
-  padding:calc(52px + env(safe-area-inset-top)) 20px calc(40px + env(safe-area-inset-bottom));
-  max-width:30rem; margin:0 auto;
-}
-h1{font-family:var(--serif);font-weight:400;font-size:2.05rem;margin:0 0 4px}
-.sub{color:var(--muted);font-size:14.5px;margin:0 0 30px}
-a.card{display:block;text-decoration:none;color:inherit;background:var(--panel);
-  border:1px solid var(--line);border-radius:14px;padding:15px 18px;margin-bottom:10px}
-a.card:active{border-color:var(--coral);background:var(--accent-soft)}
-a.card .t{font-family:var(--serif);font-size:1.28rem;margin-bottom:2px}
-a.card .d{color:var(--muted);font-size:13.5px}
-.sect{margin-top:30px}
-.sect h2{font-size:12.5px;font-weight:500;color:var(--faint);text-transform:uppercase;
-  letter-spacing:.07em;margin:0 0 12px}
+/* ======================================================================
+   Cotidie — the rebuilt page (2026-09-17). One page, both languages.
 
-.field{margin-bottom:12px}
-.field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:4px}
-.field input{width:100%;font-family:var(--sans);font-size:14.5px;padding:9px 11px;
-  border-radius:9px;border:1px solid var(--line);background:var(--raise);color:var(--ink)}
-.field input:focus{outline:none;border-color:var(--coral)}
-.btnRow{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
-button.btn{background:var(--panel);border:1px solid var(--line);color:var(--ink);
-  border-radius:9px;padding:9px 14px;font-size:13.5px;font-family:var(--sans);cursor:pointer}
-button.btn:active{border-color:var(--coral);background:var(--accent-soft)}
-button.btn.primary{background:var(--coral);border-color:var(--coral);color:var(--raise)}
-.syncNote{color:var(--faint);font-size:12px;margin-top:10px;line-height:1.5}
-.syncStatus{color:var(--muted);font-size:13px;margin-top:10px;min-height:1.2em}
+   Type: ONE leading (1.4) and SIX sizes, set here and inherited everywhere,
+   buttons and inputs included -- a <button>'s own font shorthand resets
+   line-height to `normal`, which is what made the old cards look cramped.
+   The faces are copied into fonts/ (SIL OFL) so the page works offline;
+   should one fail to load, the Didot and Bodoni that ship with macOS stand in.
+   ====================================================================== */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+:root{--t1:12px;--t2:14px;--t3:16px;--t4:20px;--t5:30px;--t6:44px;
+  --display:"Bodoni Moda","Bodoni 72","GFS Didot","Didot",serif;
+  --form:"Bodoni Moda","Bodoni 72","GFS Didot","Didot",serif;
+  --body:"Jost","Avenir Next","Futura",system-ui,sans-serif}
+html[data-id=slate]{--bg:#25323a;--panel:#2b3a43;--rule:#455962;--fg:#e9efec;--mute:#9db0b0;--hit:#3a5a53;--act:#e9efec;--actfg:#25323a;--good:#9fd6b0;--bad:#f0a890}
+html[data-id=stone]{--bg:#e6e3dc;--panel:#eeebe5;--rule:#c2bcaf;--fg:#2b2a27;--mute:#726d64;--hit:#d5cebf;--act:#2b2a27;--actfg:#eeebe5;--good:#3d6b4a;--bad:#9a3f2c}
+html[data-id=graph]{--bg:#f5f7fb;--panel:#ffffff;--rule:#15284a;--fg:#15284a;--mute:#4f6188;--hit:#dce7ff;--act:#1d4ed8;--actfg:#fff;--good:#1b6b47;--bad:#b3321f}
+body{font:400 var(--t3)/1.4 var(--body);background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;line-height:inherit;color:inherit}
+[hidden]{display:none!important}
+#app{min-height:100vh;display:flex;flex-direction:column}
+
+.lab{font-size:var(--t1);letter-spacing:.14em;color:var(--mute);text-transform:uppercase}
+.form{font-family:var(--form);text-transform:none;letter-spacing:0}
+.mute{color:var(--mute)} .v{font-variant-numeric:tabular-nums}
+kbd{font:400 var(--t1)/1 var(--body);border:1px solid currentColor;border-radius:3px;padding:2px 5px;opacity:.65;margin-left:8px}
+.btn{display:inline-flex;align-items:center;background:var(--act);color:var(--actfg);border:1px solid var(--act);padding:7px 16px;border-radius:3px;cursor:pointer;font-weight:500;white-space:nowrap}
+.btn.quiet{background:none;color:var(--fg);border-color:var(--rule);font-weight:400}
+.btn.small{padding:3px 10px;font-size:var(--t2)}
+.btn:disabled{opacity:.4;cursor:default}
+a,.link{color:var(--fg);cursor:pointer;text-decoration:none}
+:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;white-space:nowrap}
+.row>:first-child{overflow:hidden;text-overflow:ellipsis}
+.sec{display:flex;flex-direction:column;gap:8px}
+.seg{display:inline-flex;border:1px solid var(--rule);border-radius:3px;overflow:hidden}
+.seg button{background:none;border:0;padding:4px 12px;cursor:pointer;font-size:var(--t2)}
+.seg button[aria-pressed=true]{background:var(--act);color:var(--actfg)}
+
+/* the grid: Cotidie's emblem */
+.grid{border-collapse:collapse;width:100%}
+.grid th,.grid td{border:1px solid var(--rule);padding:8px 12px;text-align:left;height:46px}
+html[data-id=graph] .grid th,html[data-id=graph] .grid td{border-width:1.5px}
+.grid th{font-weight:400;font-size:var(--t1);letter-spacing:.14em;color:var(--mute);text-transform:uppercase;white-space:nowrap;width:1%}
+.grid thead th{width:auto}
+.grid td{font:400 var(--t4)/1.4 var(--form);background:var(--panel)}
+.grid td.now{background:var(--hit);box-shadow:inset 0 0 0 2px var(--fg)}
+.grid td.ok{color:var(--good)} .grid td.no{color:var(--bad)}
+.grid td.none{background:none}
+.grid td input{width:100%;background:none;border:0;outline:0;font:400 var(--t4)/1.4 var(--form)}
+.grid td:focus-within{background:var(--hit)}
+.grid td small{font:400 var(--t1)/1.4 var(--body);color:var(--mute);margin-left:8px;letter-spacing:.04em}
+
+/* ---- HOME ---- */
+.homewrap{flex:1;display:flex;justify-content:center;gap:72px;padding:0 40px;width:100%;max-width:1440px;margin:0 auto}
+.home{flex:0 0 400px;max-width:400px;padding:40px 0 24px;display:flex;flex-direction:column;gap:28px}
+.top{display:flex;justify-content:space-between;align-items:center}
+.mark{font:400 var(--t2)/1.4 var(--display);letter-spacing:.34em}
+.mark-sync{background:none;border:0;padding:2px;cursor:pointer;display:grid;place-items:center}
+.start{display:flex;align-items:center;gap:16px;white-space:nowrap}
+.start .btn{font:500 var(--t4)/1.4 var(--display);padding:9px 22px}
+.list{border-top:1px solid var(--rule)}
+.list .row{padding:7px 0;border-bottom:1px solid var(--rule);font-size:var(--t2)}
+.list .row.link:hover{background:var(--panel)}
+.foot{margin-top:auto;display:flex;gap:20px;font-size:var(--t2);border-top:1px solid var(--rule);padding-top:12px}
+.bar{height:10px;border:1px solid var(--rule);position:relative;background:var(--panel)}
+.bar i{position:absolute;inset:0 auto 0 0;background:var(--fg);max-width:100%}
+.bar s{position:absolute;top:-4px;bottom:-4px;width:1px;background:var(--rule)}
+.rail{flex:1;min-width:0;padding:40px 0 24px;display:flex;flex-direction:column;gap:32px}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:auto}
+.map{display:flex;flex-direction:column;gap:10px}
+.mgrp{display:grid;grid-template-columns:110px 1fr;gap:12px;align-items:start}
+.msq{display:flex;flex-wrap:wrap;gap:3px}
+.msq i{width:11px;height:11px;border:1px solid var(--rule);cursor:pointer}
+.msq i.known,.legend i.known{background:var(--fg);border-color:var(--fg)}
+.msq i.rotation,.legend i.rotation{background:var(--mute);border-color:var(--mute)}
+.msq i.due,.legend i.due{background:var(--bad);border-color:var(--bad)}
+.msq i:hover{outline:2px solid var(--fg);outline-offset:1px}
+.legend{display:inline-flex;align-items:center;gap:6px;font-size:var(--t1);color:var(--mute)}
+.legend i{width:9px;height:9px;border:1px solid var(--rule);margin-left:10px;display:inline-block}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;height:72px;align-items:end;position:relative;border-bottom:1px solid var(--rule)}
+.week.lim::before{content:"";position:absolute;left:0;right:0;bottom:var(--lim,60px);border-top:1px dashed var(--mute)}
+.week i{background:var(--rule);display:block;min-height:0}
+.week i.today{background:var(--fg)} .week.fc i{background:var(--mute)}
+.weekl{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;text-align:center}
+.axes{display:flex;flex-direction:column;gap:6px;font-size:var(--t2)}
+.axes>div{display:grid;grid-template-columns:96px 1fr 38px;gap:10px;align-items:center;white-space:nowrap}
+.axes b{height:6px;border:1px solid var(--rule);position:relative;display:block}
+.axes b i{position:absolute;inset:0 auto 0 0;background:var(--fg)}
+.axes .v{text-align:right}
+.empty{font-size:var(--t2);color:var(--mute)}
+
+/* ---- SITTING ---- */
+.sitbar{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;border-bottom:1px solid var(--rule);font-size:var(--t2)}
+.drill{flex:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);max-width:1240px;width:100%;margin:0 auto}
+.drill.one{grid-template-columns:minmax(0,600px);justify-content:center}
+.pane{padding:56px 40px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.pane.left{border-right:1px solid var(--rule)}
+.drill.one .pane.left{display:none}
+.ask{font:400 var(--t5)/1.2 var(--display)}
+.answer{display:flex;gap:12px;align-items:center}
+.answer input{flex:0 1 340px;min-width:0;background:var(--panel);border:1px solid var(--rule);padding:8px 12px;font:400 var(--t5)/1.2 var(--form);border-radius:0}
+.verdict{min-height:64px}
+.verdict .big{font:400 var(--t5)/1.2 var(--form)}
+.verdict.ok .big{color:var(--good)} .verdict.no .big{color:var(--bad)}
+.after{display:flex;gap:12px;flex-wrap:wrap}
+.col{width:100%;max-width:680px;margin:0 auto;padding:56px 16px;display:flex;flex-direction:column;gap:16px}
+.col.wide{max-width:960px}
+.colfoot{display:flex;justify-content:space-between;align-items:center;gap:16px;white-space:nowrap}
+.tabs{display:flex;gap:24px;border-bottom:1px solid var(--rule)}
+.tabs button{background:none;border:0;padding:8px 0;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--mute)}
+.tabs button[aria-pressed=true]{color:var(--fg);border-color:var(--fg)}
+.set{display:grid;grid-template-columns:1fr auto;gap:14px 24px;align-items:center}
+.set input[type=number]{width:72px;background:var(--panel);border:1px solid var(--rule);padding:4px 8px;text-align:right}
+.set .help{grid-column:1/-1;font-size:var(--t2);color:var(--mute);margin-top:-10px}
+.search{background:var(--panel);border:1px solid var(--rule);padding:8px 12px;font:400 var(--t4)/1.4 var(--form);width:100%}
+.days{display:grid;grid-template-columns:repeat(14,1fr);gap:4px}
+.days i{aspect-ratio:1;border:1px solid var(--rule);cursor:pointer;position:relative}
+.days i b{position:absolute;inset:0;background:var(--fg);opacity:var(--o,0)}
+.days i.sel{outline:2px solid var(--fg);outline-offset:1px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--act);color:var(--actfg);padding:8px 16px;border-radius:3px;font-size:var(--t2)}
+
+@media (max-width:1100px){.rail{display:none}.homewrap{padding:0 16px}.home{flex:1 1 auto;max-width:600px}}
+@media (max-width:760px){
+  .drill{grid-template-columns:1fr}.pane{padding:24px 16px}.pane.left{border-right:0;border-bottom:1px solid var(--rule);order:2}
+  .col{padding:24px 16px}.ask{font-size:24px}.answer input{font-size:24px}
+}
 </style>
 </head>
 <body>
-<h1>Cotidie</h1>
-<p class="sub">Daily Latin &amp; Greek grammar practice</p>
+<div id="app"><div class="col"><span class="lab">Cotidie</span></div></div>
 
-<a class="card" href="latin.html">
-  <div class="t">Latin</div>
-  <div class="d">Declension &amp; conjugation — table, recitation, drill</div>
-</a>
-<a class="card" href="greek.html">
-  <div class="t">Greek</div>
-  <div class="d">Declension &amp; conjugation — table, recitation, drill</div>
-</a>
-
-<div class="sect">
-  <h2>Sync</h2>
-  <p class="sub" style="margin:0 0 14px">A Cloudflare Worker backs up both decks under one code — no GitHub
-  account or token needed. Type the same code on every device; Latin and Greek each show their own
-  push/pull status on their own Settings screen. The code is encrypted before it ever leaves this
-  device (see <code>js/sync.js</code>), so this is the one place it's entered or shared.</p>
-
-  <div class="field">
-    <label for="fSyncCode">Sync code</label>
-    <input type="text" id="fSyncCode" autocapitalize="characters" autocorrect="off" spellcheck="false" placeholder="tap Get a code, or type one from another device">
-  </div>
-  <div class="btnRow">
-    <button class="btn primary" id="btnSaveCode">Save</button>
-    <button class="btn" id="btnNewCode">Get a code for this device</button>
-  </div>
-  <p class="syncStatus" id="credStatus"></p>
-</div>
-
-<div class="sect">
-  <h2>Backup</h2>
-  <p class="sub" style="margin:0 0 14px">One file holding both decks. Sync already keeps a copy on the server,
-  but it is the same copy every device writes to &mdash; a file is the one that stays put. Saving is a tap because
-  Safari silently blocks a download nothing asked for, so nothing here happens on its own.</p>
-  <div class="btnRow">
-    <button class="btn primary" id="btnExport">Export both decks</button>
-    <button class="btn" id="btnImport">Restore from a file</button>
-  </div>
-  <input type="file" id="impFile" accept="application/json,.json" style="display:none">
-  <p class="syncStatus" id="backupStatus"></p>
-</div>
-
-<div class="sect">
-  <h2>About</h2>
-  <!-- The version is here so a device can answer "did my upload actually land?" without
-     guesswork. tools/bump_build.py rewrites it alongside the ?v= stamps, and
-     tools/make_upload_bundle.sh refuses to build a bundle where the two disagree. -->
-  <p class="sub" style="margin:0">Personal use only. Version 2026.08.30.3.</p>
-  <p class="sub" style="margin:6px 0 0">Ground rules and open items are in <code>evergreen/HANDOFF.md</code> in the working tree — dev-only, never uploaded here.</p>
-</div>
-
-<script src="js/store.js?v=202608303"></script>
-<script src="js/sync.js?v=202608303"></script>
+<script src="data/latin-paradigms.js?v=202609180"></script>
+<script src="data/latin-vocab.js?v=202609180"></script>
+<script src="data/greek-paradigms.js?v=202609180"></script>
+<script src="data/greek-vocab.js?v=202609180"></script>
+<script src="js/engine.js?v=202609180"></script>
+<script src="js/store.js?v=202609180"></script>
+<script src="js/fsrs.js?v=202609180"></script>
+<script src="js/stats.js?v=202609180"></script>
+<script src="js/time.js?v=202609180"></script>
+<script src="js/tables.js?v=202609180"></script>
+<script src="js/rail.js?v=202609180"></script>
+<script src="js/changes.js?v=202609180"></script>
+<script src="js/sync.js?v=202609180"></script>
+<script src="js/greek.js?v=202609180"></script>
+<script src="js/greek-input.js?v=202609180"></script>
 <script>
 /* ======================================================================
-   Cotidie — launcher's sync code setup (see js/sync.js's header comment).
-   The code lives only in the shared key (loadSyncCode/saveSyncCode) --
-   this page is the one intended place to enter, generate, or share it;
-   each deck's own Settings screen just reads this same key. "Pairing"
-   another device is just typing (or pasting) the same code into this
-   same field there -- no separate pairing flow needed now that a single
-   code is the whole credential, unlike the old gist id+token pair.
+   The page. Everything that decides anything lives in js/*.js and is tested
+   there; this file draws screens and wires keys.
    ====================================================================== */
-const $ = id => document.getElementById(id);
+const LANGS = {
+  latin: { id:'latin', name:'Latin', key:STORE_KEYS.latin, table:LATIN_PARADIGMS, vocab:LATIN_VOCAB,
+           cat:CATEGORY_LABELS, cell:CELL_LABELS,
+           judge:(table, entry, category, cell, forms, input) => ({ correct:checkAnswer(input, forms.accepted), typoForgiven:false, isSibling:false }),
+           norm:s => normalize(s), expand:null },
+  greek: { id:'greek', name:'Greek', key:STORE_KEYS.greek, table:GREEK_PARADIGMS, vocab:GREEK_VOCAB,
+           cat:GREEK_CATEGORY_LABELS, cell:GREEK_CELL_LABELS,
+           judge:(table, entry, category, cell, forms, input, opts) => judgeTypedAnswer(table, entry, category, cell, forms, input, opts),
+           norm:s => normalizeGreek(s, gradeOpts()), expand:expandMovableNu }
+};
+const UI_KEY = 'cotidie.ui.v1';
+let ui = { lang:'greek', theme:'slate', panes:'two', axis:'tense' };
+try { Object.assign(ui, JSON.parse(localStorage.getItem(UI_KEY) || '{}')); } catch(e){}
+function saveUi(){ try { localStorage.setItem(UI_KEY, JSON.stringify(ui)); } catch(e){} }
 
-function refreshCredFields(){
-  $('fSyncCode').value = loadSyncCode().syncCode;
+const stores = { latin:defaultStore(), greek:defaultStore() };
+let L = LANGS[ui.lang] || LANGS.greek;
+const S = () => stores[L.id];
+const otherStore = () => stores[L.id === 'greek' ? 'latin' : 'greek'];
+function gradeOpts(){ return { accents: !!stores.greek.settings.requireAccents }; }
+// ---- saving, and the push that follows it ----
+// Every save schedules a push six seconds after the last one, per language,
+// exactly as the old pages did; the push looks at the server first (see
+// guardedAutoPush). Closing or hiding the page flushes whatever is pending.
+const sync = { latin:{ syncedLen:null, remoteAt:null, timer:null }, greek:{ syncedLen:null, remoteAt:null, timer:null } };
+const syncCode = () => loadSyncCode().syncCode || '';
+function save(id){
+  id = id || L.id;
+  persistStore(LANGS[id].key, stores[id]);
+  if (!syncCode()) return;
+  const y = sync[id]; clearTimeout(y.timer);
+  y.timer = setTimeout(() => { y.timer = null; guardedAutoPush(id); }, 6000);
 }
-refreshCredFields();
-
-/* ---------------------------------------------------------------- backup ----
-   Both decks in one file (js/sync.js: buildBackup/readBackup). The launcher
-   owns this rather than either deck page, because a per-deck backup is a
-   half backup, and the half you didn't take is the one you needed. */
-$('btnExport').addEventListener('click', async () => {
-  try {
-    // readStoreAnywhere, not localStorage: the decks moved to IndexedDB, and a
-    // backup that quietly read the abandoned copy would look like it worked
-    // while capturing nothing that has happened since.
-    const stores = {};
-    for (const k of Object.keys(STORE_KEYS)){
-      const st = await readStoreAnywhere(STORE_KEYS[k]);
-      if (st) stores[k] = st;
-    }
-    if (!Object.keys(stores).length){
-      $('backupStatus').textContent = 'Nothing to export yet — neither deck has been studied on this device.';
-      return;
-    }
-    const backup = buildBackup(stores, Date.now());
-    const counts = Object.keys(backup.decks)
-      .map(k => k + ' ' + ((backup.decks[k].log||[]).length) + ' reviews').join(', ');
-    const blob = new Blob([JSON.stringify(backup)], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'cotidie-' + new Date().toISOString().slice(0,10) + '.json';
-    document.body.appendChild(a);          // Safari will not click a detached link
-    a.click();
-    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1500);
-    $('backupStatus').textContent = 'Saved — ' + counts + '.';
-  } catch(e){
-    $('backupStatus').textContent = 'Export failed. Nothing was changed.';
+function saveBoth(){ save('latin'); save('greek'); }
+function flushPendingPush(){ ['latin','greek'].forEach(id => { const y = sync[id]; if (y.timer){ clearTimeout(y.timer); y.timer = null; doPush(id, true); } }); }
+const rowsOf = st => st.log.length + ((st.tlog || []).length);
+function noteSync(id, text, extra){ saveSyncStatus(id, Object.assign({ at:Date.now(), note:text, from:'' }, extra || {})); }
+async function doPush(id, quiet){
+  const st = stores[id], res = await pushStore(st, syncCode(), id);
+  if (res.ok){
+    sync[id].syncedLen = rowsOf(st); if (Number.isFinite(res.now)) sync[id].remoteAt = res.now;
+    const facts = { pushedLogLen: rowsOf(st), bytes: res.bytes || 0, error:'', by: installId() };
+    if (quiet) saveSyncStatus(id, Object.assign({ at:Date.now() }, facts)); else noteSync(id, 'Pushed', facts);
+  } else noteSync(id, 'Push failed (' + res.error + ')', { error: res.error || 'failed' });
+  if (view.screen === 'settings' || view.screen === 'home') render();
+  return res;
+}
+async function applyMerge(id, res){
+  const key = LANGS[id].key;
+  saveLocalSpare(key, stores[id], 'a merge', installId());
+  const m = mergeStores(stores[id], adoptStore(res.store));
+  stores[id] = adoptStore(m.store); applyDefaults(stores[id], id === 'greek');
+  storeReplaced(key); persistStore(key, stores[id]);
+  sync[id].syncedLen = rowsOf(stores[id]); if (Number.isFinite(res.at)) sync[id].remoteAt = res.at;
+  noteSync(id, mergeSummary(m.stats), { from: res.from || '' });
+  if (m.stats.fromLocal > 0 || m.stats.tablesFromLocal > 0 || m.stats.cardsFromLocal > 0 || m.stats.prefsFrom === 'local') await doPush(id, true);
+  return m;
+}
+async function doPull(id){
+  const res = await fetchStore(syncCode(), id);
+  if (!res.ok){ if (res.missing) return doPush(id); noteSync(id, 'Pull failed (' + res.error + ')', { error: res.error || 'failed' }); render(); return res; }
+  await applyMerge(id, res); render(); return res;
+}
+let lastLaunchSync = 0;
+async function syncOnLaunch(){
+  if (!syncCode() || Date.now() - lastLaunchSync < 60000) return;
+  lastLaunchSync = Date.now();
+  for (const id of ['latin','greek']){
+    const before = rowsOf(stores[id]), res = await fetchStore(syncCode(), id);
+    if (!res.ok || rowsOf(stores[id]) !== before) continue;
+    try { await applyMerge(id, res); } catch(e){ console.error('launch merge failed', e); }
   }
-});
+  if (view.screen === 'home' || view.screen === 'settings') render();
+}
+async function guardedAutoPush(id){
+  if (!syncCode()) return;
+  if (sync[id].syncedLen == null) return doPush(id, true);
+  const inc = await fetchStore(syncCode(), id);
+  if (pushRaceDecision(inc, sync[id].remoteAt) === 'merge-first'){
+    try { await applyMerge(id, inc); if (view.screen === 'home') render(); return; } catch(e){ console.error('race-guard merge failed, pushing anyway', e); }
+  }
+  return doPush(id, true);
+}
+async function restoreFrom(id, which){
+  const key = LANGS[id].key; let src, label;
+  if (which === 'server'){
+    if (!syncCode()){ noteSync(id, 'No sync code on this device'); render(); return; }
+    const res = await fetchPrevStore(syncCode(), id);
+    if (!res.ok){ noteSync(id, res.missing ? 'No spare on the server yet — one is kept the first time a second device pushes' : 'Could not read the spare (' + res.error + ')'); render(); return; }
+    src = res.store; label = 'From the server’s spare: ';
+  } else {
+    const rec = await readLocalSpare(key);
+    if (!rec || !rec.state){ noteSync(id, 'No spare on this device yet — one is kept the first time a sync replaces this copy'); render(); return; }
+    src = rec.state; label = 'From this device’s spare: ';
+  }
+  saveLocalSpare(key, stores[id], 'a restore', installId());
+  const m = mergeStores(stores[id], adoptStore(src));
+  stores[id] = adoptStore(m.store); applyDefaults(stores[id], id === 'greek');
+  storeReplaced(key); persistStore(key, stores[id]); sync[id].syncedLen = rowsOf(stores[id]);
+  noteSync(id, label + mergeSummary(m.stats));
+  if (m.stats.fromRemote || m.stats.tablesFromRemote) await doPush(id, true);
+  render();
+}
+function newSyncCode(){
+  if (syncCode() && !confirm(syncCodeReplaceMessage())) return;
+  saveSyncCode(randomSyncCode()); ['latin','greek'].forEach(id => noteSync(id, 'Code created — enter it on your other device to link them'));
+  render(); doPush('latin', true); doPush('greek', true);
+}
+function setSyncCode(v){
+  v = String(v || '').trim(); if (!v) return;
+  if (syncCode() && v !== syncCode() && !confirm(syncCodeReplaceMessage())) return;
+  saveSyncCode(v); render(); doPull('latin'); doPull('greek');
+}
+// ---- the mark: one dot that says whether this device's copy is safe ----
+function syncMarkState(id){
+  if (!syncCode()) return { kind:'off', waiting:0 };
+  const st = loadSyncStatus(id), waiting = Math.max(rowsOf(stores[id]) - (st.pushedLogLen | 0), 0);
+  if (st.error) return { kind:'failed', waiting, note: st.note };
+  const age = st.at ? Date.now() - st.at : null;
+  return { kind: age == null ? 'never' : age < 3600000 ? 'fresh' : age < FSRS_DAY ? 'aging' : 'old', waiting, at: st.at, note: st.note };
+}
+function syncMarkHtml(){
+  const a = syncMarkState('latin'), b = syncMarkState('greek');
+  const worst = ['off','failed','never','old','aging','fresh'].find(k => a.kind === k || b.kind === k);
+  const waiting = a.waiting + b.waiting;
+  const col = { fresh:'var(--good)', aging:'var(--mute)', old:'var(--bad)', never:'var(--mute)', failed:'var(--bad)', off:'var(--rule)' }[worst];
+  const r = 3 + Math.min(waiting / 150, 1) * 3;
+  const title = worst === 'off' ? 'Sync is not set up' : worst === 'failed' ? 'The last sync failed' : (waiting ? waiting + ' answers not yet on the server' : 'Everything is on the server');
+  return `<button class="mark-sync" data-act="syncnow" title="${esc(title)}" aria-label="${esc(title)}"><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="6.5" fill="none" stroke="${col}" stroke-width="1.5" ${worst === 'off' ? 'stroke-dasharray="2 2"' : ''}/>${worst === 'failed' ? `<path d="M6 6l6 6M12 6l-6 6" stroke="${col}" stroke-width="1.5"/>` : waiting && worst !== 'off' ? `<circle cx="9" cy="9" r="${r}" fill="${col}"/>` : ''}</svg></button>`;
+}
+function syncNow(){
+  if (!syncCode()){ go('settings'); return; }
+  toast('Syncing…'); Promise.all(['latin','greek'].map(id => doPull(id))).then(() => { toast('Synced'); });
+}
+window.addEventListener('pagehide', flushPendingPush);
+document.addEventListener('visibilitychange', () => { if (document.hidden) flushPendingPush(); else if (view.screen === 'home') syncOnLaunch(); });
 
-$('btnImport').addEventListener('click', () => $('impFile').click());
+function applyDefaults(st, greek){
+  if (greek){
+    if (st.settings.requireAccents === undefined) st.settings.requireAccents = false;
+    if (st.settings.hopliteInput === undefined) st.settings.hopliteInput = true;
+  }
+  if (st.settings.revealOld === undefined) st.settings.revealOld = true;
+  commitRollover(st.settings, Date.now());
+}
 
-$('impFile').addEventListener('change', e => {
-  const file = e.target.files && e.target.files[0];
-  e.target.value = '';                     // so choosing the same file twice still fires
-  if (!file) return;
-  const fr = new FileReader();
-  fr.onerror = () => { $('backupStatus').textContent = "That file couldn't be read."; };
-  fr.onload = () => {
-    let parsed = null;
-    try { parsed = JSON.parse(fr.result); }
-    catch(err){ $('backupStatus').textContent = "That file isn't valid JSON, so it wasn't touched."; return; }
-    const res = readBackup(parsed);
-    if (!res.ok){ $('backupStatus').textContent = res.error; return; }
-    const names = Object.keys(res.decks);
-    const detail = names.map(k => k + ' (' + (res.decks[k].log||[]).length + ' reviews)').join(' and ');
-    const when = parsed.exportedAt ? new Date(parsed.exportedAt).toLocaleString() : 'an unknown date';
-    if (!confirm('Restore ' + detail + ' from ' + when + '?\n\nThis REPLACES what is on this device for '
-                 + (names.length>1 ? 'both decks' : 'the ' + names[0] + ' deck')
-                 + '. Export first if you are not sure.')) {
-      $('backupStatus').textContent = 'Restore cancelled — nothing was changed.';
-      return;
-    }
-    (async () => {
-      try {
-        for (const k of names){
-          const ok = await writeStoreAnywhere(STORE_KEYS[k], res.decks[k]);
-          if (!ok) throw new Error('write failed for ' + k);
-        }
-        $('backupStatus').textContent = 'Restored ' + detail + '. Open a deck to check it.';
-      } catch(err){
-        $('backupStatus').textContent = 'Restore failed part-way. Check both decks before studying.';
-      }
-    })();
-  };
-  fr.readAsText(file);
-});
+const app = document.getElementById('app');
+const esc = escHtml;
+const $ = s => app.querySelector(s), $$ = s => [...app.querySelectorAll(s)];
+function ago(t){ const m = (Date.now() - t) / 60000; return m < 1.5 ? 'just now' : m < 90 ? Math.round(m) + ' min ago' : m < 36*60 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' days ago'; }
+const fmtMin = ms => { const m = ms / 60000; return m < 10 ? (Math.round(m * 10) / 10).toString() : String(Math.round(m)); };
+const kbd = k => `<kbd>${k}</kbd>`;
+let view = { screen:'home' };
+let sit = null;
+let toastTimer = null;
+function toast(text){
+  let t = document.querySelector('.toast'); if (!t){ t = document.createElement('div'); t.className = 'toast'; document.body.appendChild(t); }
+  t.textContent = text; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 2600);
+}
 
-$('btnSaveCode').addEventListener('click', () => {
-  const code = $('fSyncCode').value.trim().toUpperCase();
-  $('fSyncCode').value = code;
-  saveSyncCode(code);
-  $('credStatus').textContent = code ? 'Saved — enter this same code on your other devices.' : 'Cleared.';
-});
+// ---------------------------------------------------------------- labels --
+const GENDER = { m:'Masculine', f:'Feminine', n:'Neuter', mf:'Masculine / feminine' };
+const catLabel = c => L.cat[c] || String(c);
+function cellLabelOf(category, cell){
+  const one = L.cell[cell];
+  return (!one || one === '—') ? catLabel(category) : catLabel(category) + ' · ' + one;
+}
+function subLabel(t){
+  const cls = L.table[t.classKey];
+  if (cls.kind === 'adj') return GENDER[t.sub] || t.sub;
+  if (t.sub === 'inf') return 'Infinitives';
+  if (t.sub) return catLabel(t.sub);
+  return t.classKey.indexOf('pp_') === 0 ? 'Principal parts' : (cls.kind === 'noun' ? (cls.label || '') : '');
+}
+const wordHtml = e => `<span class="form">${esc(e.lemma)}</span>`;
+function tableTitleHtml(t, entry){
+  const s = subLabel(t);
+  return wordHtml(entry) + ' · ' + esc(entry.meaning || '') + (s ? ' · ' + esc(s) : '');
+}
+const tableByKey = () => { const m = {}; tablesOf(L.table).forEach(t => { m[t.key] = t; }); return m; };
+function tableOfCell(entry, category, cell){
+  const cls = L.table[entry.class];
+  return tableByKey()[TABLE_PREFIX + entry.class + '|' + tableSubOf(cls, entry.class, category, cell)];
+}
 
-// Confirm-before-overwrite (carried over from the old pairing flow's same
-// safeguard) -- only prompts when this device already has a different
-// code set up; first-time setup with nothing configured yet applies with
-// no prompt. Cancel is a genuine no-op: nothing is written.
-$('btnNewCode').addEventListener('click', () => {
-  const cur = loadSyncCode().syncCode;
-  if (cur && !confirm(syncCodeReplaceMessage())){
-    $('credStatus').textContent = 'Left as it was — this device is still using the code it had.';
+// ------------------------------------------------------------- the grid --
+// Lays a table's cells out the way it is printed: persons down and numbers
+// across for one tense; cases down and numbers across for a noun or one
+// gender; one column for infinitives and principal parts. `fill(c, i)`
+// returns {html, cls} for each cell; i is the recitation order, which is
+// column-major and is therefore also the Tab order.
+function gridHtml(t, entry, fill){
+  const cells = tableCellsFor(entry, t);
+  const person = cells.every(c => /^[123](sg|pl)$/.test(c.cell)) && new Set(cells.map(c => c.category)).size === 1;
+  let rows, cols, at;
+  if (person){
+    rows = ['1','2','3'].filter(p => cells.some(c => c.cell[0] === p));
+    cols = ['sg','pl'].filter(n => cells.some(c => c.cell.slice(1) === n));
+    at = (r, k) => cells.findIndex(c => c.cell === r + k);
+  } else {
+    rows = [...new Set(cells.map(c => c.category))];
+    cols = [...new Set(cells.map(c => c.cell))];
+    at = (r, k) => cells.findIndex(c => c.category === r && c.cell === k);
+  }
+  const rowLab = r => person ? ({ '1':'1st', '2':'2nd', '3':'3rd' })[r] : catLabel(r);
+  const colLab = k => person ? (k === 'sg' ? 'Singular' : 'Plural')
+    : String(L.cell[k] || k).replace(/^(Masculine|Feminine|Neuter|Masc\.\/Fem\.) /, '').replace('—', '');
+  const head = cols.length > 1 ? `<thead><tr><th></th>${cols.map(k => `<th>${esc(colLab(k))}</th>`).join('')}</tr></thead>` : '';
+  return `<table class="grid">${head}<tbody>` + rows.map(r => `<tr><th>${esc(rowLab(r))}</th>` + cols.map(k => {
+    const i = at(r, k);
+    if (i < 0) return '<td class="none"></td>';
+    const f = fill(cells[i], i) || {};
+    return `<td class="${f.cls || ''}" data-i="${i}">${f.html || ''}</td>`;
+  }).join('') + '</tr>').join('') + '</tbody></table>';
+}
+const formOf = (entry, c) => formsFor(L.table, entry, c.category, c.cell);
+
+// ------------------------------------------------------------------ HOME --
+const GROUPS = {
+  greek: [['Pronouns', t => /^(article|pron_|rel_|num_)/.test(t.classKey)],
+          ['Adjectives', t => /^(adj_|cmp_)/.test(t.classKey)],
+          ['Nouns', t => /^decl/.test(t.classKey)],
+          ['Participles', t => /^part_/.test(t.classKey)],
+          ['Princ. parts', t => /^pp_/.test(t.classKey)],
+          ['Indicative', t => !/\.(subj|opt|imper)$/.test(t.sub) && t.sub !== 'inf'],
+          ['Subj · opt', t => /\.(subj|opt)$/.test(t.sub)],
+          ['Imper · infin', t => true]],
+  latin: [['Nouns', t => /^decl/.test(t.classKey)],
+          ['Active', t => /^conj/.test(t.classKey) && /\.act$/.test(t.sub)],
+          ['Passive', t => /^conj/.test(t.classKey)],
+          ['Irregular', t => true]]
+};
+const GROUP_ORDER = { greek:['Pronouns','Adjectives','Nouns','Indicative','Subj · opt','Imper · infin','Participles','Princ. parts'],
+                      latin:['Nouns','Active','Passive','Irregular'] };
+function groupedTables(){
+  const by = {}; GROUP_ORDER[L.id].forEach(g => { by[g] = []; });
+  rankedTables(L.table).forEach(t => {
+    if (!tableWords(L.vocab, t).length) return;
+    const g = GROUPS[L.id].find(x => x[1](t)); by[g[0]].push(t);
+  });
+  return GROUP_ORDER[L.id].map(g => [g, by[g]]);
+}
+const isCore = t => tableRank(t) <= 5;
+function dateLabel(dayK){
+  const d = new Date(dayStart(dayK, effRollover(S().settings, Date.now())) + 12*FSRS_HOUR);
+  return d.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+}
+
+function renderHome(){
+  const now = Date.now(), st = S(), plan = homePlan(st, L.vocab, L.table, now, otherStore());
+  const lim = limitOn(st), pct = lim ? Math.min(plan.usedMs / Math.max(plan.budgetMs, 1) * 100, 100) : 0;
+  const ticks = lim ? Array.from({ length: Math.max(Math.ceil(plan.budgetMs / 300000) - 1, 0) }, (_, i) => `<s style="left:${(i + 1) * 300000 / plan.budgetMs * 100}%"></s>`).join('') : '';
+  const dueN = plan.cells + plan.tables;
+  const parts = [];
+  if (dueN) parts.push(dueN + ' due');
+  if (plan.newRoom) parts.push('room for ' + plan.newRoom + ' new table' + (plan.newRoom === 1 ? '' : 's'));
+  if (dueN) parts.push('about ' + fmtMin(plan.dueMs) + ' min');
+  const spent = lim && plan.usedMs >= plan.budgetMs;
+  const startLine = spent ? 'Today’s minutes are spent.' : parts.length ? parts.join(' · ') : (plan.unmet ? 'Nothing due.' : 'Nothing due today.');
+  const trouble = troubleCells(st).slice(0, 4);
+  const next = plan.next, nextWord = next && tableWordFor(st, L.vocab, next);
+
+  app.innerHTML = `<div class="homewrap">
+  <main class="home">
+    <div class="top"><span class="mark">COTIDIE</span><span style="display:flex;align-items:center;gap:10px">${syncMarkHtml()}
+      <span class="seg">${['latin','greek'].map(id => `<button data-act="lang" data-v="${id}" aria-pressed="${L.id === id}">${LANGS[id].name}</button>`).join('')}</span></span></div>
+    ${pileUpHtml()}
+    <section class="sec">
+      <div class="row"><span class="lab">Today</span><span class="v">${lim ? fmtMin(plan.usedMs) + ' of ' + fmtMin(plan.budgetMs) + ' min' : fmtMin(plan.usedMs) + ' min · no limit'}</span></div>
+      <div class="bar"><i style="width:${pct}%"></i>${ticks}</div>
+    </section>
+    <div class="start">
+      <button class="btn" data-act="start" ${(!dueN && !plan.unmet) ? 'disabled' : ''}>${spent ? 'Five more' : 'Start'}${kbd('↵')}</button>
+      <span class="mute">${esc(startLine)}</span>
+    </div>
+    <section class="sec">
+      <div class="row"><span class="lab">First pass</span><span class="v">${plan.met.toLocaleString()} of ${plan.total.toLocaleString()} tables</span></div>
+      <div class="bar"><i style="width:${plan.total ? plan.met / plan.total * 100 : 0}%"></i></div>
+      <div class="row" style="font-size:var(--t2)"><span class="mute">${next && nextWord ? 'Next: ' + tableTitleHtml(next, nextWord) : 'Every table has been met.'}</span></div>
+    </section>
+    <section class="sec">
+      <div class="row"><span class="lab">Trouble</span>${trouble.length ? `<button class="btn quiet small" data-act="trouble">Drill these${kbd('T')}</button>` : ''}</div>
+      ${trouble.length ? `<div class="list">${trouble.map(t => `<div class="row"><span><span class="form">${esc(t.lemma || '')}</span> · ${esc(cellLabelOf(t.category, t.cell))}</span><span class="v mute">${t.misses} of ${t.attempts} missed</span></div>`).join('')}</div>`
+        : `<div class="empty">Forms you keep missing will be named here, once one has been asked four times.</div>`}
+    </section>
+    <nav class="foot"><a data-act="go" data-v="tables">Tables${kbd('B')}</a><a data-act="go" data-v="lookup">Look up${kbd('/')}</a><a data-act="go" data-v="stats">Stats${kbd('S')}</a><a data-act="go" data-v="settings">Settings${kbd(',')}</a></nav>
+  </main>
+  <aside class="rail">${railHtml(now, plan)}</aside></div>`;
+}
+
+function pileUpHtml(){
+  const n = ['latin','greek'].reduce((t, id) => t + syncMarkState(id).waiting, 0);
+  if (!syncCode() || n < BACKUP_WARN_RATINGS) return '';
+  return `<div class="row" style="font-size:var(--t2)"><span class="mute">${n} answers are not on the server yet.</span><a data-act="syncnow">Sync now</a></div>`;
+}
+function railHtml(now, plan){
+  const st = S(), groups = groupedTables();
+  const map = groups.map(([name, ts]) => ts.length ? `<div class="mgrp"><span class="lab">${esc(name)}</span><div class="msq">${ts.map(t =>
+    `<i class="${tableStatus(st, t, L.vocab, now)}" data-act="table" data-v="${esc(t.key)}"></i>`).join('')}</div></div>` : '').join('');
+  const unmet = unmetTables(st, L.table, L.vocab), pace = firstPassPace(st, now, unmet.length, unmet.filter(isCore).length);
+  const paceLine = !unmet.length ? 'first pass complete' : !pace ? 'no pace yet' :
+    (unmet.some(isCore) ? 'core tables by ' + dateLabel(pace.coreDay) + ' · ' : '') + 'all by ' + dateLabel(pace.allDay);
+  return `<section class="sec">
+      <div class="row"><span class="lab">The grammar · ${plan.total.toLocaleString()} tables</span><span class="legend"><i class="known"></i>known<i class="rotation"></i>in rotation<i class="due"></i>due<i></i>not met</span></div>
+      <div class="map">${map}</div>
+      <div class="row" style="font-size:var(--t2)"><span class="mute" id="maphint">Each square is one table. Click one to open it.</span><span class="v mute">${esc(paceLine)}</span></div>
+    </section>
+    <div class="trio">${weekHtml(now)}${forecastHtml(now, 7)}${axisHtml()}</div>`;
+}
+function weekHtml(now){
+  const wk = weekMinutes([S(), otherStore()], now), budget = limitOn(S()) ? S().settings.minutesPerDay * 60000 : 0;
+  const top = Math.max(budget * 1.2, ...wk.map(d => d.ms), 60000);
+  return `<section class="sec"><div class="row"><span class="lab">This week</span><span class="v mute">min a day</span></div>
+    <div class="week ${budget ? 'lim' : ''}" style="--lim:${budget / top * 72}px">${wk.map(d => `<i class="${d.today ? 'today' : ''}" style="height:${d.ms / top * 72}px" title="${fmtMin(d.ms)} min"></i>`).join('')}</div>
+    <div class="weekl lab">${'MTWTFSS'.split('').map(c => `<span>${c}</span>`).join('')}</div></section>`;
+}
+function forecastHtml(now, days){
+  const fc = forecastMinutes(S(), L.table, now, days), top = Math.max(...fc, 60000);
+  const roll = effRollover(S().settings, now), d0 = new Date(dayStart(dayKey(now, roll), roll) + 12*FSRS_HOUR).getDay();
+  const any = fc.some(x => x > 0);
+  return `<section class="sec"><div class="row"><span class="lab">Next ${days} days</span><span class="v mute">reviews, min</span></div>
+    ${any ? `<div class="week fc">${fc.map(ms => `<i style="height:${ms / top * 72}px" title="${fmtMin(ms)} min"></i>`).join('')}</div>
+    <div class="weekl lab">${fc.map((_, i) => `<span>${'SMTWTFS'[(d0 + i) % 7]}</span>`).join('')}</div>`
+    : `<div class="empty">Nothing scheduled yet. Tables you have typed will appear on the day they return.</div>`}</section>`;
+}
+const AXES = ['tense','voice','mood','case'];
+function axisHtml(){
+  const rows = axisAccuracy(S(), L.table, ui.axis).filter(e => e.n >= 6).sort((a, b) => b.rate - a.rate);
+  return `<section class="sec"><div class="row"><span class="lab">Right, by</span>
+      <span class="seg">${AXES.map(a => `<button data-act="axis" data-v="${a}" aria-pressed="${ui.axis === a}" style="padding:1px 7px;font-size:var(--t1)">${a}</button>`).join('')}</span></div>
+    ${rows.length ? `<div class="axes">${rows.slice(0, 6).map(e => `<div><span>${esc(axisLabel(ui.axis, e.key))}</span><b><i style="width:${e.rate * 100}%"></i></b><span class="v">${Math.round(e.rate * 100)}%</span></div>`).join('')}</div>`
+      : `<div class="empty">Appears once you have produced six forms along this axis.</div>`}</section>`;
+}
+
+// --------------------------------------------------------------- SITTING --
+function startSitting(queue){
+  const now = Date.now();
+  if (!queue && limitReached(S(), now, otherStore())){ extendToday(S(), now); save(); }
+  sit = { n:0, queue: queue || null, startUsed: usedTodayMs(S(), now, otherStore()) };
+  view = { screen:'sit' }; nextTurn();
+}
+function nextTurn(){
+  const now = Date.now();
+  let item;
+  if (sit.queue) item = sit.queue.length ? { type:'cell', item: sit.queue.shift() } : null;
+  else item = nextItem(S(), L.vocab, L.table, now, null, otherStore());
+  sit.cur = item; sit.phase = 'ask'; sit.shownAt = now; sit.firstKeyAt = null; sit.keys = 0; sit.pending = null;
+  render();
+}
+function sitBarHtml(){
+  const used = usedTodayMs(S(), Date.now(), otherStore());
+  return `<div class="sitbar"><span class="v">${sit.n} answered · ${fmtMin(Math.max(used - sit.startUsed, 0))} min this sitting${limitOn(S()) ? ' · ' + fmtMin(used) + ' of ' + fmtMin(budgetTodayMs(S(), Date.now(), otherStore())) + ' today' : ''}</span><a class="mute" data-act="home">Leave${kbd('esc')}</a></div>`;
+}
+function answeredToday(){
+  const st = S(), now = Date.now(), roll = effRollover(st.settings, now), today = dayKey(now, roll), set = new Set();
+  for (let i = st.log.length - 1; i >= 0 && dayKey(st.log[i].ts, roll) === today; i--) set.add(st.log[i].cardId);
+  const byKey = tableByKey();
+  (st.tlog || []).forEach(r => { if (dayKey(r.ts, roll) !== today || !byKey[r.table]) return;
+    byKey[r.table].cells.forEach(c => set.add(cardId(r.word, c.category, c.cell))); });
+  return set;
+}
+function renderSit(){
+  const cur = sit.cur;
+  if (!cur || cur.type === 'limit'){
+    const lim = cur && cur.type === 'limit';
+    app.innerHTML = sitBarHtml() + `<main class="col"><span class="lab">${lim ? 'Today’s minutes are spent' : 'Nothing left'}</span>
+      <div class="ask">${lim ? 'That is the day.' : 'Everything due is done.'}</div>
+      <p class="mute">${lim ? 'Anything still waiting keeps until tomorrow. Nothing is lost by stopping here.' : sit.queue ? 'That was the whole list.' : 'Every table has been met and nothing is due.'}</p>
+      <div class="after"><button class="btn" data-act="home">Home${kbd('↵')}</button>${lim ? `<button class="btn quiet" data-act="more">Five more minutes${kbd('M')}</button>` : ''}</div></main>`;
     return;
   }
-  const code = randomSyncCode();
-  $('fSyncCode').value = code;
-  saveSyncCode(code);
-  $('credStatus').textContent = 'Created — enter this same code on your other devices to link them.';
+  if (cur.type === 'cell') return renderCell();
+  return cur.mode === 'reveal' ? renderReveal() : renderTyped();
+}
+
+// ---- one form, asked cold ----
+function renderCell(){
+  const { item } = sit.cur, entry = item.entry, t = tableOfCell(entry, item.category, item.cell);
+  const done = sit.phase === 'verdict', today = done ? null : answeredToday(), p = sit.pending;
+  const forms = formsFor(L.table, entry, item.category, item.cell);
+  const grid = t ? gridHtml(t, entry, c => {
+    const me = c.category === item.category && c.cell === item.cell;
+    const show = done || (!me && today.has(cardId(entry.id, c.category, c.cell)));
+    return { html: show ? esc(formOf(entry, c).primary) : '', cls: me ? 'now' + (done ? (p.correct ? ' ok' : ' no') : '') : '' };
+  }) : '';
+  const title = t ? `<span class="lab">${tableTitleHtml(t, entry)}</span>` : '';
+  let verdict = '';
+  if (done){
+    const prev = schedule(S().cards[cardId(entry.id, item.category, item.cell)] || freshCard(), p.correct ? GOOD : AGAIN, Date.now(), S().settings);
+    const line = p.correct ? (p.typoForgiven ? 'Right — a slip of one letter, forgiven' : 'Right') :
+      p.isSibling ? 'That is a different form of this word' : (p.typed ? 'You typed ' + p.typed : 'Left blank');
+    verdict = `<div class="verdict ${p.correct ? 'ok' : 'no'}"><div class="big">${esc(forms.primary)}</div><div class="mute">${esc(line)} · back ${esc(backIn(prev.ivl))}</div></div>
+      <div class="after"><button class="btn" data-act="next">Next${kbd('↵')}</button>
+      ${(!p.correct && !p.isSibling && p.typed) ? `<button class="btn quiet" data-act="typo">It was a typo${kbd('Y')}</button>` : ''}
+      <button class="btn quiet" data-act="flag">${isFlagged(S(), cardId(entry.id, item.category, item.cell)) ? 'Unflag' : 'Flag'}${kbd('F')}</button></div>`;
+  }
+  app.innerHTML = sitBarHtml() + `<div class="drill ${ui.panes === 'one' ? 'one' : ''}">
+    <div class="pane left">${title}${grid}${done ? '' : '<span class="mute" style="font-size:var(--t2)">Only forms you have already answered today are filled in.</span>'}</div>
+    <div class="pane"><span class="lab">${wordHtml(entry)} · ${esc(entry.meaning || '')}</span>
+      <div class="ask">${esc(cellLabelOf(item.category, item.cell))}</div>
+      <div class="answer"><input id="ans" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Your answer" ${done ? 'disabled value="' + esc(p.typed) + '"' : ''}>
+        ${done ? '' : `<button class="btn" data-act="check">Check${kbd('↵')}</button>`}</div>
+      ${verdict}${done && ui.panes === 'one' ? grid : ''}</div></div>`;
+  if (!done) wireInput($('#ans'));
+}
+function backIn(ms){
+  if (ms < 90 * 60000) return 'in ' + Math.max(Math.round(ms / 60000), 1) + ' min';
+  const now = Date.now(), roll = effRollover(S().settings, now), d = dayKey(now + ms, roll) - dayKey(now, roll);   // study days, as the scheduler counts them
+  return d <= 1 ? 'tomorrow' : d < 60 ? 'in ' + d + ' days' : 'in ' + Math.round(d / 30) + ' months';
+}
+function wireInput(inp){
+  inp.focus();
+  if (L.id === 'greek'){ const h = attachHopliteInput(inp); if (!S().settings.hopliteInput) h.disable(); }
+  inp.addEventListener('keydown', e => { if (e.key.length === 1 || e.key === 'Backspace'){ sit.keys++; if (sit.firstKeyAt == null) sit.firstKeyAt = Date.now(); } });
+}
+function checkCell(){
+  const { item } = sit.cur, inp = $('#ans'), forms = formsFor(L.table, item.entry, item.category, item.cell);
+  const j = L.judge(L.table, item.entry, item.category, item.cell, forms, inp.value, gradeOpts());
+  const now = Date.now();
+  let fl = 0; if (L.id === 'greek'){ if (S().settings.requireAccents) fl |= FL_ACCENTS; if (S().settings.hopliteInput) fl |= FL_SCHEME; }
+  try { if (matchMedia('(pointer: coarse)').matches) fl |= FL_TOUCH; } catch(e){}
+  const timing = { keys:sit.keys, flags:fl };
+  if (sit.firstKeyAt != null){ timing.toFirstKey = sit.firstKeyAt - sit.shownAt; timing.typing = now - sit.firstKeyAt; }
+  sit.pending = Object.assign({ typed: inp.value.trim(), latency: now - sit.shownAt, timing, at: now }, j);
+  sit.phase = 'verdict'; render();
+}
+// The answer is written when he moves on, not when it is judged, so "it was a
+// typo" can still change what is recorded -- the store has no undo and this
+// way does not need one. Leaving mid-verdict commits it as judged.
+function commitCell(){
+  const p = sit.pending; if (!p || sit.cur.type !== 'cell') return;
+  const { item } = sit.cur;
+  recordReview(S(), { wordId:item.entry.id, category:item.category, cell:item.cell, lemma:item.entry.lemma }, p.correct, p.latency, p.at, p.timing);
+  afterCellReview(S(), cardId(item.entry.id, item.category, item.cell));
+  sit.pending = null; sit.n++; save();
+}
+
+// ---- a whole table, typed ----
+function renderTyped(){
+  const { t, entry, first } = sit.cur, done = sit.phase === 'verdict', res = sit.results;
+  const cells = tableCellsFor(entry, t);
+  const grid = gridHtml(t, entry, (c, i) => {
+    if (!done) return { html:`<input tabindex="${i + 1}" data-i="${i}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="${esc(cellLabelOf(c.category, c.cell))}">` };
+    const r = res[i], f = formOf(entry, c).primary;
+    return { cls: r.correct ? 'ok' : 'no', html: esc(f) + (r.correct ? '' : `<small>${r.typed ? 'you: ' + esc(r.typed) : 'blank'}</small>`) };
+  });
+  const miss = done ? res.filter(r => !r.correct).length : 0;
+  app.innerHTML = sitBarHtml() + `<main class="col"><span class="lab">${first ? 'New table' : 'Table returning'} · ${cells.length} forms</span>
+    <div class="ask">${tableTitleHtml(t, entry)}</div>${grid}
+    <div class="colfoot"><span class="mute">${!done ? 'Tab moves down each column. Leave blank what you do not know.' :
+      miss ? (cells.length - miss) + ' right · ' + miss + ' to drill alone · table back ' + backIn(sit.lastIvl) : 'All right · back ' + backIn(sit.lastIvl)}</span>
+      <button class="btn" data-act="${done ? 'next' : 'checktable'}">${done ? 'Next' : 'Check table'}${kbd('↵')}</button></div></main>`;
+  if (!done){
+    const ins = $$('.grid input');
+    ins.forEach(inp => { if (L.id === 'greek'){ const h = attachHopliteInput(inp); if (!S().settings.hopliteInput) h.disable(); } });
+    const firstIn = ins.find(i => i.dataset.i === '0'); if (firstIn) firstIn.focus();
+  } else $('[data-act=next]').focus();
+}
+function checkTable(){
+  const { t, entry } = sit.cur, cells = tableCellsFor(entry, t), now = Date.now();
+  const typed = {}; $$('.grid input').forEach(i => { typed[i.dataset.i] = i.value; });
+  sit.results = cells.map((c, i) => {
+    const j = L.judge(L.table, entry, c.category, c.cell, formOf(entry, c), typed[i] || '', gradeOpts());
+    return { category:c.category, cell:c.cell, correct:j.correct, typed:(typed[i] || '').trim() };
+  });
+  const r = recordTable(S(), t, entry, sit.results, now - sit.shownAt, now);
+  sit.lastIvl = r.ivl; sit.n += cells.length; sit.phase = 'verdict'; save(); render();
+}
+
+// ---- a strong table, recited and revealed ----
+function renderReveal(){
+  const { t, entry } = sit.cur, shown = sit.phase === 'verdict';
+  const grid = gridHtml(t, entry, c => ({ html: shown ? esc(formOf(entry, c).primary) : '' }));
+  app.innerHTML = sitBarHtml() + `<main class="col"><span class="lab">Table returning · recite it, then look</span>
+    <div class="ask">${tableTitleHtml(t, entry)}</div>${grid}
+    <div class="colfoot"><span class="mute">${shown ? 'Did you have all of it?' : 'Say the table to yourself first.'}</span>
+    <span class="after">${shown ? `<button class="btn quiet" data-act="rv-miss">Missed some${kbd('1')}</button><button class="btn" data-act="rv-ok">Had it${kbd('2')}</button>`
+      : `<button class="btn" data-act="reveal">Show${kbd('space')}</button>`}</span></div></main>`;
+}
+function gradeReveal(ok){
+  const { t, entry } = sit.cur, now = Date.now(), cells = tableCellsFor(entry, t);
+  recordTable(S(), t, entry, cells.map(c => ({ category:c.category, cell:c.cell, correct:true })), now - sit.shownAt, now, ok ? { reveal:true } : { revealMissed:true });
+  sit.n += cells.length; save(); nextTurn();
+}
+
+// ---------------------------------------------------------------- TABLES --
+function renderTables(){
+  const st = S(), now = Date.now();
+  if (view.table){
+    const t = tableByKey()[view.table], entry = tableWordFor(st, L.vocab, t), c = st.cards[t.key];
+    const status = tableStatus(st, t, L.vocab, now);
+    app.innerHTML = backBar('tables') + `<main class="col"><span class="lab">${esc(({ unmet:'Not met yet', due:'Due', rotation:'In rotation', known:'Known' })[status])}${c && c.due > now ? ' · back ' + esc(backIn(c.due - now)) : ''}</span>
+      <div class="ask">${tableTitleHtml(t, entry)}</div>${status === 'unmet' ? gridHtml(t, entry, () => ({ html:'' })) : gridHtml(t, entry, x => ({ html: esc(formOf(entry, x).primary) }))}
+      <div class="colfoot"><span class="mute">${status === 'unmet' ? 'Hidden until you have typed it once.' : ''}</span><span class="after">
+      ${status === 'unmet' ? `<button class="btn quiet" data-act="peek">Show it anyway</button>` : ''}<button class="btn" data-act="typenow">Type it now${kbd('↵')}</button></span></div></main>`;
+    return;
+  }
+  app.innerHTML = backBar('home') + `<main class="col wide"><div class="ask">Tables</div>` + groupedTables().map(([name, ts]) => ts.length ? `<section class="sec" style="margin-top:16px">
+    <div class="row"><span class="lab">${esc(name)}</span><span class="v mute">${ts.filter(t => st.cards[t.key]).length} of ${ts.length} met</span></div>
+    <div class="list">${ts.map(t => { const e = tableWordFor(st, L.vocab, t), s = tableStatus(st, t, L.vocab, now);
+      return `<div class="row link" data-act="table" data-v="${esc(t.key)}"><span>${tableTitleHtml(t, e)}</span><span class="v mute">${s === 'unmet' ? 'not met' : s === 'rotation' ? 'in rotation' : s}</span></div>`; }).join('')}</div></section>` : '').join('') + '</main>';
+}
+const backBar = to => `<div class="sitbar"><a data-act="go" data-v="${to}">← Back${kbd('esc')}</a><span class="mute">${L.name}</span></div>`;
+
+// ---------------------------------------------------------------- LOOKUP --
+let formIndex = {};
+function renderLookup(){
+  app.innerHTML = backBar('home') + `<main class="col"><div class="ask">Look up a form</div>
+    <input class="search" id="q" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${L.id === 'greek' ? 'λυθεῖσι' : 'amabantur'}">
+    <div id="hits" class="list"></div></main>`;
+  const q = $('#q'); q.focus();
+  if (L.id === 'greek'){ const h = attachHopliteInput(q); if (!S().settings.hopliteInput) h.disable(); }
+  if (!formIndex[L.id]) formIndex[L.id] = buildFormIndex(L.table, L.vocab, s => L.id === 'greek' ? normalizeGreek(s, {}) : normalize(s), L.expand);
+  q.addEventListener('input', () => {
+    const hits = lookupForm(formIndex[L.id], s => L.id === 'greek' ? normalizeGreek(s, {}) : normalize(s), q.value);
+    $('#hits').innerHTML = hits.slice(0, 40).map(h => `<div class="row"><span><span class="form">${esc(h.form)}</span> · ${esc(cellLabelOf(h.category, h.cell))}</span><span class="mute">${wordHtml(h.entry)} · ${esc(h.entry.meaning || '')}</span></div>`).join('')
+      || (q.value.trim() ? '<div class="row"><span class="mute">No form in the deck matches.</span></div>' : '');
+  });
+}
+
+// ----------------------------------------------------------------- STATS --
+function renderStats(){
+  const st = S(), now = Date.now(), roll = effRollover(st.settings, now), tab = view.tab || 'time';
+  const tabs = [['time','Time'],['tables','Tables'],['forms','Forms'],['days','Days']];
+  let body = '';
+  if (tab === 'time'){
+    const k = { N:'A form met cold for the first time', L:'A form on a learning step', R:'A form reviewed alone', T:'One form inside a typed table' };
+    body = `<div class="trio" style="margin:0">${weekHtml(now)}${forecastHtml(now, 7)}<section class="sec"><div class="row"><span class="lab">Today</span></div><div class="ask v">${fmtMin(usedTodayMs(st, now, otherStore()))}<span class="mute" style="font-size:var(--t3)"> min, both languages</span></div></section></div>
+      <section class="sec"><span class="lab">What an answer costs you</span><div class="list">${Object.keys(k).map(x => `<div class="row"><span>${k[x]}</span><span class="v">${(costMs(st, x, roll) / 1000).toFixed(1)} s</span></div>`).join('')}</div>
+      <span class="empty">Starts from a guess and follows your own answers within a sitting or two.</span></section>
+      <section class="sec"><span class="lab">Still to come here</span><span class="empty">Measured recall against your ${Math.round(st.settings.retention * 100)}% target — it needs about a month of returns to mean anything (${(st.tlog || []).filter(r => !r.first).length + st.log.filter(r => r.ivl >= FSRS_DAY).length} so far).</span></section>`;
+  } else if (tab === 'tables'){
+    const count = ts => { const o = { known:0, rotation:0, due:0, unmet:0 }; ts.forEach(t => { o[tableStatus(st, t, L.vocab, now)]++; }); return o; };
+    body = `<section class="sec"><div class="row"><span class="lab">Group</span><span class="lab">known · rotation · due · not met</span></div><div class="list">${groupedTables().map(([n, ts]) => { const c = count(ts);
+      return ts.length ? `<div class="row"><span>${esc(n)}</span><span class="v">${c.known} · ${c.rotation} · ${c.due} · ${c.unmet}</span></div>` : ''; }).join('')}</div></section>`;
+  } else if (tab === 'forms'){
+    const tr = troubleCells(st, { includeClean:false });
+    body = AXES.map(a => { const rows = axisAccuracy(st, L.table, a).filter(e => e.n >= 6).sort((x, y) => x.rate - y.rate);
+      return rows.length ? `<section class="sec"><span class="lab">Right, by ${a}</span><div class="axes">${rows.map(e => `<div><span>${esc(axisLabel(a, e.key))}</span><b><i style="width:${e.rate * 100}%"></i></b><span class="v">${Math.round(e.rate * 100)}%</span></div>`).join('')}</div></section>` : ''; }).join('')
+      + `<section class="sec"><span class="lab">Forms that beat you, worst first</span>${tr.length ? `<div class="list">${tr.slice(0, 60).map(t => `<div class="row"><span><span class="form">${esc(t.lemma || '')}</span> · ${esc(cellLabelOf(t.category, t.cell))}</span><span class="v mute">${t.misses} of ${t.attempts}</span></div>`).join('')}</div>` : '<span class="empty">None yet.</span>'}</section>`;
+  } else {
+    const today = dayKey(now, roll), days = Array.from({ length:28 }, (_, i) => today - 27 + i), sel = view.day == null ? today : view.day;
+    const lim = Math.max(st.settings.minutesPerDay * 60000, 60000);
+    const used = d => usedMs(st, d, roll) + usedMs(otherStore(), d, roll);
+    const rows = st.log.filter(r => dayKey(r.ts, roll) === sel), trs = (st.tlog || []).filter(r => dayKey(r.ts, roll) === sel);
+    body = `<section class="sec"><span class="lab">The last four weeks · darker is more minutes</span><div class="days">${days.map(d => `<i class="${d === sel ? 'sel' : ''}" data-act="day" data-v="${d}" title="${dateLabel(d)}"><b style="--o:${Math.min(used(d) / lim, 1)}"></b></i>`).join('')}</div></section>
+      <section class="sec"><span class="lab">${dateLabel(sel)} · ${L.name}</span><div class="list">
+        <div class="row"><span>Minutes, both languages</span><span class="v">${fmtMin(used(sel))}</span></div>
+        <div class="row"><span>Tables typed</span><span class="v">${trs.length} (${trs.filter(r => r.first).length} new)</span></div>
+        <div class="row"><span>Forms asked alone</span><span class="v">${rows.length}</span></div>
+        <div class="row"><span>… of which right</span><span class="v">${rows.filter(r => r.correct).length}</span></div></div></section>`;
+  }
+  app.innerHTML = backBar('home') + `<main class="col wide"><div class="ask">Stats</div>
+    <div class="tabs">${tabs.map(([id, n]) => `<button data-act="tab" data-v="${id}" aria-pressed="${tab === id}">${n}</button>`).join('')}</div>${body}</main>`;
+}
+
+// -------------------------------------------------------------- SETTINGS --
+function renderSettings(){
+  const st = S(), g = stores.greek.settings;
+  const seg = (act, cur, opts) => `<span class="seg">${opts.map(([v, n]) => `<button data-act="${act}" data-v="${v}" aria-pressed="${String(cur) === String(v)}">${n}</button>`).join('')}</span>`;
+  app.innerHTML = backBar('home') + `<main class="col"><div class="ask">Settings</div><div class="set">
+    <span>Minutes a day</span><input type="number" id="mins" min="0" max="240" value="${st.settings.minutesPerDay | 0}">
+    <span class="help">One limit for Latin and Greek together. When it is reached nothing more is asked that day; 0 means no limit.</span>
+    <span>Look</span>${seg('theme', ui.theme, [['slate','Slate'],['stone','Stone'],['graph','Graph paper']])}
+    <span>A single form is asked</span>${seg('panes', ui.panes, [['two','beside its table'],['one','on its own']])}
+    <span>Strong tables</span>${seg('reveal', st.settings.revealOld !== false, [[true,'recite and reveal'],[false,'always typed']])}
+    <span class="help">A table you have typed right twice (about three weeks' strength) can be recited and checked by eye instead of typed.</span>
+    <span>Target recall</span>${seg('retention', st.settings.retention, [[0.85,'85%'],[0.9,'90%'],[0.95,'95%']])}
+    <span>Greek accents</span>${seg('accents', !!g.requireAccents, [[false,'not graded'],[true,'graded']])}
+    <span class="help">Breathings are always graded.</span>
+    <span>Greek typing</span>${seg('hoplite', g.hopliteInput !== false, [[true,'Hoplite keys'],[false,'system keyboard']])}
+    </div>
+    <section class="sec" style="margin-top:16px"><span class="lab">Sync</span>
+    <span class="empty">One code links your devices: get one here, type the same code on the other, and every answer reaches the server a few seconds later, encrypted with that code. Merging never loses a review.</span>
+    <div class="set"><span>Code</span><span class="after"><input id="code" class="search" style="width:190px;font:inherit;padding:4px 8px" value="${esc(syncCode())}" autocomplete="off" spellcheck="false" placeholder="paste a code"><button class="btn quiet small" data-act="newcode">Get a code</button></span>
+      ${['latin','greek'].map(id => { const st = loadSyncStatus(id); return `<span>${LANGS[id].name}</span><span class="mute" style="font-size:var(--t2);text-align:right">${st.at ? esc(st.note || 'Synced') + ' · ' + esc(ago(st.at)) : 'Not synced yet'}</span>`; }).join('')}
+      <span>Now</span><span class="after"><button class="btn quiet small" data-act="pull" ${syncCode() ? '' : 'disabled'}>Pull and merge</button><button class="btn quiet small" data-act="push" ${syncCode() ? '' : 'disabled'}>Push</button></span>
+      <span>Restore a spare</span><span class="after"><button class="btn quiet small" data-act="spare-server" ${syncCode() ? '' : 'disabled'}>the server’s</button><button class="btn quiet small" data-act="spare-local">this device’s</button></span>
+      <span class="help">Both spares merge in rather than overwrite, so either can only add reviews back.</span></div></section>
+    <section class="sec" style="margin-top:16px"><span class="lab">Backup file</span>
+    <div class="after"><button class="btn quiet small" data-act="export">Save a backup file</button><label class="btn quiet small" style="cursor:pointer">Restore from a file<input type="file" id="restore" accept="application/json,.json" hidden></label></div>
+    <span class="empty">A restored file is merged in, like a spare.</span></section>
+    <span class="empty">Version 2026.09.18.0.</span></main>`;
+  $('#code').addEventListener('change', e => setSyncCode(e.target.value));
+  $('#restore').addEventListener('change', async e => {
+    const f = e.target.files && e.target.files[0]; if (!f) return;
+    let parsed; try { parsed = JSON.parse(await f.text()); } catch(err){ toast('That file is not readable as a backup'); return; }
+    const b = readBackup(parsed); if (!b.ok){ toast(b.error); return; }
+    Object.keys(b.decks).forEach(id => { const key = LANGS[id].key; saveLocalSpare(key, stores[id], 'a restore', installId());
+      const m = mergeStores(stores[id], adoptStore(b.decks[id])); stores[id] = adoptStore(m.store); applyDefaults(stores[id], id === 'greek');
+      storeReplaced(key); persistStore(key, stores[id]); noteSync(id, 'From a file: ' + mergeSummary(m.stats)); if (syncCode()) doPush(id, true); });
+    toast('Restored'); render();
+  });
+  $('#mins').addEventListener('change', e => { const v = Math.max(0, Math.min(240, e.target.value | 0));
+    ['latin','greek'].forEach(id => { stores[id].settings.minutesPerDay = v; }); saveBoth(); toast(v ? v + ' minutes a day' : 'No daily limit'); });
+}
+
+// ---------------------------------------------------------------- wiring --
+function render(){
+  document.documentElement.dataset.id = ui.theme;
+  ({ home:renderHome, sit:renderSit, tables:renderTables, lookup:renderLookup, stats:renderStats, settings:renderSettings })[view.screen]();
+}
+function go(screen, extra){ view = Object.assign({ screen }, extra || {}); render(); window.scrollTo(0, 0); }
+function leaveSitting(){ if (sit && sit.pending) commitCell(); sit = null; go('home'); }
+function troubleQueue(){
+  return troubleCells(S()).slice(0, 12).map(t => { const p = splitCardId(t.cardId), entry = p && L.vocab.find(e => e.id === p.wordId);
+    return entry ? { wordId:entry.id, entry, category:p.category, cell:p.cell, card:S().cards[t.cardId] || null } : null; }).filter(Boolean);
+}
+const ACT = {
+  lang: v => { L = LANGS[v]; ui.lang = v; saveUi(); render(); },
+  start: () => startSitting(), trouble: () => { const q = troubleQueue(); if (q.length) startSitting(q); },
+  go: v => go(v), home: () => leaveSitting(), axis: v => { ui.axis = v; saveUi(); render(); },
+  table: v => go('tables', { table:v }), tab: v => { view.tab = v; render(); }, day: v => { view.day = +v; render(); },
+  check: () => checkCell(), checktable: () => checkTable(),
+  next: () => { if (sit.cur.type === 'cell') commitCell(); nextTurn(); },
+  typo: () => { sit.pending.correct = true; sit.pending.typoForgiven = true; commitCell(); nextTurn(); },
+  flag: () => { const i = sit.cur.item, id = cardId(i.entry.id, i.category, i.cell); setFlag(S(), id, !isFlagged(S(), id), Date.now()); save(); render(); },
+  more: () => { extendToday(S(), Date.now()); save(); nextTurn(); },
+  'rv-ok': () => gradeReveal(true), 'rv-miss': () => gradeReveal(false),
+  peek: () => { const t = tableByKey()[view.table], e = tableWordFor(S(), L.vocab, t); $('.grid').outerHTML = gridHtml(t, e, x => ({ html: esc(formOf(e, x).primary) })); },
+  typenow: () => { const t = tableByKey()[view.table]; sit = { n:0, queue:[], startUsed: usedTodayMs(S(), Date.now(), otherStore()) };
+    sit.cur = { type:'table', t, entry:tableWordFor(S(), L.vocab, t), mode:'typed', first:!S().cards[t.key] }; sit.phase = 'ask'; sit.shownAt = Date.now(); view = { screen:'sit' }; render(); },
+  syncnow: () => syncNow(), newcode: () => newSyncCode(),
+  pull: () => { toast('Pulling…'); Promise.all(['latin','greek'].map(id => doPull(id))).then(render); },
+  push: () => { toast('Pushing…'); Promise.all(['latin','greek'].map(id => doPush(id))).then(render); },
+  'spare-server': () => { ['latin','greek'].forEach(id => restoreFrom(id, 'server')); }, 'spare-local': () => { ['latin','greek'].forEach(id => restoreFrom(id, 'local')); },
+  export: () => { const blob = new Blob([JSON.stringify(buildBackup(stores))], { type:'application/json' }), a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'cotidie-backup-' + new Date().toISOString().slice(0, 10) + '.json'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); },
+  theme: v => { ui.theme = v; saveUi(); render(); }, panes: v => { ui.panes = v; saveUi(); render(); },
+  retention: v => { ['latin','greek'].forEach(id => { stores[id].settings.retention = +v; }); saveBoth(); render(); },
+  accents: v => { stores.greek.settings.requireAccents = v === 'true'; save('greek'); formIndex = {}; render(); },
+  hoplite: v => { stores.greek.settings.hopliteInput = v === 'true'; save('greek'); render(); }
+};
+ACT['reveal'] = v => { if (view.screen === 'settings'){ ['latin','greek'].forEach(id => { stores[id].settings.revealOld = v === 'true'; }); saveBoth(); render(); } else { sit.phase = 'verdict'; render(); } };
+app.addEventListener('click', e => { const el = e.target.closest('[data-act]'); if (!el || el.disabled) return; const f = ACT[el.dataset.act]; if (f) f(el.dataset.v); });
+app.addEventListener('mouseover', e => { const el = e.target.closest('.msq i'); if (!el) return; const t = tableByKey()[el.dataset.v], h = $('#maphint');
+  if (t && h){ const w = tableWordFor(S(), L.vocab, t); h.innerHTML = tableTitleHtml(t, w); } });
+
+document.addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const typing = /^(INPUT|SELECT|TEXTAREA)$/.test((e.target.tagName || ''));
+  const k = e.key;
+  if (k === 'Escape'){ e.preventDefault(); if (view.screen === 'sit') leaveSitting(); else if (view.screen === 'tables' && view.table) go('tables'); else go('home'); return; }
+  if (view.screen === 'sit' && sit && sit.cur){
+    if (k === 'Enter'){ e.preventDefault();
+      if (!sit.cur.type || sit.cur.type === 'limit') return leaveSitting();
+      if (sit.cur.type === 'cell') return sit.phase === 'ask' ? checkCell() : ACT.next();
+      if (sit.cur.mode === 'reveal') return sit.phase === 'ask' ? ACT.reveal() : gradeReveal(true);
+      return sit.phase === 'ask' ? checkTable() : ACT.next(); }
+    if (typing) return;
+    const low = k.toLowerCase();
+    if (sit.cur.type === 'limit' && low === 'm') return ACT.more();
+    if (sit.cur.type === 'cell' && sit.phase === 'verdict'){ if (low === 'y' && $('[data-act=typo]')) return ACT.typo(); if (low === 'f') return ACT.flag(); }
+    if (sit.cur.type === 'table' && sit.cur.mode === 'reveal'){ if (sit.phase === 'ask' && k === ' '){ e.preventDefault(); return ACT.reveal(); }
+      if (sit.phase === 'verdict'){ if (k === '1') return gradeReveal(false); if (k === '2') return gradeReveal(true); } }
+    return;
+  }
+  if (view.screen === 'sit'){ if (k === 'Enter') leaveSitting(); return; }
+  if (typing) return;
+  if (view.screen === 'tables' && view.table && k === 'Enter'){ e.preventDefault(); return ACT.typenow(); }
+  if (view.screen !== 'home') return;
+  const low = k.toLowerCase();
+  if (k === 'Enter'){ e.preventDefault(); const b = $('[data-act=start]'); if (b && !b.disabled) startSitting(); }
+  else if (low === 'l') ACT.lang('latin'); else if (low === 'g') ACT.lang('greek');
+  else if (low === 'b') go('tables'); else if (k === '/'){ e.preventDefault(); go('lookup'); }
+  else if (low === 's') go('stats'); else if (k === ',') go('settings'); else if (low === 't') ACT.trouble();
 });
+
+(async function boot(){
+  document.documentElement.dataset.id = ui.theme;
+  stores.latin = await bootStore(LANGS.latin.key); stores.greek = await bootStore(LANGS.greek.key);
+  applyDefaults(stores.latin, false); applyDefaults(stores.greek, true);
+  // one limit for both: the language last changed wins, so they never disagree
+  if (stores.latin.settings.minutesPerDay !== stores.greek.settings.minutesPerDay) stores.latin.settings.minutesPerDay = stores.greek.settings.minutesPerDay;
+  render();
+  syncOnLaunch();
+})();
 </script>
 </body>
 </html>

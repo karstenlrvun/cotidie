@@ -150,6 +150,46 @@ function saveSyncShared(g){
   } catch(e){}
 }
 
+/* ---- what this device knows about its own last sync (2026-08-31) ------
+   Per deck, and in the shared blob rather than in the deck's store, for the
+   same reason the code and the install id are: the store is the thing that
+   gets pushed, so a per-device fact kept in it would ride along in the
+   payload and arrive on the other device claiming to be its own.
+
+   Before this, the Settings screen held its note in a module-level variable
+   and so said "Not synced yet this session" after every reload -- which reads
+   exactly like "never synced", the one thing it most needs not to say.
+   ---------------------------------------------------------------------- */
+function loadSyncStatus(deckId){
+  if (typeof localStorage === 'undefined') return {};
+  try {
+    const cur = JSON.parse(localStorage.getItem(SYNC_SHARED_KEY)) || {};
+    const st = cur.status && cur.status[deckId];
+    return (st && typeof st === 'object') ? st : {};
+  } catch(e){ return {}; }
+}
+// Read-modify-write, like saveSyncShared() and for the same reason: two decks
+// and the launcher all write this one blob, and a writer that replaced it
+// wholesale would drop whatever the other deck had just recorded.
+function saveSyncStatus(deckId, patch){
+  if (typeof localStorage === 'undefined') return;
+  try {
+    let cur = {}; try { cur = JSON.parse(localStorage.getItem(SYNC_SHARED_KEY)) || {}; } catch(e){}
+    if (cur && typeof cur === 'object' && Object.prototype.hasOwnProperty.call(cur,'__proto__')) delete cur['__proto__'];
+    const status = Object.assign({}, cur.status);
+    status[deckId] = Object.assign({}, status[deckId], patch);
+    localStorage.setItem(SYNC_SHARED_KEY, JSON.stringify(Object.assign({}, cur, { status: status })));
+  } catch(e){}
+}
+
+// How far this deck has drifted from the last copy that reached the server.
+// Pure so the threshold can be pinned by a test without a browser.
+const BACKUP_WARN_RATINGS = 150;
+function ratingsSinceBackup(logLen, pushedLogLen){
+  const since = (logLen|0) - (pushedLogLen|0);
+  return since > 0 ? since : 0;
+}
+
 function loadSyncCode(){ return { syncCode: loadSyncShared().syncCode }; }
 function saveSyncCode(syncCode){ saveSyncShared({ syncCode: syncCode||'', installId: installId() }); }
 
@@ -417,7 +457,7 @@ function lastActivity(st){
   return Number.isFinite(st && st.created) ? st.created : -1;
 }
 
-const MERGE_KNOWN_FIELDS = ['version','created','settings','cards','log','flags'];
+const MERGE_KNOWN_FIELDS = ['version','created','settings','cards','log','flags','tlog','extra'];
 
 // Returns { store, stats }. Pure: no clock, no storage, no network -- which
 // is what lets the whole thing be tested, and why the tests can assert the
@@ -472,7 +512,9 @@ function mergeStores(local, remote){
   { const lc = (L.cards && typeof L.cards === 'object') ? L.cards : {};
     const rc = (R.cards && typeof R.cards === 'object') ? R.cards : {};
     const cards = {};
-    new Set([...Object.keys(lc), ...Object.keys(rc)]).forEach(id => {
+    // Sorted for the reason the flags below are (2026-09-17: found by a test
+    // that compared the two merge directions as JSON rather than canonically).
+    [...new Set([...Object.keys(lc), ...Object.keys(rc)])].sort().forEach(id => {
       if (id === '__proto__') return;              // never reparent the object being built
       const a = lc[id], b = rc[id];
       const w = pickCard(a, b);
@@ -528,6 +570,37 @@ function mergeStores(local, remote){
     });
     out.flags = flags; }
 
+  // --- 6. the table log (2026-09-17) ---
+  // A union on (table, ts), exactly as the review log is a union on
+  // (cardId, ts), and sorted for the same byte-identical reason. Left as an
+  // unknown field it would have been "whichever side sorts higher", which
+  // silently drops every table typed on the other device.
+  { const rows = new Map();
+    [L.tlog, R.tlog].forEach(list => (Array.isArray(list) ? list : []).forEach(r => {
+      if (!r || typeof r !== 'object') return;
+      const k = String(r.table) + '\u0000' + String(r.ts);
+      rows.set(k, pickLogRow(rows.get(k), r));
+    }));
+    const tl = [...rows.values()];
+    tl.sort((a, b) => (a.ts - b.ts) || (canonJSON(a) < canonJSON(b) ? -1 : canonJSON(a) > canonJSON(b) ? 1 : 0));
+    if (tl.length || Array.isArray(L.tlog) || Array.isArray(R.tlog)) out.tlog = tl;
+    const lk = new Set((Array.isArray(L.tlog) ? L.tlog : []).map(r => r && String(r.table) + '\u0000' + String(r.ts)));
+    const rk = new Set((Array.isArray(R.tlog) ? R.tlog : []).map(r => r && String(r.table) + '\u0000' + String(r.ts)));
+    stats.tablesFromRemote = [...rk].filter(k => !lk.has(k)).length;
+    stats.tablesFromLocal = [...lk].filter(k => !rk.has(k)).length; }
+
+  // --- 7. minutes added by hand, per study day: the larger of the two ---
+  { const le = (L.extra && typeof L.extra === 'object') ? L.extra : null;
+    const re = (R.extra && typeof R.extra === 'object') ? R.extra : null;
+    if (le || re){
+      const ex = {};
+      [...new Set([...Object.keys(le || {}), ...Object.keys(re || {})])].sort().forEach(k => {
+        if (k === '__proto__') return;
+        ex[k] = Math.max(((le || {})[k])|0, ((re || {})[k])|0);
+      });
+      out.extra = ex;
+    } }
+
   return { store: out, stats: stats };
 }
 
@@ -535,8 +608,10 @@ function mergeStores(local, remote){
 function mergeSummary(stats){
   if (!stats) return 'Merged.';
   const bits = [];
-  if (stats.fromRemote) bits.push(stats.fromRemote + ' review' + (stats.fromRemote===1?'':'s') + ' from the other device');
-  if (stats.fromLocal)  bits.push(stats.fromLocal  + ' from this one');
+  const n = (r, t) => { const p = []; if (r) p.push(r + ' review' + (r===1?'':'s')); if (t) p.push(t + ' table' + (t===1?'':'s')); return p.join(' and '); };
+  const fr = n(stats.fromRemote, stats.tablesFromRemote), fl = n(stats.fromLocal, stats.tablesFromLocal);
+  if (fr) bits.push(fr + ' from the other device');
+  if (fl) bits.push(fl + ' from this one');
   let msg = bits.length ? ('Merged: ' + bits.join(', ') + '.') : 'Already up to date.';
   if (stats.both && stats.both.length){
     const n = stats.both.length;

@@ -243,7 +243,10 @@ function defaultStore(){
     // partly knows. The machinery is here so it is one number away when he
     // does; buildQueue() is the only thing that reads it.
     settings: { retention: 0.90, maxIvl: 36500, rollover: 4,
-                rolloverPending: null, rolloverPendingFrom: null, newPerDay: 0 },
+                rolloverPending: null, rolloverPendingFrom: null, newPerDay: 0,
+                // The daily limit in minutes (2026-09-17, the rebuild); 0 is no
+                // limit. js/time.js is the only reader.
+                minutesPerDay: 25 },
     cards: {},   // cardId -> card state
     // cardId -> {on, at}. One flag, on or off, per CELL -- his call
     // 2026-08-30 over vocabula's seven colours. Cleared flags are kept as

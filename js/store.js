@@ -146,6 +146,57 @@ function idbDeleteStore(key){
   });
 }
 
+/* ---- the local spare (2026-08-31) -------------------------------------
+   One step back, per deck, kept in the `state` store beside the deck's own
+   record. Written whenever something REPLACES this device's copy -- a merge,
+   a pull, or a restore.
+
+   It exists because the Worker's spare cannot cover every case. That one
+   holds what the OTHER install last pushed; if the bad copy is the one that
+   came from over there, the good copy up on the server has already been
+   overwritten and there is nothing left to fetch. This one is whatever THIS
+   device had immediately before the arrival landed.
+
+   The whole store goes in as one record, log included -- a big write, but it
+   happens on a merge, never on a rating, so it is nowhere near the hot path
+   the split log store exists to protect. put() clones synchronously, so
+   ratings made after this returns can never reach the stored copy.
+
+   No IDB_VERSION bump: this is another key in a store that already exists.
+   ---------------------------------------------------------------------- */
+const SPARE_SUFFIX = '::spare';
+let localSpareMeta = Object.create(null);   // deckKey -> {at,reason,n,label}, for a synchronous render
+
+function saveLocalSpare(deckKey, store, reason, label){
+  if (!idb || !store) return false;
+  try {
+    const meta = { at: Date.now(), reason: reason || 'replaced', n: store.log.length, label: label || '' };
+    idb.transaction('state','readwrite').objectStore('state')
+      .put(Object.assign({}, meta, { state: store }), deckKey + SPARE_SUFFIX);
+    localSpareMeta[deckKey] = meta;
+    return true;
+  } catch(e){ return false; }
+}
+
+function readLocalSpare(deckKey){
+  return new Promise(res => {
+    if (!idb) return res(null);
+    try {
+      const r = idb.transaction('state','readonly').objectStore('state').get(deckKey + SPARE_SUFFIX);
+      r.onsuccess = () => {
+        const v = r.result || null;
+        localSpareMeta[deckKey] = v ? { at:v.at, reason:v.reason, n:v.n, label:v.label||'' } : null;
+        res(v);
+      };
+      r.onerror = () => res(null);
+    } catch(e){ res(null); }
+  });
+}
+
+// What renderSettings() can show without waiting on IndexedDB. Null until
+// readLocalSpare() has run once, which the Settings screen kicks off.
+function localSpareInfo(deckKey){ return localSpareMeta[deckKey] || null; }
+
 // ---- the localStorage copy, which is now only ever a source ----
 // Reads for the one-time migration below. The old copy is deliberately NOT
 // deleted afterwards: it is a snapshot that cannot grow, and leaving it costs

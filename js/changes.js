@@ -9,6 +9,9 @@
    Newest first. Shared by both decks: the app changes, not the language.
    ====================================================================== */
 const CHANGES = [
+  ['2026.09.20.1', [
+    'A table checked by mistake can be taken back. After you check a table, <b>Undo</b> sits beside Next (the <b>U</b> key): it puts the table back exactly as it was, with what you typed still in the boxes, as though you had never pressed Check. It only reaches back one check, and only while you are still looking at that table.'
+  ]],
   ['2026.09.20.0', [
     'A new icon: a chalk C on a slate, in the app’s own letter, instead of the old gold one on cream. To see it, remove Cotidie from your home screen and add it again — a phone keeps whichever icon it saved the day you added it.'
   ]],

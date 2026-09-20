@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Cotidie">
 <link rel="apple-touch-icon" href="icon-180.png">
 <title>Cotidie</title>
-<link rel="stylesheet" href="fonts/fonts.css?v=202609200">
+<link rel="stylesheet" href="fonts/fonts.css?v=202609201">
 <style>
 /* ======================================================================
    Cotidie — the rebuilt page (2026-09-17). One page, both languages.
@@ -144,21 +144,21 @@ html[data-id=graph] .grid th,html[data-id=graph] .grid td{border-width:1.5px}
 <body>
 <div id="app"><div class="col"><span class="lab">Cotidie</span></div></div>
 
-<script src="data/latin-paradigms.js?v=202609200"></script>
-<script src="data/latin-vocab.js?v=202609200"></script>
-<script src="data/greek-paradigms.js?v=202609200"></script>
-<script src="data/greek-vocab.js?v=202609200"></script>
-<script src="js/engine.js?v=202609200"></script>
-<script src="js/store.js?v=202609200"></script>
-<script src="js/fsrs.js?v=202609200"></script>
-<script src="js/stats.js?v=202609200"></script>
-<script src="js/time.js?v=202609200"></script>
-<script src="js/tables.js?v=202609200"></script>
-<script src="js/rail.js?v=202609200"></script>
-<script src="js/changes.js?v=202609200"></script>
-<script src="js/sync.js?v=202609200"></script>
-<script src="js/greek.js?v=202609200"></script>
-<script src="js/greek-input.js?v=202609200"></script>
+<script src="data/latin-paradigms.js?v=202609201"></script>
+<script src="data/latin-vocab.js?v=202609201"></script>
+<script src="data/greek-paradigms.js?v=202609201"></script>
+<script src="data/greek-vocab.js?v=202609201"></script>
+<script src="js/engine.js?v=202609201"></script>
+<script src="js/store.js?v=202609201"></script>
+<script src="js/fsrs.js?v=202609201"></script>
+<script src="js/stats.js?v=202609201"></script>
+<script src="js/time.js?v=202609201"></script>
+<script src="js/tables.js?v=202609201"></script>
+<script src="js/rail.js?v=202609201"></script>
+<script src="js/changes.js?v=202609201"></script>
+<script src="js/sync.js?v=202609201"></script>
+<script src="js/greek.js?v=202609201"></script>
+<script src="js/greek-input.js?v=202609201"></script>
 <script>
 /* ======================================================================
    The page. Everything that decides anything lives in js/*.js and is tested
@@ -615,10 +615,13 @@ function renderTyped(){
     <div class="ask">${tableTitleHtml(t, entry)}</div>${grid}
     <div class="colfoot"><span class="mute">${!done ? 'Tab moves down each column. Leave blank what you do not know.' :
       miss ? (cells.length - miss) + ' right · ' + miss + ' to drill alone · table back ' + backIn(sit.lastIvl) : 'All right · back ' + backIn(sit.lastIvl)}</span>
-      <button class="btn" data-act="${done ? 'next' : 'checktable'}">${done ? 'Next' : 'Check table'}${kbd('↵')}</button></div></main>`;
+      <span class="after">${done && sit.undo ? `<button class="btn quiet" data-act="untable">Undo${kbd('U')}</button>` : ''}
+      <button class="btn" data-act="${done ? 'next' : 'checktable'}">${done ? 'Next' : 'Check table'}${kbd('↵')}</button></span></div></main>`;
   if (!done){
     const ins = $$('.grid input');
-    ins.forEach(inp => { if (L.id === 'greek'){ const h = attachHopliteInput(inp); if (!S().settings.hopliteInput) h.disable(); } });
+    ins.forEach(inp => { if (L.id === 'greek'){ const h = attachHopliteInput(inp); if (!S().settings.hopliteInput) h.disable(); }
+      // an undo puts back what was typed, so one bad cell is one cell to fix
+      const was = sit.cur.typed; if (was && was[inp.dataset.i]) inp.value = was[inp.dataset.i]; });
     const firstIn = ins.find(i => i.dataset.i === '0'); if (firstIn) firstIn.focus();
   } else $('[data-act=next]').focus();
 }
@@ -630,7 +633,8 @@ function checkTable(){
     return { category:c.category, cell:c.cell, correct:j.correct, typed:(typed[i] || '').trim() };
   });
   const r = recordTable(S(), t, entry, sit.results, now - sit.shownAt, now);
-  sit.lastIvl = r.ivl; sit.n += cells.length; sit.phase = 'verdict'; save(); render();
+  sit.lastIvl = r.ivl; sit.undo = r.undo; sit.cur.typed = typed;
+  sit.n += cells.length; sit.phase = 'verdict'; save(); render();
 }
 
 // ---- a strong table, recited and revealed ----
@@ -746,7 +750,7 @@ function renderSettings(){
     <section class="sec" style="margin-top:16px"><span class="lab">Backup file</span>
     <div class="after"><button class="btn quiet small" data-act="export">Save a backup file</button><label class="btn quiet small" style="cursor:pointer">Restore from a file<input type="file" id="restore" accept="application/json,.json" hidden></label></div>
     <span class="empty">A restored file is merged in, like a spare.</span></section>
-    <span class="empty">Version 2026.09.20.0.</span></main>`;
+    <span class="empty">Version 2026.09.20.1.</span></main>`;
   $('#code').addEventListener('change', e => setSyncCode(e.target.value));
   $('#restore').addEventListener('change', async e => {
     const f = e.target.files && e.target.files[0]; if (!f) return;
@@ -783,6 +787,17 @@ const ACT = {
   flag: () => { const i = sit.cur.item, id = cardId(i.entry.id, i.category, i.cell); setFlag(S(), id, !isFlagged(S(), id), Date.now()); save(); render(); },
   more: () => { extendToday(S(), Date.now()); save(); nextTurn(); },
   'rv-ok': () => gradeReveal(true), 'rv-miss': () => gradeReveal(false),
+  // Undo, the one place there is one: checking a table writes eight forms on a
+  // single keystroke. save() below also reschedules the pending push, so the
+  // six-second window is restarted and the undone copy is what goes up.
+  untable: () => {
+    if (!sit || sit.phase !== 'verdict' || !sit.undo) return;
+    const n = sit.undo.row.n;
+    if (!undoTable(S(), sit.undo)){ toast('That check has already been merged with another device'); return; }
+    sit.n = Math.max(0, sit.n - n); sit.undo = null; sit.lastIvl = null; sit.results = null;
+    sit.phase = 'ask'; sit.shownAt = Date.now(); save(); render();
+    toast('Taken back — the table is as it was');
+  },
   peek: () => { const t = tableByKey()[view.table], e = tableWordFor(S(), L.vocab, t); $('.grid').outerHTML = gridHtml(t, e, x => ({ html: esc(formOf(e, x).primary) })); },
   typenow: () => { const t = tableByKey()[view.table]; sit = { n:0, queue:[], startUsed: usedTodayMs(S(), Date.now(), otherStore()) };
     sit.cur = { type:'table', t, entry:tableWordFor(S(), L.vocab, t), mode:'typed', first:!S().cards[t.key] }; sit.phase = 'ask'; sit.shownAt = Date.now(); view = { screen:'sit' }; render(); },
@@ -817,6 +832,9 @@ document.addEventListener('keydown', e => {
     const low = k.toLowerCase();
     if (sit.cur.type === 'limit' && low === 'm') return ACT.more();
     if (sit.cur.type === 'cell' && sit.phase === 'verdict'){ if (low === 'y' && $('[data-act=typo]')) return ACT.typo(); if (low === 'f') return ACT.flag(); }
+    // preventDefault, or the u itself lands in the first box of the table the
+    // undo has just put back and focused -- which it did, first time out.
+    if (sit.cur.type === 'table' && sit.cur.mode !== 'reveal' && sit.phase === 'verdict' && low === 'u'){ e.preventDefault(); return ACT.untable(); }
     if (sit.cur.type === 'table' && sit.cur.mode === 'reveal'){ if (sit.phase === 'ask' && k === ' '){ e.preventDefault(); return ACT.reveal(); }
       if (sit.phase === 'verdict'){ if (k === '1') return gradeReveal(false); if (k === '2') return gradeReveal(true); } }
     return;

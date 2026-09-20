@@ -149,6 +149,11 @@ function recordTable(store, t, entry, results, ms, now, opts){
   const prior = store.cards[t.key], first = !prior;
   const missIds = results.filter(r => !r.correct).map(r => cardId(entry.id, r.category, r.cell));
   const allRight = missIds.length === 0 && !(opts && opts.revealMissed);
+  // Everything this is about to overwrite, kept so undoTable() can put it
+  // back exactly. See the note above that function for why it is this and
+  // not a copy of the store.
+  const undo = { table:t.key, card: prior ? Object.assign({}, prior) : null,
+                 cells: [], row: null, hadTlog: Array.isArray(store.tlog) };
   let card, rating;
 
   if (first){
@@ -177,6 +182,7 @@ function recordTable(store, t, entry, results, ms, now, opts){
 
   missIds.forEach(id => {
     const c = store.cards[id];
+    undo.cells.push({ id, card: c ? Object.assign({}, c) : null });
     if (!c){ const f = freshCard(); f.due = now; store.cards[id] = f; }
     else { delete c.rj; c.due = Math.min(c.due == null ? now : c.due, now); }
   });
@@ -186,7 +192,39 @@ function recordTable(store, t, entry, results, ms, now, opts){
                 miss:missIds, first:first ? 1 : 0, rating, ivl:card.due - now };
   if (opts && (opts.reveal || opts.revealMissed)) row.rv = 1;
   store.tlog.push(row);
-  return { first, allRight, card, ivl: card.due - now, missIds };
+  undo.row = row;
+  return { first, allRight, card, ivl: card.due - now, missIds, undo };
+}
+
+/* ---- taking a table check back (2026-09-20) --------------------------------
+   recordTable is the one place in the app where a single keystroke writes
+   eight forms at once: Enter on a table not yet typed grades every cell as
+   blank. Nothing else can go so wrong so fast, so this is the one place with
+   a way back.
+
+   What it restores is the inverse of the writes above -- one table card, the
+   cell cards the misses made or touched, one log row -- rather than a copy of
+   the whole store. A store copy would mean cloning a log of tens of thousands
+   of rows every time a table is checked, on the phone, to cover a button
+   almost never pressed.
+
+   The row is found by identity, not by position, and that is the whole safety
+   check: if a merge has landed in between, the log has been rebuilt out of
+   different objects, this one is not in it, and the undo refuses rather than
+   deleting somebody else's row. It cannot reach a copy already pushed to the
+   server; index.html reschedules the push instead, so in practice the bad
+   copy never leaves the device.
+   ------------------------------------------------------------------------ */
+function undoTable(store, u){
+  if (!store || !u || !u.row) return false;
+  const tl = Array.isArray(store.tlog) ? store.tlog : [];
+  const i = tl.lastIndexOf(u.row);
+  if (i < 0) return false;
+  tl.splice(i, 1);
+  if (u.card) store.cards[u.table] = u.card; else delete store.cards[u.table];
+  u.cells.forEach(c => { if (c.card) store.cards[c.id] = c.card; else delete store.cards[c.id]; });
+  if (!u.hadTlog && !tl.length) delete store.tlog;
+  return true;
 }
 
 // Called after a cell has been reviewed alone: once it has held long enough it

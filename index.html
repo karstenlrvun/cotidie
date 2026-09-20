@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Cotidie">
 <link rel="apple-touch-icon" href="icon-180.png">
 <title>Cotidie</title>
-<link rel="stylesheet" href="fonts/fonts.css?v=202609201">
+<link rel="stylesheet" href="fonts/fonts.css?v=202609202">
 <style>
 /* ======================================================================
    Cotidie — the rebuilt page (2026-09-17). One page, both languages.
@@ -144,21 +144,21 @@ html[data-id=graph] .grid th,html[data-id=graph] .grid td{border-width:1.5px}
 <body>
 <div id="app"><div class="col"><span class="lab">Cotidie</span></div></div>
 
-<script src="data/latin-paradigms.js?v=202609201"></script>
-<script src="data/latin-vocab.js?v=202609201"></script>
-<script src="data/greek-paradigms.js?v=202609201"></script>
-<script src="data/greek-vocab.js?v=202609201"></script>
-<script src="js/engine.js?v=202609201"></script>
-<script src="js/store.js?v=202609201"></script>
-<script src="js/fsrs.js?v=202609201"></script>
-<script src="js/stats.js?v=202609201"></script>
-<script src="js/time.js?v=202609201"></script>
-<script src="js/tables.js?v=202609201"></script>
-<script src="js/rail.js?v=202609201"></script>
-<script src="js/changes.js?v=202609201"></script>
-<script src="js/sync.js?v=202609201"></script>
-<script src="js/greek.js?v=202609201"></script>
-<script src="js/greek-input.js?v=202609201"></script>
+<script src="data/latin-paradigms.js?v=202609202"></script>
+<script src="data/latin-vocab.js?v=202609202"></script>
+<script src="data/greek-paradigms.js?v=202609202"></script>
+<script src="data/greek-vocab.js?v=202609202"></script>
+<script src="js/engine.js?v=202609202"></script>
+<script src="js/store.js?v=202609202"></script>
+<script src="js/fsrs.js?v=202609202"></script>
+<script src="js/stats.js?v=202609202"></script>
+<script src="js/time.js?v=202609202"></script>
+<script src="js/tables.js?v=202609202"></script>
+<script src="js/rail.js?v=202609202"></script>
+<script src="js/changes.js?v=202609202"></script>
+<script src="js/sync.js?v=202609202"></script>
+<script src="js/greek.js?v=202609202"></script>
+<script src="js/greek-input.js?v=202609202"></script>
 <script>
 /* ======================================================================
    The page. Everything that decides anything lives in js/*.js and is tested
@@ -662,7 +662,8 @@ function renderTables(){
     app.innerHTML = backBar('tables') + `<main class="col"><span class="lab">${esc(({ unmet:'Not met yet', due:'Due', rotation:'In rotation', known:'Known' })[status])}${c && c.due > now ? ' · back ' + esc(backIn(c.due - now)) : ''}</span>
       <div class="ask">${tableTitleHtml(t, entry)}</div>${status === 'unmet' ? gridHtml(t, entry, () => ({ html:'' })) : gridHtml(t, entry, x => ({ html: esc(formOf(entry, x).primary) }))}
       <div class="colfoot"><span class="mute">${status === 'unmet' ? 'Hidden until you have typed it once.' : ''}</span><span class="after">
-      ${status === 'unmet' ? `<button class="btn quiet" data-act="peek">Show it anyway</button>` : ''}<button class="btn" data-act="typenow">Type it now${kbd('↵')}</button></span></div></main>`;
+      ${status === 'unmet' ? `<button class="btn quiet" data-act="peek">Show it anyway</button>`
+        : `<button class="btn quiet" data-act="forget">Start it again</button>`}<button class="btn" data-act="typenow">Type it now${kbd('↵')}</button></span></div></main>`;
     return;
   }
   app.innerHTML = backBar('home') + `<main class="col wide"><div class="ask">Tables</div>` + groupedTables().map(([name, ts]) => ts.length ? `<section class="sec" style="margin-top:16px">
@@ -750,7 +751,7 @@ function renderSettings(){
     <section class="sec" style="margin-top:16px"><span class="lab">Backup file</span>
     <div class="after"><button class="btn quiet small" data-act="export">Save a backup file</button><label class="btn quiet small" style="cursor:pointer">Restore from a file<input type="file" id="restore" accept="application/json,.json" hidden></label></div>
     <span class="empty">A restored file is merged in, like a spare.</span></section>
-    <span class="empty">Version 2026.09.20.1.</span></main>`;
+    <span class="empty">Version 2026.09.20.2.</span></main>`;
   $('#code').addEventListener('change', e => setSyncCode(e.target.value));
   $('#restore').addEventListener('change', async e => {
     const f = e.target.files && e.target.files[0]; if (!f) return;
@@ -797,6 +798,20 @@ const ACT = {
     sit.n = Math.max(0, sit.n - n); sit.undo = null; sit.lastIvl = null; sit.results = null;
     sit.phase = 'ask'; sit.shownAt = Date.now(); save(); render();
     toast('Taken back — the table is as it was');
+  },
+  // Start a table again: for a table he FLUKED, which the undo cannot reach
+  // once its result has left the screen. Destructive, so it says in plain
+  // words what goes and asks first -- the same confirm the sync code uses.
+  forget: () => {
+    const t = tableByKey()[view.table], st = S(), f = tableFootprint(st, t, L.vocab);
+    const name = $('.ask') ? $('.ask').innerText.replace(/\s+/g, ' ').trim() : 'this table';
+    const bits = [];
+    if (f.rows) bits.push(f.rows === 1 ? 'the one time you have typed it' : 'the ' + f.rows + ' times you have typed it');
+    if (f.ids.length) bits.push(f.ids.length === 1 ? 'the one form it is asking you on its own' : 'the ' + f.ids.length + ' forms it is asking you on their own');
+    if (!confirm('Start ' + name + ' again?\n\nIt goes back to being a table you have not met'
+      + (bits.length ? ', forgetting ' + bits.join(' and ') : '') + '.\n\nThe answers themselves stay in your history.')) return;
+    forgetTable(st, t, L.vocab); save(); render();
+    toast('Not met — it comes back as a new table');
   },
   peek: () => { const t = tableByKey()[view.table], e = tableWordFor(S(), L.vocab, t); $('.grid').outerHTML = gridHtml(t, e, x => ({ html: esc(formOf(e, x).primary) })); },
   typenow: () => { const t = tableByKey()[view.table]; sit = { n:0, queue:[], startUsed: usedTodayMs(S(), Date.now(), otherStore()) };

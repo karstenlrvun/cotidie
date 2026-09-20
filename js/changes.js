@@ -9,6 +9,9 @@
    Newest first. Shared by both decks: the app changes, not the language.
    ====================================================================== */
 const CHANGES = [
+  ['2026.09.20.2', [
+    'A table you got right by luck can be started again. Open it under Tables and there is now <b>Start it again</b>: it goes back to being a table you have not met, forgetting its schedule and the times you have typed it, but not the answers themselves. It asks first, and says what it is about to forget.'
+  ]],
   ['2026.09.20.1', [
     'A table checked by mistake can be taken back. After you check a table, <b>Undo</b> sits beside Next (the <b>U</b> key): it puts the table back exactly as it was, with what you typed still in the boxes, as though you had never pressed Check. It only reaches back one check, and only while you are still looking at that table.'
   ]],

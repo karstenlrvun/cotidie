@@ -235,6 +235,38 @@ function afterCellReview(store, id){
   return false;
 }
 
+/* ---- starting a table again (2026-09-20) -----------------------------------
+   His ask, the same day as the undo: the undo only reaches a check still on
+   screen, and a table can be wrong about him days later -- above all one he
+   FLUKED, which goes straight to eighteen days' strength and is not asked
+   again for a fortnight.
+
+   What this removes is everything that says the table has been met: its own
+   card, the cell cards its forms carry, and its rows in the table log. The
+   cell cards have to be looked up across every word the table can be shown
+   with, because a Latin table is a pattern that rotates through its class and
+   may have been typed with more than one of them.
+
+   `store.log` is deliberately left alone. Those are answers he really gave,
+   and this is a scheduling decision, not a claim that they did not happen.
+   ------------------------------------------------------------------------ */
+function tableFootprint(store, t, vocab){
+  const ids = [];
+  tableWords(vocab, t).forEach(entry => tableCellsFor(entry, t).forEach(c => {
+    const id = cardId(entry.id, c.category, c.cell);
+    if (store.cards[id]) ids.push(id);
+  }));
+  const rows = (Array.isArray(store.tlog) ? store.tlog : []).filter(r => r && r.table === t.key).length;
+  return { ids, rows, met: !!store.cards[t.key] };
+}
+function forgetTable(store, t, vocab){
+  const f = tableFootprint(store, t, vocab);
+  delete store.cards[t.key];
+  f.ids.forEach(id => { delete store.cards[id]; });
+  if (f.rows) store.tlog = store.tlog.filter(r => !(r && r.table === t.key));
+  return f;
+}
+
 function tableMode(store, t){
   const c = store.cards[t.key];
   const on = !store.settings || store.settings.revealOld !== false;

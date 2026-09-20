@@ -9,6 +9,12 @@
    Newest first. Shared by both decks: the app changes, not the language.
    ====================================================================== */
 const CHANGES = [
+  ['2026.09.20.3', [
+    'Missing one form no longer sets a whole table back. It used to be treated as though you had known none of it; now the table keeps its place in the schedule, and only the form you missed is drilled on its own.',
+    'A table you type entirely right the first time is retired — you produced every form of it cold, so it is not put in the schedule at all. If you got one by luck, Start it again is on its own screen.',
+    'One in four retired tables comes back once, about four months later, to check that retiring it was safe.',
+    'Stats now shows what you actually recall: of the forms asked inside a table you have met before, how many you produced, against your target.'
+  ]],
   ['2026.09.20.2', [
     'A table you got right by luck can be started again. Open it under Tables and there is now <b>Start it again</b>: it goes back to being a table you have not met, forgetting its schedule and the times you have typed it, but not the answers themselves. It asks first, and says what it is about to forget.'
   ]],

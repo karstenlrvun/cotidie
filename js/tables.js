@@ -41,6 +41,13 @@ const TABLE_S_KNOWN = 18, TABLE_S_SHAKY = 4;
 // A form drilled alone rejoins its table once it has held this long; and a
 // table this strong may be reviewed by reveal-and-grade instead of typing.
 const REJOIN_DAYS = 21, REVEAL_DAYS = 21;
+// A table typed entirely right the first time is retired: he produced every
+// form of it cold, which is the same evidence Clepsydra retires a word on.
+// A QUARTER of them are given one audit at AUDIT_DAYS instead of going away
+// for good -- retiring destroys the evidence that retiring was safe, and a
+// sample large enough to estimate a proportion costs about half a minute a
+// day. This is the tripwire; see in-progress/RETENTION_MEASUREMENT.md.
+const AUDIT_DAYS = 120, AUDIT_SPREAD = 60, AUDIT_SHARE = 0.25;
 const TABLE_FAR = 36500 * FSRS_DAY;
 
 // A small deterministic hash of an id, in [0,1) -- so two devices agree on how
@@ -156,27 +163,41 @@ function recordTable(store, t, entry, results, ms, now, opts){
                  cells: [], row: null, hadTlog: Array.isArray(store.tlog) };
   let card, rating;
 
+  const audit = !first && !!prior.ret;          // this return is a retired table's one audit
   if (first){
     rating = allRight ? GOOD : HARD;
     const s = allRight ? TABLE_S_KNOWN : TABLE_S_SHAKY;
-    let days = nextInterval(s, store.settings.retention, store.settings.maxIvl);
-    // Spread a known table's first return over 0.4-1.0 of its interval: a
-    // sitting's worth of tables would otherwise all come back on one day.
-    if (allRight) days = Math.max(1, Math.round(days * (0.4 + 0.6 * idUnit(t.key, 'spread'))));
+    const days = nextInterval(s, store.settings.retention, store.settings.maxIvl);
     card = { st:'R', step:null, s, d:initD(rating, true), due:dayStart(today + days, roll),
              last:now, reps:1, lapses:0, tb:1 };
-  } else {
-    rating = allRight ? GOOD : AGAIN;
-    card = schedule(prior, rating, now, store.settings).card;
+    // Typed entirely right, cold: retired, which replaces that due date.
+    if (allRight) retire(card, t, today, roll, now);
+  } else if (allRight){
+    card = schedule(prior, GOOD, now, store.settings).card;
     card.tb = 1;
-    if (rating === AGAIN){
-      // No ten-minute relearning step for a table: the forms that were missed
-      // are what gets relearned, one by one. The table itself just comes back
-      // at whatever its reduced strength now asks for.
-      card.st = 'R'; card.step = null;
-      const days = nextInterval(card.s, store.settings.retention, store.settings.maxIvl);
-      card.due = dayStart(today + Math.max(days, 1), roll);
-    }
+    rating = GOOD;
+    // An audit passed is the end of it: retired for good, no second audit.
+    if (audit){ card.ret = 1; delete card.aud; card.due = now + TABLE_FAR; }
+  } else {
+    /* A miss HOLDS the table where it is (2026-09-20, from the workload
+       simulation). It used to lapse: one form wrong out of twelve cut the
+       table's strength more than fourfold and brought it back in days, so a
+       large table could never settle -- at 95% a form, a twelve-form table
+       comes back imperfect 47% of the time. Holding gives it no credit either
+       (strength and difficulty are untouched); it simply comes back after the
+       same interval it has just served, while the forms actually missed are
+       drilled one by one below, which is where the relearning belongs.
+
+       Honest by construction: the row still carries every missed form, so
+       form-level recall -- the number that says whether this was safe -- is
+       computed from the log, not from the rating. */
+    rating = HARD;
+    const served = (prior.due != null && prior.last != null) ? prior.due - prior.last
+                 : nextInterval(prior.s, store.settings.retention, store.settings.maxIvl) * FSRS_DAY;
+    card = Object.assign({}, prior, { st:'R', step:null, tb:1, last:now,
+             reps:(prior.reps | 0) + 1, holds:(prior.holds | 0) + 1 });
+    delete card.ret; delete card.aud;          // an audit with a miss un-retires it
+    card.due = dayStart(today + Math.max(1, Math.round(served / FSRS_DAY)), roll);
   }
   store.cards[t.key] = card;
 
@@ -191,9 +212,28 @@ function recordTable(store, t, entry, results, ms, now, opts){
   const row = { ts:now, table:t.key, word:entry.id, ms:Math.max(ms|0, 0), n:results.length,
                 miss:missIds, first:first ? 1 : 0, rating, ivl:card.due - now };
   if (opts && (opts.reveal || opts.revealMissed)) row.rv = 1;
+  // Which rule this return was scheduled under, so a month of these can be
+  // read back and the change judged rather than assumed.
+  if (card.ret) row.ret = 1;
+  if (audit) row.aud = 1;
+  if (!first && !allRight) row.hold = 1;
   store.tlog.push(row);
   undo.row = row;
   return { first, allRight, card, ivl: card.due - now, missIds, undo };
+}
+
+// Retiring a table typed entirely right the first time. A quarter of them keep
+// one audit date; the rest go past the end of the calendar.
+function retire(card, t, today, roll, now){
+  card.ret = 1;
+  if (idUnit(t.key, 'audit') < AUDIT_SHARE){
+    // Spread over the two months after AUDIT_DAYS. A sitting's worth of tables
+    // retired on one day would otherwise all come back for audit on one day --
+    // which is what the first-return spread used to prevent, before retiring
+    // took over that due date.
+    card.aud = 1;
+    card.due = dayStart(today + AUDIT_DAYS + Math.round(AUDIT_SPREAD * idUnit(t.key, 'spread')), roll);
+  } else card.due = now + TABLE_FAR;
 }
 
 /* ---- taking a table check back (2026-09-20) --------------------------------
@@ -265,6 +305,39 @@ function forgetTable(store, t, vocab){
   f.ids.forEach(id => { delete store.cards[id]; });
   if (f.rows) store.tlog = store.tlog.filter(r => !(r && r.table === t.key));
   return f;
+}
+
+/* ---- the number that says whether the two rules above were safe ------------
+   Form-level recall inside a table he has met before: of every form asked in
+   a returning table, how many did he actually produce? This is the honest
+   measure now that a miss no longer lapses the table -- the rating on the row
+   says the table kept its place, while `miss` still names every form that was
+   wrong, so the truth is in the log whatever the scheduler did with it.
+
+   Reveal-and-grade returns are excluded: a miss there cannot say WHICH forms,
+   so they would enter as an unknown number of wrong answers.
+
+   Audits are the retired tables' tripwire, reported separately, because they
+   answer a different question: not "is the schedule right" but "was retiring
+   these at all a safe thing to do".
+   ------------------------------------------------------------------------ */
+function tableRecall(store){
+  const rows = Array.isArray(store.tlog) ? store.tlog : [];
+  const o = { returns:0, asked:0, right:0, held:0, audits:0, auditsPassed:0,
+              auditAsked:0, auditRight:0, retired:0, rate:null, auditRate:null, firstPerfect:0, firsts:0 };
+  rows.forEach(r => {
+    if (!r || typeof r !== 'object') return;
+    const n = r.n | 0, miss = Array.isArray(r.miss) ? r.miss.length : 0;
+    if (r.first){ o.firsts++; if (!miss) o.firstPerfect++; return; }
+    if (r.rv) return;
+    o.returns++; o.asked += n; o.right += n - miss;
+    if (r.hold) o.held++;
+    if (r.aud){ o.audits++; o.auditAsked += n; o.auditRight += n - miss; if (!miss) o.auditsPassed++; }
+  });
+  Object.keys(store.cards || {}).forEach(k => { if (isTableId(k) && store.cards[k] && store.cards[k].ret) o.retired++; });
+  if (o.asked) o.rate = o.right / o.asked;
+  if (o.auditAsked) o.auditRate = o.auditRight / o.auditAsked;
+  return o;
 }
 
 function tableMode(store, t){

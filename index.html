@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Cotidie">
 <link rel="apple-touch-icon" href="icon-180.png">
 <title>Cotidie</title>
-<link rel="stylesheet" href="fonts/fonts.css?v=202609202">
+<link rel="stylesheet" href="fonts/fonts.css?v=202609203">
 <style>
 /* ======================================================================
    Cotidie — the rebuilt page (2026-09-17). One page, both languages.
@@ -144,21 +144,21 @@ html[data-id=graph] .grid th,html[data-id=graph] .grid td{border-width:1.5px}
 <body>
 <div id="app"><div class="col"><span class="lab">Cotidie</span></div></div>
 
-<script src="data/latin-paradigms.js?v=202609202"></script>
-<script src="data/latin-vocab.js?v=202609202"></script>
-<script src="data/greek-paradigms.js?v=202609202"></script>
-<script src="data/greek-vocab.js?v=202609202"></script>
-<script src="js/engine.js?v=202609202"></script>
-<script src="js/store.js?v=202609202"></script>
-<script src="js/fsrs.js?v=202609202"></script>
-<script src="js/stats.js?v=202609202"></script>
-<script src="js/time.js?v=202609202"></script>
-<script src="js/tables.js?v=202609202"></script>
-<script src="js/rail.js?v=202609202"></script>
-<script src="js/changes.js?v=202609202"></script>
-<script src="js/sync.js?v=202609202"></script>
-<script src="js/greek.js?v=202609202"></script>
-<script src="js/greek-input.js?v=202609202"></script>
+<script src="data/latin-paradigms.js?v=202609203"></script>
+<script src="data/latin-vocab.js?v=202609203"></script>
+<script src="data/greek-paradigms.js?v=202609203"></script>
+<script src="data/greek-vocab.js?v=202609203"></script>
+<script src="js/engine.js?v=202609203"></script>
+<script src="js/store.js?v=202609203"></script>
+<script src="js/fsrs.js?v=202609203"></script>
+<script src="js/stats.js?v=202609203"></script>
+<script src="js/time.js?v=202609203"></script>
+<script src="js/tables.js?v=202609203"></script>
+<script src="js/rail.js?v=202609203"></script>
+<script src="js/changes.js?v=202609203"></script>
+<script src="js/sync.js?v=202609203"></script>
+<script src="js/greek.js?v=202609203"></script>
+<script src="js/greek-input.js?v=202609203"></script>
 <script>
 /* ======================================================================
    The page. Everything that decides anything lives in js/*.js and is tested
@@ -569,6 +569,15 @@ function renderCell(){
       ${verdict}${done && ui.panes === 'one' ? grid : ''}</div></div>`;
   if (!done) wireInput($('#ans'));
 }
+// What to say about a table that has just gone right. A retired one is not
+// "back in 1217 months" -- it is not coming back, and the reason it is not is
+// worth saying once, where he can see it.
+function retiredLine(t, ivl){
+  const c = S().cards[t.key];
+  if (!c || !c.ret) return 'All right · back ' + backIn(ivl);
+  return 'All right · retired — you typed the whole of it cold'
+    + (c.aud ? ', with one check-up ' + backIn(c.due - Date.now()) : '');
+}
 function backIn(ms){
   if (ms < 90 * 60000) return 'in ' + Math.max(Math.round(ms / 60000), 1) + ' min';
   const now = Date.now(), roll = effRollover(S().settings, now), d = dayKey(now + ms, roll) - dayKey(now, roll);   // study days, as the scheduler counts them
@@ -614,7 +623,7 @@ function renderTyped(){
   app.innerHTML = sitBarHtml() + `<main class="col"><span class="lab">${first ? 'New table' : 'Table returning'} · ${cells.length} forms</span>
     <div class="ask">${tableTitleHtml(t, entry)}</div>${grid}
     <div class="colfoot"><span class="mute">${!done ? 'Tab moves down each column. Leave blank what you do not know.' :
-      miss ? (cells.length - miss) + ' right · ' + miss + ' to drill alone · table back ' + backIn(sit.lastIvl) : 'All right · back ' + backIn(sit.lastIvl)}</span>
+      miss ? (cells.length - miss) + ' right · ' + miss + ' to drill alone · table back ' + backIn(sit.lastIvl) : retiredLine(t, sit.lastIvl)}</span>
       <span class="after">${done && sit.undo ? `<button class="btn quiet" data-act="untable">Undo${kbd('U')}</button>` : ''}
       <button class="btn" data-act="${done ? 'next' : 'checktable'}">${done ? 'Next' : 'Check table'}${kbd('↵')}</button></span></div></main>`;
   if (!done){
@@ -659,7 +668,9 @@ function renderTables(){
   if (view.table){
     const t = tableByKey()[view.table], entry = tableWordFor(st, L.vocab, t), c = st.cards[t.key];
     const status = tableStatus(st, t, L.vocab, now);
-    app.innerHTML = backBar('tables') + `<main class="col"><span class="lab">${esc(({ unmet:'Not met yet', due:'Due', rotation:'In rotation', known:'Known' })[status])}${c && c.due > now ? ' · back ' + esc(backIn(c.due - now)) : ''}</span>
+    app.innerHTML = backBar('tables') + `<main class="col"><span class="lab">${esc(({ unmet:'Not met yet', due:'Due', rotation:'In rotation', known:'Known' })[status])}${
+        c && c.ret ? ' · retired' + (c.aud ? ' · one check-up ' + esc(backIn(c.due - now)) : '')
+        : c && c.due > now ? ' · back ' + esc(backIn(c.due - now)) : ''}</span>
       <div class="ask">${tableTitleHtml(t, entry)}</div>${status === 'unmet' ? gridHtml(t, entry, () => ({ html:'' })) : gridHtml(t, entry, x => ({ html: esc(formOf(entry, x).primary) }))}
       <div class="colfoot"><span class="mute">${status === 'unmet' ? 'Hidden until you have typed it once.' : ''}</span><span class="after">
       ${status === 'unmet' ? `<button class="btn quiet" data-act="peek">Show it anyway</button>`
@@ -689,6 +700,29 @@ function renderLookup(){
   });
 }
 
+// Measured recall: the one number that says whether a miss holding a table in
+// place, and a table typed right first time retiring, were safe. Target is his
+// own retention setting -- 90% by default -- read at the level the change was
+// made at, which is the FORM, not the table.
+function recallHtml(st){
+  const r = tableRecall(st), want = Math.round(st.settings.retention * 100);
+  const pc = x => Math.round(x * 100) + '%';
+  const verdict = r.asked < 200 ? 'Too few returns yet to mean anything.'
+    : r.rate >= st.settings.retention - 0.03 ? 'At or about your target — the schedule is holding.'
+    : r.rate >= st.settings.retention - 0.08 ? 'A little under target. Worth watching; not yet worth changing.'
+    : 'Well under target — the schedule is asking too late. Settings › target is the dial.';
+  return `<section class="sec" style="margin-top:16px"><span class="lab">Measured recall · target ${want}%</span>
+    <div class="list">
+      <div class="row"><span>Forms you produce inside a table you have met before</span><span class="v">${r.rate == null ? '—' : pc(r.rate)}</span></div>
+      <div class="row"><span class="mute">out of ${r.asked} form${r.asked === 1 ? '' : 's'}, over ${r.returns} return${r.returns === 1 ? '' : 's'}</span><span class="v mute">${r.right} right</span></div>
+      ${r.held ? `<div class="row"><span class="mute">returns where a form was missed and the table kept its place</span><span class="v mute">${r.held}</span></div>` : ''}
+      ${r.firsts ? `<div class="row"><span class="mute">tables typed entirely right the first time</span><span class="v mute">${r.firstPerfect} of ${r.firsts}</span></div>` : ''}
+      ${r.retired ? `<div class="row"><span>Tables retired</span><span class="v">${r.retired}</span></div>` : ''}
+      ${r.audits ? `<div class="row"><span>Retired tables audited later</span><span class="v">${r.auditsPassed} of ${r.audits} came back perfect${r.auditRate == null ? '' : ' · ' + pc(r.auditRate) + ' of forms'}</span></div>`
+                 : (r.retired ? `<div class="row"><span class="mute">a quarter of them come back once, four months on, to check that retiring them was safe</span><span class="v mute">none due yet</span></div>` : '')}
+    </div><span class="empty">${verdict}</span></section>`;
+}
+
 // ----------------------------------------------------------------- STATS --
 function renderStats(){
   const st = S(), now = Date.now(), roll = effRollover(st.settings, now), tab = view.tab || 'time';
@@ -699,7 +733,7 @@ function renderStats(){
     body = `<div class="trio" style="margin:0">${weekHtml(now)}${forecastHtml(now, 7)}<section class="sec"><div class="row"><span class="lab">Today</span></div><div class="ask v">${fmtMin(usedTodayMs(st, now, otherStore()))}<span class="mute" style="font-size:var(--t3)"> min, both languages</span></div></section></div>
       <section class="sec"><span class="lab">What an answer costs you</span><div class="list">${Object.keys(k).map(x => `<div class="row"><span>${k[x]}</span><span class="v">${(costMs(st, x, roll) / 1000).toFixed(1)} s</span></div>`).join('')}</div>
       <span class="empty">Starts from a guess and follows your own answers within a sitting or two.</span></section>
-      <section class="sec"><span class="lab">Still to come here</span><span class="empty">Measured recall against your ${Math.round(st.settings.retention * 100)}% target — it needs about a month of returns to mean anything (${(st.tlog || []).filter(r => !r.first).length + st.log.filter(r => r.ivl >= FSRS_DAY).length} so far).</span></section>`;
+      ${recallHtml(st)}`;
   } else if (tab === 'tables'){
     const count = ts => { const o = { known:0, rotation:0, due:0, unmet:0 }; ts.forEach(t => { o[tableStatus(st, t, L.vocab, now)]++; }); return o; };
     body = `<section class="sec"><div class="row"><span class="lab">Group</span><span class="lab">known · rotation · due · not met</span></div><div class="list">${groupedTables().map(([n, ts]) => { const c = count(ts);
@@ -751,7 +785,7 @@ function renderSettings(){
     <section class="sec" style="margin-top:16px"><span class="lab">Backup file</span>
     <div class="after"><button class="btn quiet small" data-act="export">Save a backup file</button><label class="btn quiet small" style="cursor:pointer">Restore from a file<input type="file" id="restore" accept="application/json,.json" hidden></label></div>
     <span class="empty">A restored file is merged in, like a spare.</span></section>
-    <span class="empty">Version 2026.09.20.2.</span></main>`;
+    <span class="empty">Version 2026.09.20.3.</span></main>`;
   $('#code').addEventListener('change', e => setSyncCode(e.target.value));
   $('#restore').addEventListener('change', async e => {
     const f = e.target.files && e.target.files[0]; if (!f) return;

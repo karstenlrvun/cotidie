@@ -9,6 +9,9 @@
    Newest first. Shared by both decks: the app changes, not the language.
    ====================================================================== */
 const CHANGES = [
+  ['2026.09.20.0', [
+    'A new icon: a chalk C on a slate, in the app’s own letter, instead of the old gold one on cream. To see it, remove Cotidie from your home screen and add it again — a phone keeps whichever icon it saved the day you added it.'
+  ]],
   ['2026.09.18.0', [
     'The new page is now the only page: the old Latin and Greek pages and the launcher are gone.',
     'Sync lives in the new page. A dot beside the language switch says whether everything is on the server; click it to sync. Settings has the code, Pull, Push, both spares, and a backup file.',

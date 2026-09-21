@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Cotidie">
 <link rel="apple-touch-icon" href="icon-180.png">
 <title>Cotidie</title>
-<link rel="stylesheet" href="fonts/fonts.css?v=202609204">
+<link rel="stylesheet" href="fonts/fonts.css?v=202609205">
 <style>
 /* ======================================================================
    Cotidie — the rebuilt page (2026-09-17). One page, both languages.
@@ -63,6 +63,8 @@ html[data-id=graph] .grid th,html[data-id=graph] .grid td{border-width:1.5px}
 .row.ok .form{color:var(--good)} .row.no .form{color:var(--bad)}
 .row input{width:220px;max-width:46vw;background:var(--panel);border:1px solid var(--rule);outline:0;padding:4px 8px;color:inherit;font:400 var(--t4)/1.4 var(--form);border-radius:0}
 .row input:focus{border-color:var(--ink)}
+.news{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.news p{margin:0;max-width:62ch;line-height:1.5;color:var(--ink)}
 .grid td.none{background:none}
 .grid td input{width:100%;background:none;border:0;outline:0;font:400 var(--t4)/1.4 var(--form)}
 .grid td:focus-within{background:var(--hit)}
@@ -147,21 +149,21 @@ html[data-id=graph] .grid th,html[data-id=graph] .grid td{border-width:1.5px}
 <body>
 <div id="app"><div class="col"><span class="lab">Cotidie</span></div></div>
 
-<script src="data/latin-paradigms.js?v=202609204"></script>
-<script src="data/latin-vocab.js?v=202609204"></script>
-<script src="data/greek-paradigms.js?v=202609204"></script>
-<script src="data/greek-vocab.js?v=202609204"></script>
-<script src="js/engine.js?v=202609204"></script>
-<script src="js/store.js?v=202609204"></script>
-<script src="js/fsrs.js?v=202609204"></script>
-<script src="js/stats.js?v=202609204"></script>
-<script src="js/time.js?v=202609204"></script>
-<script src="js/tables.js?v=202609204"></script>
-<script src="js/rail.js?v=202609204"></script>
-<script src="js/changes.js?v=202609204"></script>
-<script src="js/sync.js?v=202609204"></script>
-<script src="js/greek.js?v=202609204"></script>
-<script src="js/greek-input.js?v=202609204"></script>
+<script src="data/latin-paradigms.js?v=202609205"></script>
+<script src="data/latin-vocab.js?v=202609205"></script>
+<script src="data/greek-paradigms.js?v=202609205"></script>
+<script src="data/greek-vocab.js?v=202609205"></script>
+<script src="js/engine.js?v=202609205"></script>
+<script src="js/store.js?v=202609205"></script>
+<script src="js/fsrs.js?v=202609205"></script>
+<script src="js/stats.js?v=202609205"></script>
+<script src="js/time.js?v=202609205"></script>
+<script src="js/tables.js?v=202609205"></script>
+<script src="js/rail.js?v=202609205"></script>
+<script src="js/changes.js?v=202609205"></script>
+<script src="js/sync.js?v=202609205"></script>
+<script src="js/greek.js?v=202609205"></script>
+<script src="js/greek-input.js?v=202609205"></script>
 <script>
 /* ======================================================================
    The page. Everything that decides anything lives in js/*.js and is tested
@@ -703,6 +705,43 @@ function renderLookup(){
   });
 }
 
+/* ---- what's new -----------------------------------------------------------
+   The user-facing half of the record. The full one is
+   evergreen/BUILD_HISTORY.md, which nobody has to read; this is the one he
+   does, so every entry says what a change gives him, how to use it and WHERE
+   in the app it is.
+
+   The rebuild of 17 September dropped this screen along with the old pages --
+   js/changes.js was still loaded, but only for the build number, so for four
+   days the app shipped a changelog it never showed. Put back 2026-09-21.
+
+   Builds are grouped by day: five builds in one afternoon is a fact about the
+   repository, not about what he can now do.
+   -------------------------------------------------------------------------- */
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function changeDays(){
+  const days = [];
+  CHANGES.forEach(([v, lines]) => {
+    const day = v.split('.').slice(0, 3).join('.');
+    const last = days[days.length - 1];
+    if (last && last.day === day){ last.lines = last.lines.concat(lines); last.builds.push(v); }
+    else days.push({ day, builds:[v], lines: lines.slice() });
+  });
+  return days;
+}
+function dayTitle(day){
+  const p = day.split('.');
+  return (+p[2]) + ' ' + MONTHS[(+p[1]) - 1] + ' ' + p[0];
+}
+function renderChanges(){
+  app.innerHTML = backBar('settings') + `<main class="col"><div class="ask">What’s new</div>
+    ${changeDays().map(d => `<section class="sec" style="margin-top:20px">
+      <div class="row"><span class="lab">${esc(dayTitle(d.day))}</span><span class="v mute">${esc(d.builds[0])}</span></div>
+      <div class="news">${d.lines.map(t => '<p>' + t + '</p>').join('')}</div>
+    </section>`).join('')}
+    <span class="empty" style="margin-top:24px">Every build ever, in full, is in the repository — this is the short version, and the one worth reading.</span></main>`;
+}
+
 /* ---- the cold sheet ------------------------------------------------------
    Twenty-five forms drawn uniformly from everything he has met, typed in one
    go with no feedback until the end -- so that nothing he learns from item 3
@@ -832,7 +871,7 @@ function renderSettings(){
     <section class="sec" style="margin-top:16px"><span class="lab">Backup file</span>
     <div class="after"><button class="btn quiet small" data-act="export">Save a backup file</button><label class="btn quiet small" style="cursor:pointer">Restore from a file<input type="file" id="restore" accept="application/json,.json" hidden></label></div>
     <span class="empty">A restored file is merged in, like a spare.</span></section>
-    <span class="empty">Version 2026.09.20.4.</span></main>`;
+    <div class="set" style="margin-top:16px"><span>What’s new</span><span class="after"><button class="btn quiet small" data-act="go" data-v="changes">Version 2026.09.20.5</button></span></div></main>`;
   $('#code').addEventListener('change', e => setSyncCode(e.target.value));
   $('#restore').addEventListener('change', async e => {
     const f = e.target.files && e.target.files[0]; if (!f) return;
@@ -850,7 +889,7 @@ function renderSettings(){
 // ---------------------------------------------------------------- wiring --
 function render(){
   document.documentElement.dataset.id = ui.theme;
-  ({ home:renderHome, sit:renderSit, tables:renderTables, lookup:renderLookup, stats:renderStats, settings:renderSettings, cold:renderCold })[view.screen]();
+  ({ home:renderHome, sit:renderSit, tables:renderTables, lookup:renderLookup, stats:renderStats, settings:renderSettings, cold:renderCold, changes:renderChanges })[view.screen]();
 }
 function go(screen, extra){ view = Object.assign({ screen }, extra || {}); render(); window.scrollTo(0, 0); }
 function leaveSitting(){ if (sit && sit.pending) commitCell(); sit = null; go('home'); }

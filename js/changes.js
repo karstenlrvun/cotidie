@@ -9,35 +9,36 @@
    Newest first. Shared by both decks: the app changes, not the language.
    ====================================================================== */
 const CHANGES = [
+  ['2026.09.20.5', [
+    'This screen now says <b>where</b> to find each new thing and how to use it, not only what changed. Everything back to the rebuild has been rewritten that way.'
+  ]],
   ['2026.09.20.4', [
-    'New: a <b>cold check</b>, under Stats. Twenty-five forms drawn at random from everything you have ever met — including the tables that have been retired, which nothing else asks you any more — typed in one go with no feedback until the end. Nothing in it is recorded as a review and nothing about it changes your schedule; only the score is kept. It is the one number here that is not shaped by what the app chose to ask you. Once a month is plenty.'
+    '<b>The cold check</b> — Stats › Take a cold check. Twenty-five forms drawn at random from everything you have met, retired tables included. Type what you can, leave the rest blank, then Mark the sheet. Nothing in it counts as a review or changes your schedule. Once a month; the first one is worth taking soon, as a baseline.'
   ]],
   ['2026.09.20.3', [
-    'Missing one form no longer sets a whole table back. It used to be treated as though you had known none of it; now the table keeps its place in the schedule, and only the form you missed is drilled on its own.',
-    'A table you type entirely right the first time is retired — you produced every form of it cold, so it is not put in the schedule at all. If you got one by luck, Start it again is on its own screen.',
-    'One in four retired tables comes back once, about four months later, to check that retiring it was safe.',
-    'Stats now shows what you actually recall: of the forms asked inside a table you have met before, how many you produced, against your target.'
+    '<b>Missing one form no longer sets a whole table back</b> — nothing to do; you will notice tables coming back far less often. Get eleven of twelve right and the table keeps its place, instead of being treated as though you had known none of it. Only the form you missed is drilled on its own.',
+    '<b>A table you type entirely right the first time is retired</b> — the results screen says so. You produced every form of it cold, so it is not put in the schedule at all. One in four comes back once, about four months later, to check that retiring it was safe.',
+    '<b>Measured recall</b> — Stats › Time. Of the forms asked inside a table you have met before, how many you produced, against your target. It is the number that says whether the two changes above were safe. Worth watching from about the third week.'
   ]],
   ['2026.09.20.2', [
-    'A table you got right by luck can be started again. Open it under Tables and there is now <b>Start it again</b>: it goes back to being a table you have not met, forgetting its schedule and the times you have typed it, but not the answers themselves. It asks first, and says what it is about to forget.'
+    '<b>Start it again</b> — Tables › open the table › Start it again. Puts a table back to one you have not met, forgetting its schedule and the times you have typed it, but not the answers themselves. The way back from a table you got right by luck. It asks first, and names what it is about to forget.'
   ]],
   ['2026.09.20.1', [
-    'A table checked by mistake can be taken back. After you check a table, <b>Undo</b> sits beside Next (the <b>U</b> key): it puts the table back exactly as it was, with what you typed still in the boxes, as though you had never pressed Check. It only reaches back one check, and only while you are still looking at that table.'
+    '<b>Undo</b> — after you check a table, beside Next, or the <b>U</b> key. Puts the table back exactly as it was, with what you typed still in the boxes, as though you had never pressed Check. It reaches back one check, and only while that result is still on screen.'
   ]],
   ['2026.09.20.0', [
-    'A new icon: a chalk C on a slate, in the app’s own letter, instead of the old gold one on cream. To see it, remove Cotidie from your home screen and add it again — a phone keeps whichever icon it saved the day you added it.'
+    '<b>A new icon</b> — to see it, remove Cotidie from your home screen and add it again. A chalk C on a slate, in the app’s own letter; a phone keeps whichever icon it saved the day you added it.'
   ]],
   ['2026.09.18.0', [
-    'The new page is now the only page: the old Latin and Greek pages and the launcher are gone.',
-    'Sync lives in the new page. A dot beside the language switch says whether everything is on the server; click it to sync. Settings has the code, Pull, Push, both spares, and a backup file.',
+    '<b>Sync</b> — the dot beside the Latin/Greek switch says whether everything is on the server; click it to sync. The code, Pull, Push, both spares and a backup file are in Settings.',
+    '<b>One page</b> — the old Latin and Greek pages and the launcher are gone.',
     'The type is bundled with the app, so it looks the same offline.'
   ]],
   ['2026.09.17.0', [
-    'Cotidie has a new page for both languages. The old Latin and Greek pages are still here, unchanged, until the new one has proved itself.',
-    'A daily limit in minutes, one for Latin and Greek together. When it is reached nothing more is asked that day.',
-    'You now meet the grammar a table at a time: type a table once, and if it is all right it comes back as a table. Only the forms you miss are asked one by one.',
-    'On a laptop, Home has a map of every table beside it, with this week, the next seven days, and how often you are right by tense, voice, mood or case.',
-    'New look: three themes (Slate, Stone, Graph paper) and Didot type. Everything has a key.'
+    '<b>A daily limit, in minutes</b> — Settings › Minutes a day. One limit for Latin and Greek together; 0 means no limit. When it is reached nothing more is asked — but the screen that stops you offers <b>Five more minutes</b> (the <b>M</b> key), as often as you like.',
+    '<b>You meet the grammar a table at a time</b> — type a table right through. If it is all right it comes back as a table; only the forms you miss are asked one by one. Tables › shows every table and which you have met.',
+    '<b>A map of the grammar</b> — on a laptop, beside Home: this week, the next seven days, and how often you are right by tense, voice, mood or case.',
+    '<b>A new look</b> — Settings › Look. Three themes (Slate, Stone, Graph paper), Didot type, and a key on everything.'
   ]],
   ['2026.08.31.2', [
     'Sync can be set up inside each deck now — the code box and "Get a code for this device" are on the Settings screen, not only in the launcher.',

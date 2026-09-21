@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Cotidie">
 <link rel="apple-touch-icon" href="icon-180.png">
 <title>Cotidie</title>
-<link rel="stylesheet" href="fonts/fonts.css?v=202609203">
+<link rel="stylesheet" href="fonts/fonts.css?v=202609204">
 <style>
 /* ======================================================================
    Cotidie — the rebuilt page (2026-09-17). One page, both languages.
@@ -60,6 +60,9 @@ html[data-id=graph] .grid th,html[data-id=graph] .grid td{border-width:1.5px}
 .grid td{font:400 var(--t4)/1.4 var(--form);background:var(--panel)}
 .grid td.now{background:var(--hit);box-shadow:inset 0 0 0 2px var(--fg)}
 .grid td.ok{color:var(--good)} .grid td.no{color:var(--bad)}
+.row.ok .form{color:var(--good)} .row.no .form{color:var(--bad)}
+.row input{width:220px;max-width:46vw;background:var(--panel);border:1px solid var(--rule);outline:0;padding:4px 8px;color:inherit;font:400 var(--t4)/1.4 var(--form);border-radius:0}
+.row input:focus{border-color:var(--ink)}
 .grid td.none{background:none}
 .grid td input{width:100%;background:none;border:0;outline:0;font:400 var(--t4)/1.4 var(--form)}
 .grid td:focus-within{background:var(--hit)}
@@ -144,21 +147,21 @@ html[data-id=graph] .grid th,html[data-id=graph] .grid td{border-width:1.5px}
 <body>
 <div id="app"><div class="col"><span class="lab">Cotidie</span></div></div>
 
-<script src="data/latin-paradigms.js?v=202609203"></script>
-<script src="data/latin-vocab.js?v=202609203"></script>
-<script src="data/greek-paradigms.js?v=202609203"></script>
-<script src="data/greek-vocab.js?v=202609203"></script>
-<script src="js/engine.js?v=202609203"></script>
-<script src="js/store.js?v=202609203"></script>
-<script src="js/fsrs.js?v=202609203"></script>
-<script src="js/stats.js?v=202609203"></script>
-<script src="js/time.js?v=202609203"></script>
-<script src="js/tables.js?v=202609203"></script>
-<script src="js/rail.js?v=202609203"></script>
-<script src="js/changes.js?v=202609203"></script>
-<script src="js/sync.js?v=202609203"></script>
-<script src="js/greek.js?v=202609203"></script>
-<script src="js/greek-input.js?v=202609203"></script>
+<script src="data/latin-paradigms.js?v=202609204"></script>
+<script src="data/latin-vocab.js?v=202609204"></script>
+<script src="data/greek-paradigms.js?v=202609204"></script>
+<script src="data/greek-vocab.js?v=202609204"></script>
+<script src="js/engine.js?v=202609204"></script>
+<script src="js/store.js?v=202609204"></script>
+<script src="js/fsrs.js?v=202609204"></script>
+<script src="js/stats.js?v=202609204"></script>
+<script src="js/time.js?v=202609204"></script>
+<script src="js/tables.js?v=202609204"></script>
+<script src="js/rail.js?v=202609204"></script>
+<script src="js/changes.js?v=202609204"></script>
+<script src="js/sync.js?v=202609204"></script>
+<script src="js/greek.js?v=202609204"></script>
+<script src="js/greek-input.js?v=202609204"></script>
 <script>
 /* ======================================================================
    The page. Everything that decides anything lives in js/*.js and is tested
@@ -700,6 +703,47 @@ function renderLookup(){
   });
 }
 
+/* ---- the cold sheet ------------------------------------------------------
+   Twenty-five forms drawn uniformly from everything he has met, typed in one
+   go with no feedback until the end -- so that nothing he learns from item 3
+   can change item 20, and so it takes five minutes rather than twenty.
+
+   Nothing here touches store.log, store.cards, store.tlog or the day's
+   minutes. Only the score is kept, in store.cold, which the scheduler never
+   reads. The moment this feeds back into the schedule it stops being a
+   measurement of it.
+   -------------------------------------------------------------------------- */
+const COLD_N = 25;
+let cold = null;
+function renderCold(){
+  const done = cold.phase === 'done';
+  const rows = cold.items.map((it, i) => {
+    const want = formsFor(L.table, it.entry, it.category, it.cell).primary;
+    const r = done ? cold.results[i] : null;
+    return `<div class="row${done ? (r.correct ? ' ok' : ' no') : ''}">
+      <span>${wordHtml(it.entry)} <span class="mute">${esc(cellLabelOf(it.category, it.cell))}</span></span>
+      <span class="v">${done ? `<span class="form">${esc(want)}</span>${r.correct ? '' : ' <span class="mute">you: ' + (r.typed ? esc(r.typed) : 'blank') + '</span>'}`
+        : `<input data-i="${i}" tabindex="${i + 1}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="${esc(cellLabelOf(it.category, it.cell))}">`}</span></div>`;
+  }).join('');
+  const right = done ? cold.results.filter(r => r.correct).length : 0;
+  app.innerHTML = `<div class="sitbar"><a data-act="go" data-v="stats">← Back${kbd('esc')}</a><span class="mute">${L.name}</span></div>
+    <main class="col"><span class="lab">Cold check · ${cold.items.length} forms drawn at random from everything you have met</span>
+    <div class="ask">${done ? right + ' of ' + cold.items.length + ' · ' + Math.round(100 * right / cold.items.length) + '%' : 'Type what you can. Leave the rest blank.'}</div>
+    <div class="list">${rows}</div>
+    <div class="colfoot"><span class="mute">${done ? 'Not shaped by what the app chose to ask you — that is the point of it.' : 'None of this is recorded as a review, and none of it changes your schedule.'}</span>
+      <button class="btn" data-act="${done ? 'coldsave' : 'coldmark'}">${done ? 'Done' : 'Mark the sheet'}${kbd('↵')}</button></div></main>`;
+  if (!done){
+    const ins = $$('.list input');
+    ins.forEach(inp => { if (L.id === 'greek'){ const h = attachHopliteInput(inp); if (!S().settings.hopliteInput) h.disable(); } });
+    if (ins[0]) ins[0].focus();
+  }
+}
+function coldHistoryHtml(st){
+  const list = Array.isArray(st.cold) ? st.cold.slice(-6).reverse() : [];
+  if (!list.length) return '';
+  return `<div class="list">${list.map(c => `<div class="row"><span class="mute">${esc(dateLabel(dayKey(c.ts, effRollover(st.settings, c.ts))))}</span><span class="v">${c.right} of ${c.n} · ${Math.round(100 * c.right / Math.max(c.n, 1))}%</span></div>`).join('')}</div>`;
+}
+
 // Measured recall: the one number that says whether a miss holding a table in
 // place, and a table typed right first time retiring, were safe. Target is his
 // own retention setting -- 90% by default -- read at the level the change was
@@ -720,7 +764,10 @@ function recallHtml(st){
       ${r.retired ? `<div class="row"><span>Tables retired</span><span class="v">${r.retired}</span></div>` : ''}
       ${r.audits ? `<div class="row"><span>Retired tables audited later</span><span class="v">${r.auditsPassed} of ${r.audits} came back perfect${r.auditRate == null ? '' : ' · ' + pc(r.auditRate) + ' of forms'}</span></div>`
                  : (r.retired ? `<div class="row"><span class="mute">a quarter of them come back once, four months on, to check that retiring them was safe</span><span class="v mute">none due yet</span></div>` : '')}
-    </div><span class="empty">${verdict}</span></section>`;
+    </div><span class="empty">${verdict}</span>
+    <div class="row" style="margin-top:12px"><span class="mute">A cold check samples everything you have met — retired tables included — and is recorded nowhere the schedule can see it.</span>
+      <span class="after"><button class="btn quiet small" data-act="cold" ${metForms(st, L.vocab, L.table).length < COLD_N ? 'disabled' : ''}>Take a cold check</button></span></div>
+    ${coldHistoryHtml(st)}</section>`;
 }
 
 // ----------------------------------------------------------------- STATS --
@@ -785,7 +832,7 @@ function renderSettings(){
     <section class="sec" style="margin-top:16px"><span class="lab">Backup file</span>
     <div class="after"><button class="btn quiet small" data-act="export">Save a backup file</button><label class="btn quiet small" style="cursor:pointer">Restore from a file<input type="file" id="restore" accept="application/json,.json" hidden></label></div>
     <span class="empty">A restored file is merged in, like a spare.</span></section>
-    <span class="empty">Version 2026.09.20.3.</span></main>`;
+    <span class="empty">Version 2026.09.20.4.</span></main>`;
   $('#code').addEventListener('change', e => setSyncCode(e.target.value));
   $('#restore').addEventListener('change', async e => {
     const f = e.target.files && e.target.files[0]; if (!f) return;
@@ -803,7 +850,7 @@ function renderSettings(){
 // ---------------------------------------------------------------- wiring --
 function render(){
   document.documentElement.dataset.id = ui.theme;
-  ({ home:renderHome, sit:renderSit, tables:renderTables, lookup:renderLookup, stats:renderStats, settings:renderSettings })[view.screen]();
+  ({ home:renderHome, sit:renderSit, tables:renderTables, lookup:renderLookup, stats:renderStats, settings:renderSettings, cold:renderCold })[view.screen]();
 }
 function go(screen, extra){ view = Object.assign({ screen }, extra || {}); render(); window.scrollTo(0, 0); }
 function leaveSitting(){ if (sit && sit.pending) commitCell(); sit = null; go('home'); }
@@ -847,6 +894,21 @@ const ACT = {
     forgetTable(st, t, L.vocab); save(); render();
     toast('Not met — it comes back as a new table');
   },
+  cold: () => { cold = { items: coldSample(S(), L.vocab, L.table, COLD_N), results:null, phase:'ask', at:Date.now() };
+    if (!cold.items.length){ cold = null; return; } go('cold'); },
+  coldmark: () => {
+    const typed = {}; $$('.list input').forEach(i => { typed[i.dataset.i] = i.value; });
+    cold.results = cold.items.map((it, i) => {
+      const forms = formsFor(L.table, it.entry, it.category, it.cell);
+      const j = L.judge(L.table, it.entry, it.category, it.cell, forms, typed[i] || '', gradeOpts());
+      return { correct:j.correct, typed:(typed[i] || '').trim() };
+    });
+    cold.phase = 'done'; render(); window.scrollTo(0, 0);
+  },
+  coldsave: () => {
+    recordCold(S(), cold.items.length, cold.results.filter(r => r.correct).length, Date.now() - cold.at);
+    cold = null; save(); go('stats'); toast('Kept as a measurement, not as a review');
+  },
   peek: () => { const t = tableByKey()[view.table], e = tableWordFor(S(), L.vocab, t); $('.grid').outerHTML = gridHtml(t, e, x => ({ html: esc(formOf(e, x).primary) })); },
   typenow: () => { const t = tableByKey()[view.table]; sit = { n:0, queue:[], startUsed: usedTodayMs(S(), Date.now(), otherStore()) };
     sit.cur = { type:'table', t, entry:tableWordFor(S(), L.vocab, t), mode:'typed', first:!S().cards[t.key] }; sit.phase = 'ask'; sit.shownAt = Date.now(); view = { screen:'sit' }; render(); },
@@ -870,7 +932,8 @@ document.addEventListener('keydown', e => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   const typing = /^(INPUT|SELECT|TEXTAREA)$/.test((e.target.tagName || ''));
   const k = e.key;
-  if (k === 'Escape'){ e.preventDefault(); if (view.screen === 'sit') leaveSitting(); else if (view.screen === 'tables' && view.table) go('tables'); else go('home'); return; }
+  if (k === 'Escape'){ e.preventDefault(); if (view.screen === 'sit') leaveSitting(); else if (view.screen === 'cold'){ cold = null; go('stats'); }
+    else if (view.screen === 'tables' && view.table) go('tables'); else go('home'); return; }
   if (view.screen === 'sit' && sit && sit.cur){
     if (k === 'Enter'){ e.preventDefault();
       if (!sit.cur.type || sit.cur.type === 'limit') return leaveSitting();
@@ -889,6 +952,7 @@ document.addEventListener('keydown', e => {
     return;
   }
   if (view.screen === 'sit'){ if (k === 'Enter') leaveSitting(); return; }
+  if (view.screen === 'cold' && cold){ if (k === 'Enter'){ e.preventDefault(); return cold.phase === 'done' ? ACT.coldsave() : ACT.coldmark(); } return; }
   if (typing) return;
   if (view.screen === 'tables' && view.table && k === 'Enter'){ e.preventDefault(); return ACT.typenow(); }
   if (view.screen !== 'home') return;

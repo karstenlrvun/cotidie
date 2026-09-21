@@ -340,6 +340,51 @@ function tableRecall(store){
   return o;
 }
 
+/* ---- the cold sheet (2026-09-20) -------------------------------------------
+   Every other measure in the app is conditioned on what the scheduler chose to
+   ask. That is the one thing they cannot escape: a scheduler that stops asking
+   the hard things shows rising recall while knowledge falls, and retiring a
+   table removes it from the asking altogether.
+
+   So this samples UNIFORMLY from every form he has ever met -- retired tables
+   included, due or not, asked yesterday or not -- and is recorded nowhere that
+   the scheduler can see. It is the only unbiased number in the app, and the
+   closest thing in it to the exam.
+
+   One form per cell of every table he has a card for, shown with the word that
+   table would be shown with now. Forms drilled alone are cells of met tables,
+   so they are already in the pool.
+   ------------------------------------------------------------------------ */
+function metForms(store, vocab, table){
+  const out = [];
+  rankedTables(table).forEach(t => {
+    if (!store.cards[t.key]) return;
+    const entry = tableWordFor(store, vocab, t); if (!entry) return;
+    tableCellsFor(entry, t).forEach(c => out.push({ table:t.key, entry, category:c.category, cell:c.cell }));
+  });
+  return out;
+}
+
+// `rnd` is passed in so the tests can pin the sampling; the app passes
+// Math.random, because a sheet drawn the same way every month would stop being
+// a sample of what he knows and start being a deck of its own.
+function coldSample(store, vocab, table, n, rnd){
+  rnd = rnd || Math.random;
+  const pool = metForms(store, vocab, table);
+  for (let i = pool.length - 1; i > 0; i--){ const j = Math.floor(rnd() * (i + 1)); const x = pool[i]; pool[i] = pool[j]; pool[j] = x; }
+  return pool.slice(0, Math.min(n, pool.length));
+}
+
+// The result, kept apart from every log the scheduler reads. Capped, because
+// it is a record of measurements and not of reviews.
+const COLD_KEEP = 24;
+function recordCold(store, n, right, ms, now){
+  if (!Array.isArray(store.cold)) store.cold = [];
+  store.cold.push({ ts: now == null ? Date.now() : now, n:n|0, right:right|0, ms:Math.max(ms|0,0) });
+  if (store.cold.length > COLD_KEEP) store.cold = store.cold.slice(-COLD_KEEP);
+  return store.cold[store.cold.length - 1];
+}
+
 function tableMode(store, t){
   const c = store.cards[t.key];
   const on = !store.settings || store.settings.revealOld !== false;

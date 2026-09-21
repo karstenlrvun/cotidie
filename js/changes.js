@@ -9,6 +9,9 @@
    Newest first. Shared by both decks: the app changes, not the language.
    ====================================================================== */
 const CHANGES = [
+  ['2026.09.20.4', [
+    'New: a <b>cold check</b>, under Stats. Twenty-five forms drawn at random from everything you have ever met — including the tables that have been retired, which nothing else asks you any more — typed in one go with no feedback until the end. Nothing in it is recorded as a review and nothing about it changes your schedule; only the score is kept. It is the one number here that is not shaped by what the app chose to ask you. Once a month is plenty.'
+  ]],
   ['2026.09.20.3', [
     'Missing one form no longer sets a whole table back. It used to be treated as though you had known none of it; now the table keeps its place in the schedule, and only the form you missed is drilled on its own.',
     'A table you type entirely right the first time is retired — you produced every form of it cold, so it is not put in the schedule at all. If you got one by luck, Start it again is on its own screen.',

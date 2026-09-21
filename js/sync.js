@@ -457,7 +457,7 @@ function lastActivity(st){
   return Number.isFinite(st && st.created) ? st.created : -1;
 }
 
-const MERGE_KNOWN_FIELDS = ['version','created','settings','cards','log','flags','tlog','extra'];
+const MERGE_KNOWN_FIELDS = ['version','created','settings','cards','log','flags','tlog','extra','cold'];
 
 // Returns { store, stats }. Pure: no clock, no storage, no network -- which
 // is what lets the whole thing be tested, and why the tests can assert the
@@ -588,6 +588,20 @@ function mergeStores(local, remote){
     const rk = new Set((Array.isArray(R.tlog) ? R.tlog : []).map(r => r && String(r.table) + '\u0000' + String(r.ts)));
     stats.tablesFromRemote = [...rk].filter(k => !lk.has(k)).length;
     stats.tablesFromLocal = [...lk].filter(k => !rk.has(k)).length; }
+
+  // --- 6b. the cold sheets (2026-09-20) ---
+  // A union on ts, like the logs above, and capped the same way the writer caps
+  // it. Left as an unknown field it would have been "whichever side sorts
+  // higher", which is how the table log nearly lost every row typed on the
+  // other device -- the mistake is cheap to repeat and expensive to find.
+  { const rows = new Map();
+    [L.cold, R.cold].forEach(list => (Array.isArray(list) ? list : []).forEach(r => {
+      if (!r || typeof r !== 'object') return;
+      rows.set(String(r.ts), pickLogRow(rows.get(String(r.ts)), r));
+    }));
+    const cl = [...rows.values()];
+    cl.sort((a, b) => (a.ts - b.ts) || (canonJSON(a) < canonJSON(b) ? -1 : canonJSON(a) > canonJSON(b) ? 1 : 0));
+    if (cl.length || Array.isArray(L.cold) || Array.isArray(R.cold)) out.cold = cl.slice(-COLD_KEEP); }
 
   // --- 7. minutes added by hand, per study day: the larger of the two ---
   { const le = (L.extra && typeof L.extra === 'object') ? L.extra : null;

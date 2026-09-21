@@ -9,6 +9,9 @@
    Newest first. Shared by both decks: the app changes, not the language.
    ====================================================================== */
 const CHANGES = [
+  ['2026.09.21.0', [
+    '<b>You no longer type the stem in every cell</b> — nothing to turn on. Type the first form of a table in full, and every box you have not reached yet starts with the letters your own answers so far already share. Type straight on from there, or backspace if it has gone too far. Across both decks that is about half the keys you used to press. It only ever shows you what you typed yourself, so an aorist table still asks you for its stem. Settings › Repeating the stem turns it off.'
+  ]],
   ['2026.09.20.5', [
     'This screen now says <b>where</b> to find each new thing and how to use it, not only what changed. Everything back to the rebuild has been rewritten that way.'
   ]],

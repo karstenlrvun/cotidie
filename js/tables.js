@@ -27,7 +27,12 @@
                                    asked alone.
    store.tlog[]                    one row per table typed or revealed:
                                    {ts, table, word, ms, n, miss[], first,
-                                    rating, ivl, rv}. Its own log on purpose:
+                                    rating, ivl, rv} plus, when it was typed,
+                                    {keys, pre, tfk, typ} -- the keys pressed,
+                                    the characters carried forward rather than
+                                    typed, the pause before the first key and
+                                    the span from first key to last.
+                                    Its own log on purpose:
                                    store.log stays what it has always been,
                                    one row per form asked cold, so nothing
                                    fitted to it later is fitted to a mixture.
@@ -146,6 +151,34 @@ function rankedTables(table){
   return out;
 }
 
+// ---- carrying his own typing forward ----
+// The longest run of letters every answer he has ALREADY given in this table
+// begins with. It is what the app puts in the boxes he has not reached yet, so
+// he types a word's stem once rather than once a cell (58% of every Latin
+// keystroke and 44% of every Greek one is the stem typed again).
+//
+// Built only from the strings passed in, which are his own typing -- never
+// from the answer key. That is the whole design: on every imperfect, future,
+// aorist, perfect and optative table the shared stem IS the tense stem, which
+// is the half of the answer those tables exist to ask for, so an app that
+// filled it in from what it knows would be giving that away. This cannot: it
+// can only ever repeat a letter he wrote himself.
+//
+// Blank answers are ignored rather than collapsing the run to nothing.
+function sharedPrefix(typed){
+  const given = (typed || []).map(v => String(v == null ? '' : v).trim()).filter(Boolean);
+  if (!given.length) return '';
+  let p = Array.from(given[0]);
+  for (let j = 1; j < given.length; j++){
+    const v = Array.from(given[j]);
+    let i = 0;
+    while (i < p.length && i < v.length && p[i] === v[i]) i++;
+    p = p.slice(0, i);
+    if (!p.length) break;
+  }
+  return p.join('');
+}
+
 // ---- recording a table ----
 // results: [{category, cell, correct}] for the cells shown. `opts.reveal` marks
 // a reveal-and-grade review, where a miss cannot say WHICH forms were missed.
@@ -212,6 +245,19 @@ function recordTable(store, t, entry, results, ms, now, opts){
   const row = { ts:now, table:t.key, word:entry.id, ms:Math.max(ms|0, 0), n:results.length,
                 miss:missIds, first:first ? 1 : 0, rating, ivl:card.due - now };
   if (opts && (opts.reveal || opts.revealMissed)) row.rv = 1;
+  // What the typing itself cost, in the same shape store.log already keeps for
+  // a form asked on its own (fsrs.js recordReview: tfk / typ / keys). Recorded
+  // so the two can be SET BESIDE each other: the app has always assumed a form
+  // asked alone costs twice what the same form costs inside a table, and
+  // nothing has ever measured it. `pre` is the characters that were carried
+  // forward rather than typed, which is what makes the saving readable too.
+  if (opts && opts.typing){
+    const T = opts.typing;
+    if (T.keys != null) row.keys = T.keys | 0;
+    if (T.pre  != null) row.pre  = T.pre  | 0;
+    if (T.tfk  != null) row.tfk  = T.tfk  | 0;
+    if (T.typ  != null) row.typ  = T.typ  | 0;
+  }
   // Which rule this return was scheduled under, so a month of these can be
   // read back and the change judged rather than assumed.
   if (card.ret) row.ret = 1;

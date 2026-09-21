@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Cotidie">
 <link rel="apple-touch-icon" href="icon-180.png">
 <title>Cotidie</title>
-<link rel="stylesheet" href="fonts/fonts.css?v=202609205">
+<link rel="stylesheet" href="fonts/fonts.css?v=202609210">
 <style>
 /* ======================================================================
    Cotidie — the rebuilt page (2026-09-17). One page, both languages.
@@ -66,6 +66,7 @@ html[data-id=graph] .grid th,html[data-id=graph] .grid td{border-width:1.5px}
 .news{display:flex;flex-direction:column;gap:10px;margin-top:6px}
 .news p{margin:0;max-width:62ch;line-height:1.5;color:var(--ink)}
 .grid td.none{background:none}
+.grid td input.carried{color:var(--mute)}
 .grid td input{width:100%;background:none;border:0;outline:0;font:400 var(--t4)/1.4 var(--form)}
 .grid td:focus-within{background:var(--hit)}
 .grid td small{font:400 var(--t1)/1.4 var(--body);color:var(--mute);margin-left:8px;letter-spacing:.04em}
@@ -149,21 +150,21 @@ html[data-id=graph] .grid th,html[data-id=graph] .grid td{border-width:1.5px}
 <body>
 <div id="app"><div class="col"><span class="lab">Cotidie</span></div></div>
 
-<script src="data/latin-paradigms.js?v=202609205"></script>
-<script src="data/latin-vocab.js?v=202609205"></script>
-<script src="data/greek-paradigms.js?v=202609205"></script>
-<script src="data/greek-vocab.js?v=202609205"></script>
-<script src="js/engine.js?v=202609205"></script>
-<script src="js/store.js?v=202609205"></script>
-<script src="js/fsrs.js?v=202609205"></script>
-<script src="js/stats.js?v=202609205"></script>
-<script src="js/time.js?v=202609205"></script>
-<script src="js/tables.js?v=202609205"></script>
-<script src="js/rail.js?v=202609205"></script>
-<script src="js/changes.js?v=202609205"></script>
-<script src="js/sync.js?v=202609205"></script>
-<script src="js/greek.js?v=202609205"></script>
-<script src="js/greek-input.js?v=202609205"></script>
+<script src="data/latin-paradigms.js?v=202609210"></script>
+<script src="data/latin-vocab.js?v=202609210"></script>
+<script src="data/greek-paradigms.js?v=202609210"></script>
+<script src="data/greek-vocab.js?v=202609210"></script>
+<script src="js/engine.js?v=202609210"></script>
+<script src="js/store.js?v=202609210"></script>
+<script src="js/fsrs.js?v=202609210"></script>
+<script src="js/stats.js?v=202609210"></script>
+<script src="js/time.js?v=202609210"></script>
+<script src="js/tables.js?v=202609210"></script>
+<script src="js/rail.js?v=202609210"></script>
+<script src="js/changes.js?v=202609210"></script>
+<script src="js/sync.js?v=202609210"></script>
+<script src="js/greek.js?v=202609210"></script>
+<script src="js/greek-input.js?v=202609210"></script>
 <script>
 /* ======================================================================
    The page. Everything that decides anything lives in js/*.js and is tested
@@ -312,6 +313,7 @@ function applyDefaults(st, greek){
     if (st.settings.hopliteInput === undefined) st.settings.hopliteInput = true;
   }
   if (st.settings.revealOld === undefined) st.settings.revealOld = true;
+  if (st.settings.carryStem === undefined) st.settings.carryStem = true;
   commitRollover(st.settings, Date.now());
 }
 
@@ -627,18 +629,121 @@ function renderTyped(){
   const miss = done ? res.filter(r => !r.correct).length : 0;
   app.innerHTML = sitBarHtml() + `<main class="col"><span class="lab">${first ? 'New table' : 'Table returning'} · ${cells.length} forms</span>
     <div class="ask">${tableTitleHtml(t, entry)}</div>${grid}
-    <div class="colfoot"><span class="mute">${!done ? 'Tab moves down each column. Leave blank what you do not know.' :
+    <div class="colfoot"><span class="mute">${!done ? (S().settings.carryStem !== false
+        ? 'Tab moves down each column; a box you have not reached starts with what your answers so far share, so trim it or type on. Leave blank what you do not know.'
+        : 'Tab moves down each column. Leave blank what you do not know.') :
       miss ? (cells.length - miss) + ' right · ' + miss + ' to drill alone · table back ' + backIn(sit.lastIvl) : retiredLine(t, sit.lastIvl)}</span>
       <span class="after">${done && sit.undo ? `<button class="btn quiet" data-act="untable">Undo${kbd('U')}</button>` : ''}
       <button class="btn" data-act="${done ? 'next' : 'checktable'}">${done ? 'Next' : 'Check table'}${kbd('↵')}</button></span></div></main>`;
   if (!done){
     const ins = $$('.grid input');
-    ins.forEach(inp => { if (L.id === 'greek'){ const h = attachHopliteInput(inp); if (!S().settings.hopliteInput) h.disable(); }
-      // an undo puts back what was typed, so one bad cell is one cell to fix
-      const was = sit.cur.typed; if (was && was[inp.dataset.i]) inp.value = was[inp.dataset.i]; });
+    wireTable(ins, cells);
     const firstIn = ins.find(i => i.dataset.i === '0'); if (firstIn) firstIn.focus();
   } else $('[data-act=next]').focus();
 }
+/* ---- carrying his own typing forward (2026-09-21) --------------------------
+   He types the stem of the word again in every cell of a table, which teaches
+   nothing about the declension: it is 58% of every Latin keystroke and 44% of
+   every Greek one. So every box he has not yet typed in starts with the
+   longest run of letters common to the answers he HAS already given in this
+   table.
+
+   Built from his own keystrokes and never from the answer key, which is the
+   whole point. Filling in the stem the app knows would be cheaper still, but
+   on every imperfect, future, aorist, perfect and optative table the shared
+   stem IS the tense stem -- 419 of Greek's 975 tables -- and that is the half
+   of the answer those tables exist to ask for. Nothing here can show him a
+   letter he did not write himself.
+
+   Two details that are easy to get wrong. Tab into a box that already holds a
+   carried stem SELECTS its text, so the next key would replace it rather than
+   continue it -- hence the caret guard, registered before the Greek input
+   handler so the caret is already right by the time that one reads it. And a
+   box stops being refilled the moment he touches it, so nothing he has typed
+   is ever overwritten by a later answer shortening the shared run.
+
+   Timing is taken from the keystrokes, not from focus events, which do not
+   fire in a window that is not frontmost.
+   -------------------------------------------------------------------------*/
+function wireTable(ins, cells){
+  const carry = S().settings.carryStem !== false;
+  const track = {};
+  cells.forEach((c, i) => { track[i] = { keys:0, pre:0, touched:false, first:null, last:null }; });
+  sit.typing = { track, redone:false };
+
+  // sharedPrefix lives in js/tables.js: pure, and therefore tested. A run of
+  // one character is not carried: it saves a single key and, on exactly the
+  // tables where one letter is all the forms share, it is usually WRONG --
+  // the article's ὁ against τόν. 38 Greek tables and one Latin one have a
+  // one-letter run, so the cost of the rule is about 0.7% of the saving.
+  const carried = () => {
+    const p = sharedPrefix(ins.filter(el => track[el.dataset.i].touched).map(el => el.value));
+    return [...p].length < 2 ? '' : p;
+  };
+  function spread(){
+    if (!carry) return;
+    const p = carried();
+    ins.forEach(el => {
+      const t = track[el.dataset.i]; if (t.touched) return;
+      el.value = p; el.classList.toggle('carried', !!p); t.pre = [...p].length;
+    });
+  }
+
+  ins.forEach(inp => {
+    const t = track[inp.dataset.i];
+    inp.addEventListener('keydown', () => {
+      if (!t.touched && inp.selectionStart !== inp.selectionEnd)
+        inp.selectionStart = inp.selectionEnd = inp.value.length;
+    });
+    if (L.id === 'greek'){ const h = attachHopliteInput(inp); if (!S().settings.hopliteInput) h.disable(); }
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Tab' || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key.length !== 1 && e.key !== 'Backspace' && e.key !== 'Delete') return;
+      const now = Date.now();
+      // Backspace deletes ONE character, as it always has. It briefly did not:
+      // it threw the whole carried run away, on the reasoning that rejecting a
+      // wrong guess should cost one key. That optimised the wrong case. The
+      // run overshoots on 1,293 Greek cells and 62 Latin ones, and the average
+      // overshoot is 2.4 letters in Greek and 1.6 in Latin -- νεανίας to
+      // νεανία, one letter off the end -- so TRIMMING is the normal case and
+      // wholesale rejection is the tail. Trimming has to cost one key; the
+      // tail can pay for itself (holding Backspace, or ⌘⌫, which clears the
+      // box natively because this handler leaves modified keys alone).
+      t.touched = true; t.keys++; if (t.first == null) t.first = now; t.last = now;
+      inp.classList.remove('carried');
+      setTimeout(spread, 0);
+    });
+    inp.addEventListener('focus', () => {
+      if (t.touched) return;
+      setTimeout(() => { try { inp.selectionStart = inp.selectionEnd = inp.value.length; } catch(err){} }, 0);
+    });
+    // an undo puts back what was typed, so one bad cell is one cell to fix.
+    // Those cells count as his, and the table's typing is no longer a clean
+    // measurement of one pass, so it is not recorded.
+    const was = sit.cur.typed;
+    if (was && was[inp.dataset.i]){ inp.value = was[inp.dataset.i]; t.touched = true; sit.typing.redone = true; }
+  });
+  spread();
+}
+
+// What one pass over a table cost, in the shape store.log keeps for a form
+// asked on its own, so the two can be compared rather than assumed.
+function tableTyping(){
+  const tp = sit.typing;
+  if (!tp || tp.redone) return null;
+  let keys = 0, pre = 0, first = null, last = null;
+  Object.keys(tp.track).forEach(k => {
+    const r = tp.track[k];
+    keys += r.keys; pre += r.pre;
+    if (r.first != null && (first == null || r.first < first)) first = r.first;
+    if (r.last  != null && (last  == null || r.last  > last )) last  = r.last;
+  });
+  if (!keys) return null;
+  return { keys, pre,
+           tfk: first == null ? null : Math.max(first - sit.shownAt, 0),
+           typ: (first != null && last != null) ? (last - first) : null };
+}
+
 function checkTable(){
   const { t, entry } = sit.cur, cells = tableCellsFor(entry, t), now = Date.now();
   const typed = {}; $$('.grid input').forEach(i => { typed[i.dataset.i] = i.value; });
@@ -646,7 +751,7 @@ function checkTable(){
     const j = L.judge(L.table, entry, c.category, c.cell, formOf(entry, c), typed[i] || '', gradeOpts());
     return { category:c.category, cell:c.cell, correct:j.correct, typed:(typed[i] || '').trim() };
   });
-  const r = recordTable(S(), t, entry, sit.results, now - sit.shownAt, now);
+  const r = recordTable(S(), t, entry, sit.results, now - sit.shownAt, now, { typing: tableTyping() });
   sit.lastIvl = r.ivl; sit.undo = r.undo; sit.cur.typed = typed;
   sit.n += cells.length; sit.phase = 'verdict'; save(); render();
 }
@@ -856,6 +961,8 @@ function renderSettings(){
     <span>A single form is asked</span>${seg('panes', ui.panes, [['two','beside its table'],['one','on its own']])}
     <span>Strong tables</span>${seg('reveal', st.settings.revealOld !== false, [[true,'recite and reveal'],[false,'always typed']])}
     <span class="help">A table you have typed right twice (about three weeks' strength) can be recited and checked by eye instead of typed.</span>
+    <span>Repeating the stem</span>${seg('carry', st.settings.carryStem !== false, [[true,'carried forward'],[false,'typed each time']])}
+    <span class="help">Inside a table, every box you have not typed in starts with the letters your own answers so far already share — so you type the stem once rather than once a cell. It can only ever show you what you typed yourself.</span>
     <span>Target recall</span>${seg('retention', st.settings.retention, [[0.85,'85%'],[0.9,'90%'],[0.95,'95%']])}
     <span>Greek accents</span>${seg('accents', !!g.requireAccents, [[false,'not graded'],[true,'graded']])}
     <span class="help">Breathings are always graded.</span>
@@ -871,7 +978,7 @@ function renderSettings(){
     <section class="sec" style="margin-top:16px"><span class="lab">Backup file</span>
     <div class="after"><button class="btn quiet small" data-act="export">Save a backup file</button><label class="btn quiet small" style="cursor:pointer">Restore from a file<input type="file" id="restore" accept="application/json,.json" hidden></label></div>
     <span class="empty">A restored file is merged in, like a spare.</span></section>
-    <div class="set" style="margin-top:16px"><span>What’s new</span><span class="after"><button class="btn quiet small" data-act="go" data-v="changes">Version 2026.09.20.5</button></span></div></main>`;
+    <div class="set" style="margin-top:16px"><span>What’s new</span><span class="after"><button class="btn quiet small" data-act="go" data-v="changes">Version 2026.09.21.0</button></span></div></main>`;
   $('#code').addEventListener('change', e => setSyncCode(e.target.value));
   $('#restore').addEventListener('change', async e => {
     const f = e.target.files && e.target.files[0]; if (!f) return;
@@ -960,7 +1067,8 @@ const ACT = {
   theme: v => { ui.theme = v; saveUi(); render(); }, panes: v => { ui.panes = v; saveUi(); render(); },
   retention: v => { ['latin','greek'].forEach(id => { stores[id].settings.retention = +v; }); saveBoth(); render(); },
   accents: v => { stores.greek.settings.requireAccents = v === 'true'; save('greek'); formIndex = {}; render(); },
-  hoplite: v => { stores.greek.settings.hopliteInput = v === 'true'; save('greek'); render(); }
+  hoplite: v => { stores.greek.settings.hopliteInput = v === 'true'; save('greek'); render(); },
+  carry: v => { ['latin','greek'].forEach(id => { stores[id].settings.carryStem = v === 'true'; }); saveBoth(); render(); }
 };
 ACT['reveal'] = v => { if (view.screen === 'settings'){ ['latin','greek'].forEach(id => { stores[id].settings.revealOld = v === 'true'; }); saveBoth(); render(); } else { sit.phase = 'verdict'; render(); } };
 app.addEventListener('click', e => { const el = e.target.closest('[data-act]'); if (!el || el.disabled) return; const f = ACT[el.dataset.act]; if (f) f(el.dataset.v); });

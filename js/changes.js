@@ -9,6 +9,10 @@
    Newest first. Shared by both decks: the app changes, not the language.
    ====================================================================== */
 const CHANGES = [
+  ['2026.09.21.1', [
+    '<b>Carrying the stem forward is switched off again for now</b> — Settings › Repeating the stem turns it back on. It had two faults worth more than the keystrokes it saved. Pressing a diacritic key on a letter that had been carried in typed the digit instead of the mark, so <i>χωρᾳ</i> came out as <i>χωρα8</i> — the dative singular of almost every feminine word. And a box you had already passed and accepted could be quietly shortened later, when some other form in the table turned out to share less. Both are fixed; it is off because a wrong answer on a form you know books a drill you do not need.',
+    '<b>Diacritics now work on any letter already in a box</b> — nothing to do. They used to work only on a letter you had just typed yourself, so a form an undo put back could not be accented either.'
+  ]],
   ['2026.09.21.0', [
     '<b>You no longer type the stem in every cell</b> — nothing to turn on. Type the first form of a table in full, and every box you have not reached yet starts with the letters your own answers so far already share. Type straight on from there, or backspace if it has gone too far. Across both decks that is about half the keys you used to press. It only ever shows you what you typed yourself, so an aorist table still asks you for its stem. Settings › Repeating the stem turns it off.'
   ]],

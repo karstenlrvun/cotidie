@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Cotidie">
 <link rel="apple-touch-icon" href="icon-180.png">
 <title>Cotidie</title>
-<link rel="stylesheet" href="fonts/fonts.css?v=202609210">
+<link rel="stylesheet" href="fonts/fonts.css?v=202609211">
 <style>
 /* ======================================================================
    Cotidie — the rebuilt page (2026-09-17). One page, both languages.
@@ -150,21 +150,21 @@ html[data-id=graph] .grid th,html[data-id=graph] .grid td{border-width:1.5px}
 <body>
 <div id="app"><div class="col"><span class="lab">Cotidie</span></div></div>
 
-<script src="data/latin-paradigms.js?v=202609210"></script>
-<script src="data/latin-vocab.js?v=202609210"></script>
-<script src="data/greek-paradigms.js?v=202609210"></script>
-<script src="data/greek-vocab.js?v=202609210"></script>
-<script src="js/engine.js?v=202609210"></script>
-<script src="js/store.js?v=202609210"></script>
-<script src="js/fsrs.js?v=202609210"></script>
-<script src="js/stats.js?v=202609210"></script>
-<script src="js/time.js?v=202609210"></script>
-<script src="js/tables.js?v=202609210"></script>
-<script src="js/rail.js?v=202609210"></script>
-<script src="js/changes.js?v=202609210"></script>
-<script src="js/sync.js?v=202609210"></script>
-<script src="js/greek.js?v=202609210"></script>
-<script src="js/greek-input.js?v=202609210"></script>
+<script src="data/latin-paradigms.js?v=202609211"></script>
+<script src="data/latin-vocab.js?v=202609211"></script>
+<script src="data/greek-paradigms.js?v=202609211"></script>
+<script src="data/greek-vocab.js?v=202609211"></script>
+<script src="js/engine.js?v=202609211"></script>
+<script src="js/store.js?v=202609211"></script>
+<script src="js/fsrs.js?v=202609211"></script>
+<script src="js/stats.js?v=202609211"></script>
+<script src="js/time.js?v=202609211"></script>
+<script src="js/tables.js?v=202609211"></script>
+<script src="js/rail.js?v=202609211"></script>
+<script src="js/changes.js?v=202609211"></script>
+<script src="js/sync.js?v=202609211"></script>
+<script src="js/greek.js?v=202609211"></script>
+<script src="js/greek-input.js?v=202609211"></script>
 <script>
 /* ======================================================================
    The page. Everything that decides anything lives in js/*.js and is tested
@@ -313,7 +313,16 @@ function applyDefaults(st, greek){
     if (st.settings.hopliteInput === undefined) st.settings.hopliteInput = true;
   }
   if (st.settings.revealOld === undefined) st.settings.revealOld = true;
-  if (st.settings.carryStem === undefined) st.settings.carryStem = true;
+  // Default OFF, 2026-09-21 evening. It shipped on this morning and he found
+  // two faults in an hour that a simulation could not have found: a diacritic
+  // key pressed on a carried letter typed itself ("χωρα8" for χωρᾳ -- the
+  // dative singular of essentially every feminine word in the deck), and a
+  // run that shrank later silently rewrote boxes he had already accepted.
+  // Both are fixed below, but a wrong answer on a form he KNOWS is not a
+  // nuisance: it books a solo drill he does not need and corrupts the
+  // form-level recall the whole retirement rule is judged on. Off until it
+  // has earned being on; Settings turns it back in two taps.
+  if (st.settings.carryStem === undefined) st.settings.carryStem = false;
   commitRollover(st.settings, Date.now());
 }
 
@@ -676,24 +685,39 @@ function wireTable(ins, cells){
   // tables where one letter is all the forms share, it is usually WRONG --
   // the article's ὁ against τόν. 38 Greek tables and one Latin one have a
   // one-letter run, so the cost of the rule is about 0.7% of the saving.
-  const carried = () => {
-    const p = sharedPrefix(ins.filter(el => track[el.dataset.i].touched).map(el => el.value));
-    return [...p].length < 2 ? '' : p;
-  };
-  function spread(){
-    if (!carry) return;
-    const p = carried();
-    ins.forEach(el => {
-      const t = track[el.dataset.i]; if (t.touched) return;
-      el.value = p; el.classList.toggle('carried', !!p); t.pre = [...p].length;
-    });
+  // A box is filled ONCE, when he arrives in it, and never written to again.
+  //
+  // It used to be filled and refilled: every box he had not typed in held the
+  // current run, rewritten after each keystroke. Two things went wrong with
+  // that, both of which he hit. The run can only ever SHRINK, so a box he had
+  // already passed and accepted -- the vocative that is the same as the
+  // nominative, filled in whole and tabbed past -- was silently shortened
+  // later when some other cell diverged. Over both decks that reaches 231
+  // cells he had accepted. And a box mid-edit, one letter deleted on the way
+  // to correcting it, dragged the run down for every box at once.
+  //
+  // Filling on arrival costs nothing: going down the table in order, the run
+  // when he reaches a box is the same run the old code would have put there.
+  // It simply cannot reach backwards any more. Whatever is in a box when he
+  // leaves it is his answer.
+  function fillOnArrival(el){
+    if (!carry || el.value) return;
+    const others = ins.filter(x => x !== el && x.value.trim()).map(x => x.value);
+    const p = sharedPrefix(others);
+    const run = [...p].length < 2 ? '' : p;
+    if (!run) return;
+    el.value = run; el.classList.add('carried');
+    track[el.dataset.i].pre = [...run].length;
   }
 
   ins.forEach(inp => {
     const t = track[inp.dataset.i];
     inp.addEventListener('keydown', () => {
-      if (!t.touched && inp.selectionStart !== inp.selectionEnd)
-        inp.selectionStart = inp.selectionEnd = inp.value.length;
+      if (!t.touched){
+        fillOnArrival(inp);                  // belt and braces: not every
+        if (inp.selectionStart !== inp.selectionEnd)   // browser fires focus
+          inp.selectionStart = inp.selectionEnd = inp.value.length;
+      }
     });
     if (L.id === 'greek'){ const h = attachHopliteInput(inp); if (!S().settings.hopliteInput) h.disable(); }
     inp.addEventListener('keydown', e => {
@@ -711,10 +735,10 @@ function wireTable(ins, cells){
       // box natively because this handler leaves modified keys alone).
       t.touched = true; t.keys++; if (t.first == null) t.first = now; t.last = now;
       inp.classList.remove('carried');
-      setTimeout(spread, 0);
     });
     inp.addEventListener('focus', () => {
       if (t.touched) return;
+      fillOnArrival(inp);
       setTimeout(() => { try { inp.selectionStart = inp.selectionEnd = inp.value.length; } catch(err){} }, 0);
     });
     // an undo puts back what was typed, so one bad cell is one cell to fix.
@@ -723,7 +747,6 @@ function wireTable(ins, cells){
     const was = sit.cur.typed;
     if (was && was[inp.dataset.i]){ inp.value = was[inp.dataset.i]; t.touched = true; sit.typing.redone = true; }
   });
-  spread();
 }
 
 // What one pass over a table cost, in the shape store.log keeps for a form
@@ -978,7 +1001,7 @@ function renderSettings(){
     <section class="sec" style="margin-top:16px"><span class="lab">Backup file</span>
     <div class="after"><button class="btn quiet small" data-act="export">Save a backup file</button><label class="btn quiet small" style="cursor:pointer">Restore from a file<input type="file" id="restore" accept="application/json,.json" hidden></label></div>
     <span class="empty">A restored file is merged in, like a spare.</span></section>
-    <div class="set" style="margin-top:16px"><span>What’s new</span><span class="after"><button class="btn quiet small" data-act="go" data-v="changes">Version 2026.09.21.0</button></span></div></main>`;
+    <div class="set" style="margin-top:16px"><span>What’s new</span><span class="after"><button class="btn quiet small" data-act="go" data-v="changes">Version 2026.09.21.1</button></span></div></main>`;
   $('#code').addEventListener('change', e => setSyncCode(e.target.value));
   $('#restore').addEventListener('change', async e => {
     const f = e.target.files && e.target.files[0]; if (!f) return;

@@ -99,6 +99,40 @@ function hopliteCompose(base, activeMarks){
   return (base + marks).normalize('NFC');
 }
 
+// The inverse of HOPLITE_MARK_CODEPOINT, and the base letters the scheme can
+// produce -- both needed to read an EXISTING character back into a base plus a
+// set of marks.
+const HOPLITE_MARK_NAME = Object.keys(HOPLITE_MARK_CODEPOINT)
+  .reduce((m, k) => { m[HOPLITE_MARK_CODEPOINT[k]] = k; return m; }, Object.create(null));
+
+// Read the character before the caret back into {base, marks}, so a digit key
+// works on text this handler did not type.
+//
+// Until 2026-09-21 a diacritic key only ever applied to the letter the handler
+// had just inserted itself, tracked in lastBase/lastPos/lastMarks. Anything
+// else in the field was invisible to it, so the digit fell through and typed
+// itself: press 8 after a stem that was carried forward and you got "χωρα8"
+// instead of "χωρᾳ". Carrying forward made that constant, but it was already
+// true of a form an undo put back, and of any text he clicked into.
+//
+// Returns null when there is nothing modifiable before the caret, which is
+// when a digit should still type itself.
+function hopliteReadBack(value, caret){
+  if (!(caret > 0)) return null;
+  const upto = value.slice(0, caret), chars = Array.from(upto);
+  if (!chars.length) return null;
+  const last = chars[chars.length - 1], d = last.normalize('NFD');
+  const base = d[0];
+  if (!/^[\u0391-\u03c9]$/.test(base)) return null;
+  const marks = new Set();
+  for (let i = 1; i < d.length; i++){
+    const name = HOPLITE_MARK_NAME[d[i]];
+    if (!name) return null;                 // something this scheme cannot make
+    marks.add(name);
+  }
+  return { base: base, marks: marks, pos: upto.length - last.length, len: last.length };
+}
+
 // Wires the scheme onto a real <input> element via keydown interception.
 // Returns a controller {enable(), disable(), isEnabled()} so callers can
 // offer an escape hatch (paste, OS input, etc.) rather than trapping the
@@ -144,7 +178,13 @@ function attachHopliteInput(inputEl){
     }
 
     if (Object.prototype.hasOwnProperty.call(HOPLITE_DIACRITIC_KEYS, e.key)){
-      if (!cursorRightAfterLastLetter) return; // no current letter to modify -- let the digit type normally
+      if (!cursorRightAfterLastLetter){
+        // Not a letter this handler typed -- but if the caret sits just after
+        // one it can still read, that letter is the one he means.
+        const back = (selStart === selEnd) ? hopliteReadBack(el.value, selStart) : null;
+        if (!back) return;                   // nothing to modify -- let the digit type normally
+        lastBase = back.base; lastMarks = back.marks; lastPos = back.pos; lastLen = back.len;
+      }
       e.preventDefault();
       const markName = HOPLITE_DIACRITIC_KEYS[e.key];
       lastMarks = hopliteToggleMark(lastMarks, markName);

@@ -165,18 +165,31 @@ function rankedTables(table){
 // can only ever repeat a letter he wrote himself.
 //
 // Blank answers are ignored rather than collapsing the run to nothing.
+//
+// The comparison is on BASE LETTERS, while the text returned is the first
+// answer's own characters. Composed characters caught this out: ᾳ is a single
+// character (U+1FB3), not α plus a subscript, so χωρα and χωρᾳ looked like
+// they shared only three letters, and putting the iota subscript in the
+// dative singular took the alpha away from every box after it. Deciding the
+// LENGTH by the letters underneath the marks fixes that without ever putting
+// a character in a box that he did not write.
+function bareLetters(s){
+  return Array.from(String(s == null ? '' : s).normalize('NFD')
+    .replace(/[\u0300-\u036f\u0345]/g, '').normalize('NFC'));
+}
 function sharedPrefix(typed){
   const given = (typed || []).map(v => String(v == null ? '' : v).trim()).filter(Boolean);
   if (!given.length) return '';
-  let p = Array.from(given[0]);
+  const first = Array.from(given[0]), a = bareLetters(given[0]);
+  let n = first.length;
   for (let j = 1; j < given.length; j++){
-    const v = Array.from(given[j]);
+    const b = bareLetters(given[j]);
     let i = 0;
-    while (i < p.length && i < v.length && p[i] === v[i]) i++;
-    p = p.slice(0, i);
-    if (!p.length) break;
+    while (i < a.length && i < b.length && a[i] === b[i]) i++;
+    if (i < n) n = i;
+    if (!n) break;
   }
-  return p.join('');
+  return first.slice(0, n).join('');
 }
 
 // ---- recording a table ----
@@ -257,6 +270,14 @@ function recordTable(store, t, entry, results, ms, now, opts){
     if (T.pre  != null) row.pre  = T.pre  | 0;
     if (T.tfk  != null) row.tfk  = T.tfk  | 0;
     if (T.typ  != null) row.typ  = T.typ  | 0;
+    // `need` is what the forms would have cost typed out, and `ask` how often
+    // he pressed Space for a suggestion. With `keys` those make the saving a
+    // SUBTRACTION rather than an estimate, per table, in his own hands -- the
+    // simulation says 47% of Latin's keystrokes and 36% of Greek's, and this
+    // is how that claim gets checked.
+    if (T.need != null) row.need = T.need | 0;
+    if (T.ask  != null && T.ask) row.ask = T.ask | 0;
+    if (T.mode) row.cm = T.mode;              // 'fill' or 'ask'
   }
   // Which rule this return was scheduled under, so a month of these can be
   // read back and the change judged rather than assumed.

@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Cotidie">
 <link rel="apple-touch-icon" href="icon-180.png">
 <title>Cotidie</title>
-<link rel="stylesheet" href="fonts/fonts.css?v=202609211">
+<link rel="stylesheet" href="fonts/fonts.css?v=202609220">
 <style>
 /* ======================================================================
    Cotidie — the rebuilt page (2026-09-17). One page, both languages.
@@ -150,21 +150,21 @@ html[data-id=graph] .grid th,html[data-id=graph] .grid td{border-width:1.5px}
 <body>
 <div id="app"><div class="col"><span class="lab">Cotidie</span></div></div>
 
-<script src="data/latin-paradigms.js?v=202609211"></script>
-<script src="data/latin-vocab.js?v=202609211"></script>
-<script src="data/greek-paradigms.js?v=202609211"></script>
-<script src="data/greek-vocab.js?v=202609211"></script>
-<script src="js/engine.js?v=202609211"></script>
-<script src="js/store.js?v=202609211"></script>
-<script src="js/fsrs.js?v=202609211"></script>
-<script src="js/stats.js?v=202609211"></script>
-<script src="js/time.js?v=202609211"></script>
-<script src="js/tables.js?v=202609211"></script>
-<script src="js/rail.js?v=202609211"></script>
-<script src="js/changes.js?v=202609211"></script>
-<script src="js/sync.js?v=202609211"></script>
-<script src="js/greek.js?v=202609211"></script>
-<script src="js/greek-input.js?v=202609211"></script>
+<script src="data/latin-paradigms.js?v=202609220"></script>
+<script src="data/latin-vocab.js?v=202609220"></script>
+<script src="data/greek-paradigms.js?v=202609220"></script>
+<script src="data/greek-vocab.js?v=202609220"></script>
+<script src="js/engine.js?v=202609220"></script>
+<script src="js/store.js?v=202609220"></script>
+<script src="js/fsrs.js?v=202609220"></script>
+<script src="js/stats.js?v=202609220"></script>
+<script src="js/time.js?v=202609220"></script>
+<script src="js/tables.js?v=202609220"></script>
+<script src="js/rail.js?v=202609220"></script>
+<script src="js/changes.js?v=202609220"></script>
+<script src="js/sync.js?v=202609220"></script>
+<script src="js/greek.js?v=202609220"></script>
+<script src="js/greek-input.js?v=202609220"></script>
 <script>
 /* ======================================================================
    The page. Everything that decides anything lives in js/*.js and is tested
@@ -322,7 +322,12 @@ function applyDefaults(st, greek){
   // nuisance: it books a solo drill he does not need and corrupts the
   // form-level recall the whole retirement rule is judged on. Off until it
   // has earned being on; Settings turns it back in two taps.
-  if (st.settings.carryStem === undefined) st.settings.carryStem = false;
+  // 'fill' the run waits in the box · 'ask' Space fetches it · 'off'
+  // His call 2026-09-22, after measuring twelve tables by hand: 309 keys
+  // against 492, 37% saved. It shipped on, off, and now on again with the
+  // faults he found in between actually fixed.
+  if (st.settings.carryStem === undefined || st.settings.carryStem === true) st.settings.carryStem = 'fill';
+  if (st.settings.carryStem === false) st.settings.carryStem = 'off';
   commitRollover(st.settings, Date.now());
 }
 
@@ -638,9 +643,10 @@ function renderTyped(){
   const miss = done ? res.filter(r => !r.correct).length : 0;
   app.innerHTML = sitBarHtml() + `<main class="col"><span class="lab">${first ? 'New table' : 'Table returning'} · ${cells.length} forms</span>
     <div class="ask">${tableTitleHtml(t, entry)}</div>${grid}
-    <div class="colfoot"><span class="mute">${!done ? (S().settings.carryStem !== false
-        ? 'Tab moves down each column; a box you have not reached starts with what your answers so far share, so trim it or type on. Leave blank what you do not know.'
-        : 'Tab moves down each column. Leave blank what you do not know.') :
+    <div class="colfoot"><span class="mute">${!done ? ({
+        fill:'Tab moves down each column; a box you have not reached starts with what your answers so far share. Space steps through your last answer, then empty. Leave blank what you do not know.',
+        ask:'Tab moves down each column; Space fetches what your answers so far share. Leave blank what you do not know.'
+      }[S().settings.carryStem] || 'Tab moves down each column. Leave blank what you do not know.') :
       miss ? (cells.length - miss) + ' right · ' + miss + ' to drill alone · table back ' + backIn(sit.lastIvl) : retiredLine(t, sit.lastIvl)}</span>
       <span class="after">${done && sit.undo ? `<button class="btn quiet" data-act="untable">Undo${kbd('U')}</button>` : ''}
       <button class="btn" data-act="${done ? 'next' : 'checktable'}">${done ? 'Next' : 'Check table'}${kbd('↵')}</button></span></div></main>`;
@@ -650,119 +656,133 @@ function renderTyped(){
     const firstIn = ins.find(i => i.dataset.i === '0'); if (firstIn) firstIn.focus();
   } else $('[data-act=next]').focus();
 }
-/* ---- carrying his own typing forward (2026-09-21) --------------------------
-   He types the stem of the word again in every cell of a table, which teaches
-   nothing about the declension: it is 58% of every Latin keystroke and 44% of
-   every Greek one. So every box he has not yet typed in starts with the
-   longest run of letters common to the answers he HAS already given in this
-   table.
+/* ---- carrying his own typing forward -------------------------------------
+   He types a word's stem again in every cell of a table, which teaches nothing
+   about the declension: it is 58% of every Latin keystroke and 44% of every
+   Greek one. So a box he has not reached starts with the longest run of
+   letters the answers he has ALREADY GIVEN all begin with, and Space steps
+   through the alternatives.
 
-   Built from his own keystrokes and never from the answer key, which is the
-   whole point. Filling in the stem the app knows would be cheaper still, but
-   on every imperfect, future, aorist, perfect and optative table the shared
-   stem IS the tense stem -- 419 of Greek's 975 tables -- and that is the half
-   of the answer those tables exist to ask for. Nothing here can show him a
-   letter he did not write himself.
+   Built from his own keystrokes and never from the deck. That is the whole
+   design, not a nicety: filling in the stem the app knows would be cheaper,
+   but on every imperfect, future, aorist, perfect and optative table the
+   shared run IS the tense stem -- 419 of Greek's 975 tables -- which is the
+   half of the answer those tables exist to ask for. Nothing here can show him
+   a letter he did not write himself. For the same reason the app never varies
+   the rule by table: a fill withheld on a word the app knows is irregular
+   would announce that it is irregular.
 
-   Two details that are easy to get wrong. Tab into a box that already holds a
-   carried stem SELECTS its text, so the next key would replace it rather than
-   continue it -- hence the caret guard, registered before the Greek input
-   handler so the caret is already right by the time that one reads it. And a
-   box stops being refilled the moment he touches it, so nothing he has typed
-   is ever overwritten by a later answer shortening the shared run.
+   His own measurements over the twelve hardest tables, 2026-09-22: 309 keys
+   against 492 typed out, 37% saved. Regular nouns save half or more (mensa 50
+   of 71); the article, houtos, eimi and sum COST him 2 to 7 keys each, which
+   is why "empty until I ask" is offered beside it.
 
-   Timing is taken from the keystrokes, not from focus events, which do not
-   fire in a window that is not frontmost.
+   Five things here look small and are not; each was a real fault first.
+     - A box is filled AT MOST ONCE. It used to be refilled after every
+       keystroke, so a box he had passed and accepted was silently shortened
+       when a later form diverged; and clearing one with Space then typing
+       brought the word straight back.
+     - Tab into a filled box SELECTS its text, so the next key would replace
+       it. The caret guard runs before the Greek handler, which reads the
+       caret.
+     - Backspace deletes one character. It briefly cleared the whole run: the
+       run overshoots by 2.4 letters on average, so trimming is the common
+       case and wholesale rejection the rare one.
+     - A run of one letter is never carried. The first Greek table is the
+       article: one letter would fill every box with a wrong tau.
+     - Space is unambiguous only in a box he has not typed in. 120 of 9,585
+       forms contain a space and not one begins with one.
    -------------------------------------------------------------------------*/
-function wireTable(ins, cells){
-  const carry = S().settings.carryStem !== false;
-  const track = {};
-  cells.forEach((c, i) => { track[i] = { keys:0, pre:0, touched:false, first:null, last:null }; });
-  sit.typing = { track, redone:false };
+const CARRY_MIN = 2;                       // never carry a single letter
 
-  // sharedPrefix lives in js/tables.js: pure, and therefore tested. A run of
-  // one character is not carried: it saves a single key and, on exactly the
-  // tables where one letter is all the forms share, it is usually WRONG --
-  // the article's ὁ against τόν. 38 Greek tables and one Latin one have a
-  // one-letter run, so the cost of the rule is about 0.7% of the saving.
-  // A box is filled ONCE, when he arrives in it, and never written to again.
-  //
-  // It used to be filled and refilled: every box he had not typed in held the
-  // current run, rewritten after each keystroke. Two things went wrong with
-  // that, both of which he hit. The run can only ever SHRINK, so a box he had
-  // already passed and accepted -- the vocative that is the same as the
-  // nominative, filled in whole and tabbed past -- was silently shortened
-  // later when some other cell diverged. Over both decks that reaches 231
-  // cells he had accepted. And a box mid-edit, one letter deleted on the way
-  // to correcting it, dragged the run down for every box at once.
-  //
-  // Filling on arrival costs nothing: going down the table in order, the run
-  // when he reaches a box is the same run the old code would have put there.
-  // It simply cannot reach backwards any more. Whatever is in a box when he
-  // leaves it is his answer.
+function wireTable(ins, cells){
+  const mode = S().settings.carryStem;     // 'fill' | 'ask' | 'off'
+  const track = {};
+  cells.forEach((c, i) => { track[i] = { keys:0, pre:0, ask:0, touched:false, filled:false,
+                                         step:null, first:null, last:null }; });
+  sit.typing = { track, redone:false };
+  const greek = L.id === 'greek';
+
+  // Only boxes HE has typed in are answers. A box still holding the app's own
+  // text is not one, and counting it dragged the run down to whatever the
+  // oldest fill happened to be.
+  const mine = except => ins.filter(x => x !== except && x.value.trim() && track[x.dataset.i].touched)
+                            .map(x => x.value);
+  const runOf = list => { const p = sharedPrefix(list); return [...p].length < CARRY_MIN ? '' : p; };
+  const lastOf = i => { let v = ''; ins.forEach(x => {
+    if (+x.dataset.i < i && x.value.trim() && track[x.dataset.i].touched) v = x.value.trim(); }); return v; };
+
   function fillOnArrival(el){
-    if (!carry || el.value) return;
-    const others = ins.filter(x => x !== el && x.value.trim()).map(x => x.value);
-    const p = sharedPrefix(others);
-    const run = [...p].length < 2 ? '' : p;
+    const t = track[el.dataset.i];
+    if (t.filled || mode !== 'fill' || el.value || t.touched) return;
+    t.filled = true;
+    const run = runOf(mine(el));
     if (!run) return;
-    el.value = run; el.classList.add('carried');
-    track[el.dataset.i].pre = [...run].length;
+    el.value = run; el.classList.add('carried'); t.pre = [...run].length;
   }
 
   ins.forEach(inp => {
-    const t = track[inp.dataset.i];
-    inp.addEventListener('keydown', () => {
-      if (!t.touched){
-        fillOnArrival(inp);                  // belt and braces: not every
-        if (inp.selectionStart !== inp.selectionEnd)   // browser fires focus
-          inp.selectionStart = inp.selectionEnd = inp.value.length;
+    const i = +inp.dataset.i, t = track[i];
+    inp.addEventListener('keydown', e => {
+      if (t.touched || mode === 'off') return;
+      fillOnArrival(inp);                  // not every browser fires focus
+      if (inp.selectionStart !== inp.selectionEnd)
+        inp.selectionStart = inp.selectionEnd = inp.value.length;
+      // Space steps through the alternatives, always the same three, never
+      // collapsed when two of them hold the same text -- so he always knows
+      // how many presses he is from empty.
+      if (e.key === ' '){
+        const steps = [runOf(mine(inp)), lastOf(i), ''];
+        e.preventDefault();
+        // In 'fill' the box already shows step 0, so the first press must move
+        // PAST it, to his previous answer. In 'ask' the box is empty and the
+        // first press should hand him step 0, the shared run.
+        if (t.step == null) t.step = (mode === 'fill') ? 1 : 0;
+        else t.step = (t.step + 1) % steps.length;
+        inp.value = steps[t.step];
+        inp.classList.toggle('carried', !!inp.value);
+        t.ask++; t.keys++; t.pre = [...inp.value].length; t.filled = true;
+        e._carry = true;                   // counted here; the next handler skips it
+        try { inp.selectionStart = inp.selectionEnd = inp.value.length; } catch(err){}
       }
     });
-    if (L.id === 'greek'){ const h = attachHopliteInput(inp); if (!S().settings.hopliteInput) h.disable(); }
+    if (greek){ const h = attachHopliteInput(inp); if (!S().settings.hopliteInput) h.disable(); }
     inp.addEventListener('keydown', e => {
+      if (e._carry) return;
       if (e.key === 'Tab' || e.metaKey || e.ctrlKey || e.altKey) return;
       if (e.key.length !== 1 && e.key !== 'Backspace' && e.key !== 'Delete') return;
       const now = Date.now();
-      // Backspace deletes ONE character, as it always has. It briefly did not:
-      // it threw the whole carried run away, on the reasoning that rejecting a
-      // wrong guess should cost one key. That optimised the wrong case. The
-      // run overshoots on 1,293 Greek cells and 62 Latin ones, and the average
-      // overshoot is 2.4 letters in Greek and 1.6 in Latin -- νεανίας to
-      // νεανία, one letter off the end -- so TRIMMING is the normal case and
-      // wholesale rejection is the tail. Trimming has to cost one key; the
-      // tail can pay for itself (holding Backspace, or ⌘⌫, which clears the
-      // box natively because this handler leaves modified keys alone).
       t.touched = true; t.keys++; if (t.first == null) t.first = now; t.last = now;
       inp.classList.remove('carried');
     });
-    inp.addEventListener('focus', () => {
-      if (t.touched) return;
-      fillOnArrival(inp);
-      setTimeout(() => { try { inp.selectionStart = inp.selectionEnd = inp.value.length; } catch(err){} }, 0);
-    });
+    inp.addEventListener('focus', () => { if (!t.touched) { fillOnArrival(inp);
+      setTimeout(() => { try { inp.selectionStart = inp.selectionEnd = inp.value.length; } catch(err){} }, 0); } });
     // an undo puts back what was typed, so one bad cell is one cell to fix.
-    // Those cells count as his, and the table's typing is no longer a clean
-    // measurement of one pass, so it is not recorded.
+    // Those count as his, and the table is no longer one clean pass, so its
+    // typing is not recorded.
     const was = sit.cur.typed;
-    if (was && was[inp.dataset.i]){ inp.value = was[inp.dataset.i]; t.touched = true; sit.typing.redone = true; }
+    if (was && was[inp.dataset.i]){ inp.value = was[inp.dataset.i]; t.touched = true; t.filled = true;
+                                    sit.typing.redone = true; }
   });
 }
 
 // What one pass over a table cost, in the shape store.log keeps for a form
-// asked on its own, so the two can be compared rather than assumed.
-function tableTyping(){
+// asked on its own, plus what it would have cost typed out.
+function tableTyping(cells, entry){
   const tp = sit.typing;
   if (!tp || tp.redone) return null;
-  let keys = 0, pre = 0, first = null, last = null;
+  const greek = L.id === 'greek';
+  let keys = 0, pre = 0, ask = 0, first = null, last = null;
   Object.keys(tp.track).forEach(k => {
     const r = tp.track[k];
-    keys += r.keys; pre += r.pre;
+    keys += r.keys; pre += r.pre; ask += r.ask;
     if (r.first != null && (first == null || r.first < first)) first = r.first;
     if (r.last  != null && (last  == null || r.last  > last )) last  = r.last;
   });
   if (!keys) return null;
-  return { keys, pre,
+  let need = 0;
+  cells.forEach(c => { try { need += typedKeys(formOf(entry, c).primary, greek); } catch(e){} });
+  return { keys, pre, ask, need, mode: S().settings.carryStem || 'off',
            tfk: first == null ? null : Math.max(first - sit.shownAt, 0),
            typ: (first != null && last != null) ? (last - first) : null };
 }
@@ -774,7 +794,7 @@ function checkTable(){
     const j = L.judge(L.table, entry, c.category, c.cell, formOf(entry, c), typed[i] || '', gradeOpts());
     return { category:c.category, cell:c.cell, correct:j.correct, typed:(typed[i] || '').trim() };
   });
-  const r = recordTable(S(), t, entry, sit.results, now - sit.shownAt, now, { typing: tableTyping() });
+  const r = recordTable(S(), t, entry, sit.results, now - sit.shownAt, now, { typing: tableTyping(cells, entry) });
   sit.lastIvl = r.ivl; sit.undo = r.undo; sit.cur.typed = typed;
   sit.n += cells.length; sit.phase = 'verdict'; save(); render();
 }
@@ -938,6 +958,34 @@ function recallHtml(st){
 }
 
 // ----------------------------------------------------------------- STATS --
+// Is carrying the stem forward actually paying? Subtraction, not a claim:
+// every typed table records the keys he pressed and the keys the forms would
+// have cost typed out, so this is the difference. It names the tables where
+// it cost him, because those are the ones worth turning it off for -- the
+// simulation says the article, the pronouns and the athematic verbs, and the
+// only way to know whether that matches him is to count.
+function carryHtml(store){
+  const rows = (store.tlog || []).filter(r => r && r.need && r.keys != null && r.cm && r.cm !== 'off');
+  if (rows.length < 3) return '';
+  const pressed = rows.reduce((a, r) => a + r.keys, 0);
+  const need = rows.reduce((a, r) => a + r.need, 0);
+  const asks = rows.reduce((a, r) => a + (r.ask | 0), 0);
+  const cost = rows.filter(r => r.keys > r.need);
+  const byTable = {};
+  cost.forEach(r => { byTable[r.table] = (byTable[r.table] || 0) + (r.keys - r.need); });
+  const worst = Object.keys(byTable).sort((a, b) => byTable[b] - byTable[a]).slice(0, 6);
+  const name = key => { const t = tableByKey()[key]; if (!t) return key;
+    const w = tableWordFor(store, L.vocab, t); return (w ? wordHtml(w) : key) + (subLabel(t) ? ' · ' + esc(subLabel(t)) : ''); };
+  return `<section class="sec"><span class="lab">Carrying the stem forward</span><div class="list">
+    <div class="row"><span>Keys you pressed, over ${rows.length} tables</span><span class="v">${pressed}</span></div>
+    <div class="row"><span>Typing them out in full</span><span class="v">${need}</span></div>
+    <div class="row"><span>${need >= pressed ? 'Saved' : 'Cost you'}</span><span class="v">${Math.abs(need - pressed)} keys · ${Math.round(100 * Math.abs(need - pressed) / (need || 1))}%</span></div>
+    ${asks ? `<div class="row"><span>Times you pressed Space for it</span><span class="v">${asks}</span></div>` : ''}
+    <div class="row"><span>Tables where it cost you keys</span><span class="v">${cost.length} of ${rows.length}</span></div></div>
+    ${worst.length ? `<span class="empty">Worst: ${worst.map(k => name(k) + ' (' + byTable[k] + ')').join(' · ')}. Settings can turn it off, or ask only when you press Space.</span>`
+      : '<span class="empty">It has not cost you keys on any table yet.</span>'}</section>`;
+}
+
 function renderStats(){
   const st = S(), now = Date.now(), roll = effRollover(st.settings, now), tab = view.tab || 'time';
   const tabs = [['time','Time'],['tables','Tables'],['forms','Forms'],['days','Days']];
@@ -947,7 +995,7 @@ function renderStats(){
     body = `<div class="trio" style="margin:0">${weekHtml(now)}${forecastHtml(now, 7)}<section class="sec"><div class="row"><span class="lab">Today</span></div><div class="ask v">${fmtMin(usedTodayMs(st, now, otherStore()))}<span class="mute" style="font-size:var(--t3)"> min, both languages</span></div></section></div>
       <section class="sec"><span class="lab">What an answer costs you</span><div class="list">${Object.keys(k).map(x => `<div class="row"><span>${k[x]}</span><span class="v">${(costMs(st, x, roll) / 1000).toFixed(1)} s</span></div>`).join('')}</div>
       <span class="empty">Starts from a guess and follows your own answers within a sitting or two.</span></section>
-      ${recallHtml(st)}`;
+      ${carryHtml(st)}${recallHtml(st)}`;
   } else if (tab === 'tables'){
     const count = ts => { const o = { known:0, rotation:0, due:0, unmet:0 }; ts.forEach(t => { o[tableStatus(st, t, L.vocab, now)]++; }); return o; };
     body = `<section class="sec"><div class="row"><span class="lab">Group</span><span class="lab">known · rotation · due · not met</span></div><div class="list">${groupedTables().map(([n, ts]) => { const c = count(ts);
@@ -984,8 +1032,8 @@ function renderSettings(){
     <span>A single form is asked</span>${seg('panes', ui.panes, [['two','beside its table'],['one','on its own']])}
     <span>Strong tables</span>${seg('reveal', st.settings.revealOld !== false, [[true,'recite and reveal'],[false,'always typed']])}
     <span class="help">A table you have typed right twice (about three weeks' strength) can be recited and checked by eye instead of typed.</span>
-    <span>Repeating the stem</span>${seg('carry', st.settings.carryStem !== false, [[true,'carried forward'],[false,'typed each time']])}
-    <span class="help">Inside a table, every box you have not typed in starts with the letters your own answers so far already share — so you type the stem once rather than once a cell. It can only ever show you what you typed yourself.</span>
+    <span>Repeating the stem</span>${seg('carry', st.settings.carryStem || 'fill', [['fill','carried forward'],['ask','only when I ask'],['off','typed each time']])}
+    <span class="help">Inside a table, a box you have not reached starts with the letters your own answers so far already share — so you type the stem once rather than once a cell. It can only ever show you what you typed yourself. <b>Space</b> steps through your previous answer whole, then empty, then back. On regular words this saves half your keys; on the article, <i>οὗτος</i>, <i>εἰμί</i> and <i>sum</i> it costs a few, which is what <i>only when I ask</i> is for.</span>
     <span>Target recall</span>${seg('retention', st.settings.retention, [[0.85,'85%'],[0.9,'90%'],[0.95,'95%']])}
     <span>Greek accents</span>${seg('accents', !!g.requireAccents, [[false,'not graded'],[true,'graded']])}
     <span class="help">Breathings are always graded.</span>
@@ -1001,7 +1049,7 @@ function renderSettings(){
     <section class="sec" style="margin-top:16px"><span class="lab">Backup file</span>
     <div class="after"><button class="btn quiet small" data-act="export">Save a backup file</button><label class="btn quiet small" style="cursor:pointer">Restore from a file<input type="file" id="restore" accept="application/json,.json" hidden></label></div>
     <span class="empty">A restored file is merged in, like a spare.</span></section>
-    <div class="set" style="margin-top:16px"><span>What’s new</span><span class="after"><button class="btn quiet small" data-act="go" data-v="changes">Version 2026.09.21.1</button></span></div></main>`;
+    <div class="set" style="margin-top:16px"><span>What’s new</span><span class="after"><button class="btn quiet small" data-act="go" data-v="changes">Version 2026.09.22.0</button></span></div></main>`;
   $('#code').addEventListener('change', e => setSyncCode(e.target.value));
   $('#restore').addEventListener('change', async e => {
     const f = e.target.files && e.target.files[0]; if (!f) return;
@@ -1091,7 +1139,7 @@ const ACT = {
   retention: v => { ['latin','greek'].forEach(id => { stores[id].settings.retention = +v; }); saveBoth(); render(); },
   accents: v => { stores.greek.settings.requireAccents = v === 'true'; save('greek'); formIndex = {}; render(); },
   hoplite: v => { stores.greek.settings.hopliteInput = v === 'true'; save('greek'); render(); },
-  carry: v => { ['latin','greek'].forEach(id => { stores[id].settings.carryStem = v === 'true'; }); saveBoth(); render(); }
+  carry: v => { ['latin','greek'].forEach(id => { stores[id].settings.carryStem = v; }); saveBoth(); render(); }
 };
 ACT['reveal'] = v => { if (view.screen === 'settings'){ ['latin','greek'].forEach(id => { stores[id].settings.revealOld = v === 'true'; }); saveBoth(); render(); } else { sit.phase = 'verdict'; render(); } };
 app.addEventListener('click', e => { const el = e.target.closest('[data-act]'); if (!el || el.disabled) return; const f = ACT[el.dataset.act]; if (f) f(el.dataset.v); });

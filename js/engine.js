@@ -181,6 +181,23 @@ function classesOfKind(table, kind){
 const MACRON_MAP = { 'ā':'a','ē':'e','ī':'i','ō':'o','ū':'u','ȳ':'y',
                       'Ā':'A','Ē':'E','Ī':'I','Ō':'O','Ū':'U','Ȳ':'Y' };
 
+// How many keys a form really costs him to type, which is what makes the
+// saving from carrying forward a measurable number rather than a claim.
+//   Latin  macrons are stripped before grading, so one key a letter.
+//   Greek  Hoplite KB (js/greek-input.js): one key a base letter, one a
+//          diacritic -- except the pitch accents and the quantity marks,
+//          which grading ignores and he does not type. Movable nu is counted
+//          at its shorter form.
+function typedKeys(s, greek){
+  if (!greek) return Array.from(normalize(String(s == null ? '' : s))).length;
+  let k = 0;
+  for (const ch of String(s == null ? '' : s).replace('(\u03bd)','').normalize('NFD')){
+    if (/[\u0301\u0300\u0342\u0304\u0306]/.test(ch)) continue;
+    k++;
+  }
+  return k;
+}
+
 function stripMacrons(s){
   return String(s).replace(/[āēīōūȳĀĒĪŌŪȲ]/g, c => MACRON_MAP[c] || c);
 }

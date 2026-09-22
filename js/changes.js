@@ -9,6 +9,11 @@
    Newest first. Shared by both decks: the app changes, not the language.
    ====================================================================== */
 const CHANGES = [
+  ['2026.09.22.0', [
+    '<b>Carrying the stem forward is back, and mended</b> — Settings › Repeating the stem, now three ways: <i>carried forward</i>, <i>only when I ask</i>, or off. A box you have not reached starts with the letters your own answers so far already share, so you type a word\u2019s stem once instead of once a cell. It can only ever show you letters you typed yourself.',
+    '<b>Space steps through the alternatives</b> — in a box you have not typed in, press Space for your previous answer whole, again for empty, again for the shared run. Always those three, always in that order.',
+    '<b>Stats › Time now says whether it is paying</b> — the keys you pressed against the keys the forms would have cost typed out, and the tables where it cost you rather than saved. On the twelve hardest tables it saved 37%; on the article, <i>οὗτος</i>, <i>εἰμί</i> and <i>sum</i> it costs a few keys, which is what <i>only when I ask</i> is for.'
+  ]],
   ['2026.09.21.1', [
     '<b>Carrying the stem forward is switched off again for now</b> — Settings › Repeating the stem turns it back on. It had two faults worth more than the keystrokes it saved. Pressing a diacritic key on a letter that had been carried in typed the digit instead of the mark, so <i>χωρᾳ</i> came out as <i>χωρα8</i> — the dative singular of almost every feminine word. And a box you had already passed and accepted could be quietly shortened later, when some other form in the table turned out to share less. Both are fixed; it is off because a wrong answer on a form you know books a drill you do not need.',
     '<b>Diacritics now work on any letter already in a box</b> — nothing to do. They used to work only on a letter you had just typed yourself, so a form an undo put back could not be accented either.'

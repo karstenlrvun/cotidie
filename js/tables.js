@@ -192,6 +192,36 @@ function sharedPrefix(typed){
   return first.slice(0, n).join('');
 }
 
+// ---- which way the stem is carried on THIS table ----
+// Settings choose for every table, with one exception: a KIND of table where
+// the forms share so little that carried letters are usually wrong. There
+// 'carried forward' becomes 'only when I ask' -- the box stays empty and
+// Space fetches the run -- and `why` names the kind, so the screen can say so.
+//
+// Measured 2026-09-24 over every table of both decks (tools/carry-default-
+// sim.js): the carried letters are right as they stand in 84% of Latin boxes
+// and 67% of Greek ones, but in only 19% of Greek principal-parts boxes
+// (φέρω, οἴσω, ἤνεγκα), where filling costs 2.5% MORE keys than typing out.
+// Asking there takes Greek from 32.6% saved to 34.4%, and the wrong fills he
+// has to catch from 1,293 to 768. Comparison tables (12 boxes) are the same
+// shape and go with them.
+//
+// It is decided by the kind of table and never by the word. Every verb has a
+// principal-parts table, so this says nothing about any one of them; a rule
+// that withheld the fill from a word the deck knows to be irregular would
+// announce that it is irregular.
+const CARRY_ASK_KINDS = [
+  { test: k => k.indexOf('pp_') === 0,  why: 'principal parts' },
+  { test: k => k.indexOf('cmp_') === 0, why: 'comparison' }
+];
+function carryModeFor(setting, table){
+  const mode = (setting === 'ask' || setting === 'off') ? setting : 'fill';
+  if (mode !== 'fill') return { mode, why: null };
+  const k = String((table && table.classKey) || '');
+  const hit = CARRY_ASK_KINDS.find(x => x.test(k));
+  return hit ? { mode: 'ask', why: hit.why } : { mode, why: null };
+}
+
 // ---- recording a table ----
 // results: [{category, cell, correct}] for the cells shown. `opts.reveal` marks
 // a reveal-and-grade review, where a miss cannot say WHICH forms were missed.

@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Cotidie">
 <link rel="apple-touch-icon" href="icon-180.png">
 <title>Cotidie</title>
-<link rel="stylesheet" href="fonts/fonts.css?v=202609220">
+<link rel="stylesheet" href="fonts/fonts.css?v=202609240">
 <style>
 /* ======================================================================
    Cotidie — the rebuilt page (2026-09-17). One page, both languages.
@@ -67,6 +67,12 @@ html[data-id=graph] .grid th,html[data-id=graph] .grid td{border-width:1.5px}
 .news p{margin:0;max-width:62ch;line-height:1.5;color:var(--ink)}
 .grid td.none{background:none}
 .grid td input.carried{color:var(--mute)}
+.labrow{display:flex;justify-content:space-between;align-items:baseline;gap:8px 16px;flex-wrap:wrap}
+.stemlight{font-size:var(--t1);color:var(--mute);letter-spacing:.04em}
+.stemlight.differs{color:var(--fg)}
+.stemlight i{display:inline-block;width:8px;height:8px;border-radius:50%;border:1px solid currentColor;margin-right:7px;vertical-align:0}
+.stemlight[data-m=fill] i{background:currentColor}
+.stemlight[data-m=ask] i{background:linear-gradient(90deg,currentColor 50%,transparent 50%)}
 .grid td input{width:100%;background:none;border:0;outline:0;font:400 var(--t4)/1.4 var(--form)}
 .grid td:focus-within{background:var(--hit)}
 .grid td small{font:400 var(--t1)/1.4 var(--body);color:var(--mute);margin-left:8px;letter-spacing:.04em}
@@ -127,6 +133,7 @@ html[data-id=graph] .grid th,html[data-id=graph] .grid td{border-width:1.5px}
 .col{width:100%;max-width:680px;margin:0 auto;padding:56px 16px;display:flex;flex-direction:column;gap:16px}
 .col.wide{max-width:960px}
 .colfoot{display:flex;justify-content:space-between;align-items:center;gap:16px;white-space:nowrap}
+.colfoot > .mute{white-space:normal;min-width:0}   /* the buttons stay on one line; the sentence wraps rather than widening the page */
 .tabs{display:flex;gap:24px;border-bottom:1px solid var(--rule)}
 .tabs button{background:none;border:0;padding:8px 0;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--mute)}
 .tabs button[aria-pressed=true]{color:var(--fg);border-color:var(--fg)}
@@ -150,21 +157,21 @@ html[data-id=graph] .grid th,html[data-id=graph] .grid td{border-width:1.5px}
 <body>
 <div id="app"><div class="col"><span class="lab">Cotidie</span></div></div>
 
-<script src="data/latin-paradigms.js?v=202609220"></script>
-<script src="data/latin-vocab.js?v=202609220"></script>
-<script src="data/greek-paradigms.js?v=202609220"></script>
-<script src="data/greek-vocab.js?v=202609220"></script>
-<script src="js/engine.js?v=202609220"></script>
-<script src="js/store.js?v=202609220"></script>
-<script src="js/fsrs.js?v=202609220"></script>
-<script src="js/stats.js?v=202609220"></script>
-<script src="js/time.js?v=202609220"></script>
-<script src="js/tables.js?v=202609220"></script>
-<script src="js/rail.js?v=202609220"></script>
-<script src="js/changes.js?v=202609220"></script>
-<script src="js/sync.js?v=202609220"></script>
-<script src="js/greek.js?v=202609220"></script>
-<script src="js/greek-input.js?v=202609220"></script>
+<script src="data/latin-paradigms.js?v=202609240"></script>
+<script src="data/latin-vocab.js?v=202609240"></script>
+<script src="data/greek-paradigms.js?v=202609240"></script>
+<script src="data/greek-vocab.js?v=202609240"></script>
+<script src="js/engine.js?v=202609240"></script>
+<script src="js/store.js?v=202609240"></script>
+<script src="js/fsrs.js?v=202609240"></script>
+<script src="js/stats.js?v=202609240"></script>
+<script src="js/time.js?v=202609240"></script>
+<script src="js/tables.js?v=202609240"></script>
+<script src="js/rail.js?v=202609240"></script>
+<script src="js/changes.js?v=202609240"></script>
+<script src="js/sync.js?v=202609240"></script>
+<script src="js/greek.js?v=202609240"></script>
+<script src="js/greek-input.js?v=202609240"></script>
 <script>
 /* ======================================================================
    The page. Everything that decides anything lives in js/*.js and is tested
@@ -641,12 +648,13 @@ function renderTyped(){
     return { cls: r.correct ? 'ok' : 'no', html: esc(f) + (r.correct ? '' : `<small>${r.typed ? 'you: ' + esc(r.typed) : 'blank'}</small>`) };
   });
   const miss = done ? res.filter(r => !r.correct).length : 0;
-  app.innerHTML = sitBarHtml() + `<main class="col"><span class="lab">${first ? 'New table' : 'Table returning'} · ${cells.length} forms</span>
+  const carry = carryModeFor(S().settings.carryStem, t);
+  app.innerHTML = sitBarHtml() + `<main class="col"><div class="labrow"><span class="lab">${first ? 'New table' : 'Table returning'} · ${cells.length} forms</span>${done ? '' : stemLightHtml(carry)}</div>
     <div class="ask">${tableTitleHtml(t, entry)}</div>${grid}
     <div class="colfoot"><span class="mute">${!done ? ({
         fill:'Tab moves down each column; a box you have not reached starts with what your answers so far share. Space steps through your last answer, then empty. Leave blank what you do not know.',
         ask:'Tab moves down each column; Space fetches what your answers so far share. Leave blank what you do not know.'
-      }[S().settings.carryStem] || 'Tab moves down each column. Leave blank what you do not know.') :
+      }[carry.mode] || 'Tab moves down each column. Leave blank what you do not know.') :
       miss ? (cells.length - miss) + ' right · ' + miss + ' to drill alone · table back ' + backIn(sit.lastIvl) : retiredLine(t, sit.lastIvl)}</span>
       <span class="after">${done && sit.undo ? `<button class="btn quiet" data-act="untable">Undo${kbd('U')}</button>` : ''}
       <button class="btn" data-act="${done ? 'next' : 'checktable'}">${done ? 'Next' : 'Check table'}${kbd('↵')}</button></span></div></main>`;
@@ -695,8 +703,19 @@ function renderTyped(){
    -------------------------------------------------------------------------*/
 const CARRY_MIN = 2;                       // never carry a single letter
 
+// The light above a table being typed: which way the stem is carried HERE.
+// Filled, half, empty -- carried forward, on request, typed each time -- and
+// when this table departs from his setting (principal parts, see
+// carryModeFor in js/tables.js) it says why, in full ink, so an empty box
+// where he expected letters is never a surprise.
+function stemLightHtml(carry){
+  const word = { fill:'stem carried forward', ask:'stem on request', off:'stem typed each time' }[carry.mode];
+  const why = carry.why ? ` — ${esc(carry.why)}, where your forms share little. Space fetches it.` : '';
+  return `<span class="stemlight${carry.why ? ' differs' : ''}" data-m="${carry.mode}"><i aria-hidden="true"></i>${word}${why}</span>`;
+}
+
 function wireTable(ins, cells){
-  const mode = S().settings.carryStem;     // 'fill' | 'ask' | 'off'
+  const mode = carryModeFor(S().settings.carryStem, sit.cur.t).mode;   // 'fill' | 'ask' | 'off', for THIS table
   const track = {};
   cells.forEach((c, i) => { track[i] = { keys:0, pre:0, ask:0, touched:false, filled:false,
                                          step:null, first:null, last:null }; });
@@ -782,7 +801,9 @@ function tableTyping(cells, entry){
   if (!keys) return null;
   let need = 0;
   cells.forEach(c => { try { need += typedKeys(formOf(entry, c).primary, greek); } catch(e){} });
-  return { keys, pre, ask, need, mode: S().settings.carryStem || 'off',
+  // the mode this table actually ran under, not the setting: a principal-parts
+  // table under 'carried forward' was asked, and the log must say so
+  return { keys, pre, ask, need, mode: carryModeFor(S().settings.carryStem, sit.cur.t).mode,
            tfk: first == null ? null : Math.max(first - sit.shownAt, 0),
            typ: (first != null && last != null) ? (last - first) : null };
 }
@@ -1033,7 +1054,7 @@ function renderSettings(){
     <span>Strong tables</span>${seg('reveal', st.settings.revealOld !== false, [[true,'recite and reveal'],[false,'always typed']])}
     <span class="help">A table you have typed right twice (about three weeks' strength) can be recited and checked by eye instead of typed.</span>
     <span>Repeating the stem</span>${seg('carry', st.settings.carryStem || 'fill', [['fill','carried forward'],['ask','only when I ask'],['off','typed each time']])}
-    <span class="help">Inside a table, a box you have not reached starts with the letters your own answers so far already share — so you type the stem once rather than once a cell. It can only ever show you what you typed yourself. <b>Space</b> steps through your previous answer whole, then empty, then back. On regular words this saves half your keys; on the article, <i>οὗτος</i>, <i>εἰμί</i> and <i>sum</i> it costs a few, which is what <i>only when I ask</i> is for.</span>
+    <span class="help">Inside a table, a box you have not reached starts with the letters your own answers so far already share — so you type the stem once rather than once a cell. It can only ever show you what you typed yourself. <b>Space</b> steps through your previous answer whole, then empty, then back. On regular words this saves half your keys; on the article, <i>οὗτος</i>, <i>εἰμί</i> and <i>sum</i> it costs a few, which is what <i>only when I ask</i> is for. Principal parts always wait until you ask, because their forms share so little; the light above each table says which way it is working.</span>
     <span>Target recall</span>${seg('retention', st.settings.retention, [[0.85,'85%'],[0.9,'90%'],[0.95,'95%']])}
     <span>Greek accents</span>${seg('accents', !!g.requireAccents, [[false,'not graded'],[true,'graded']])}
     <span class="help">Breathings are always graded.</span>
@@ -1049,7 +1070,7 @@ function renderSettings(){
     <section class="sec" style="margin-top:16px"><span class="lab">Backup file</span>
     <div class="after"><button class="btn quiet small" data-act="export">Save a backup file</button><label class="btn quiet small" style="cursor:pointer">Restore from a file<input type="file" id="restore" accept="application/json,.json" hidden></label></div>
     <span class="empty">A restored file is merged in, like a spare.</span></section>
-    <div class="set" style="margin-top:16px"><span>What’s new</span><span class="after"><button class="btn quiet small" data-act="go" data-v="changes">Version 2026.09.22.0</button></span></div></main>`;
+    <div class="set" style="margin-top:16px"><span>What’s new</span><span class="after"><button class="btn quiet small" data-act="go" data-v="changes">Version 2026.09.24.0</button></span></div></main>`;
   $('#code').addEventListener('change', e => setSyncCode(e.target.value));
   $('#restore').addEventListener('change', async e => {
     const f = e.target.files && e.target.files[0]; if (!f) return;

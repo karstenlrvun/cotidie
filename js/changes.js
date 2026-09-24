@@ -9,6 +9,11 @@
    Newest first. Shared by both decks: the app changes, not the language.
    ====================================================================== */
 const CHANGES = [
+  ['2026.09.24.0', [
+    '<b>Principal parts now wait until you ask for the stem</b> — nothing to do. Their forms share so little (<i>φέρω, οἴσω, ἤνεγκα</i>) that carried letters were right less than one time in five and cost more keys than they saved. In those tables the boxes start empty and Space fetches what your answers so far share. Every other table carries forward as before.',
+    '<b>A light above each table says which way the stem is working</b> — filled: carried forward; half: on request, press Space; empty: typed each time. When a table differs from your setting it says why.',
+    'The sentence under a table now wraps, so it no longer pushes <b>Check table</b> off the right edge of the screen.'
+  ]],
   ['2026.09.22.0', [
     '<b>Carrying the stem forward is back, and mended</b> — Settings › Repeating the stem, now three ways: <i>carried forward</i>, <i>only when I ask</i>, or off. A box you have not reached starts with the letters your own answers so far already share, so you type a word\u2019s stem once instead of once a cell. It can only ever show you letters you typed yourself.',
     '<b>Space steps through the alternatives</b> — in a box you have not typed in, press Space for your previous answer whole, again for empty, again for the shared run. Always those three, always in that order.',
